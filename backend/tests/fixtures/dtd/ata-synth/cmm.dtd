@@ -1,0 +1,37 @@
+<!-- SYNTHETIC ASTHRA TEST DTD. Uses ATA iSpec 2200-style element names for testing only;
+     it is NOT an ATA DTD and must not be used for real validation. -->
+<!ENTITY % iso PUBLIC "-//ASTHRA//ENTITIES Synthetic ISO subset//EN" "isoent.ent">
+%iso;
+<!ELEMENT cmm (title, pgblk+)>
+<!ATTLIST cmm chapnbr CDATA #REQUIRED sectnbr CDATA #REQUIRED subjnbr CDATA #REQUIRED model CDATA #IMPLIED>
+<!ELEMENT pgblk (title, task+)>
+<!ATTLIST pgblk pgblknbr CDATA #REQUIRED>
+<!ELEMENT task (title, (warning|caution|note)*, subtask+)>
+<!ATTLIST task key ID #REQUIRED>
+<!ELEMENT subtask (title?, (warning|caution|note|para|list1|table)*)>
+<!ATTLIST subtask key ID #IMPLIED>
+<!ELEMENT list1 (l1item+)>
+<!ELEMENT l1item (para, (note|list2)*)>
+<!ELEMENT list2 (l2item+)>
+<!ELEMENT l2item (para, (note|list3)*)>
+<!ELEMENT list3 (l3item+)>
+<!ELEMENT l3item (para)>
+<!ELEMENT para (#PCDATA|refint|torque)*>
+<!ELEMENT refint EMPTY>
+<!ATTLIST refint refid IDREF #REQUIRED reftype (figure|table|task) "task">
+<!ELEMENT torque (#PCDATA)>
+<!ATTLIST torque unit (lbf.in|lbf.ft|N.m) #REQUIRED>
+<!ELEMENT warning (para+)>
+<!ELEMENT caution (para+)>
+<!ELEMENT note (para+)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT table (title?, tgroup)>
+<!ATTLIST table id ID #IMPLIED>
+<!ELEMENT tgroup (colspec*, thead?, tbody)>
+<!ATTLIST tgroup cols CDATA #REQUIRED>
+<!ELEMENT colspec EMPTY>
+<!ATTLIST colspec colname CDATA #IMPLIED colwidth CDATA #IMPLIED>
+<!ELEMENT thead (row+)>
+<!ELEMENT tbody (row+)>
+<!ELEMENT row (entry+)>
+<!ELEMENT entry (#PCDATA|para)*>

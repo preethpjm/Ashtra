@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ipd.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTHRA" systemDiffCode="A" systemCode="32" subSystemCode="1" subSubSystemCode="0" assyCode="00" disassyCode="00" disassyCodeVariant="A" infoCode="941" infoCodeVariant="A" itemLocationCode="A"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmTitle><techName>Main landing gear</techName><infoName>Illustrated parts data</infoName></dmTitle>
+    </dmAddress>
+    <dmStatus><applic><displayText>All synthetic test aircraft</displayText></applic></dmStatus>
+  </identAndStatusSection>
+  <content>
+    <illustratedPartsCatalog>
+      <figure id="fig-0001"><title>Shock strut assembly</title><graphic infoEntityIdent="ICN-ASTHRA-A-320000-A-00001-00002-A-01-1"/></figure>
+      <catalogSeqNumber figureNumber="01" item="001" indenture="1">
+        <itemSeqNumber itemSeqNumberValue="00A">
+          <quantityPerNextHigherAssy>1</quantityPerNextHigherAssy>
+          <partRef manufacturerCodeValue="ZZ001" partNumberValue="SS-1000-1"/>
+          <descrForPart>Shock strut assembly</descrForPart>
+        </itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber figureNumber="01" item="010" indenture="2">
+        <itemSeqNumber itemSeqNumberValue="00A">
+          <quantityPerNextHigherAssy>4</quantityPerNextHigherAssy>
+          <partRef manufacturerCodeValue="ZZ001" partNumberValue="BLT-220"/>
+          <descrForPart>Bolt</descrForPart>
+          <applic><displayText>Post-SB 32-001</displayText></applic>
+        </itemSeqNumber>
+      </catalogSeqNumber>
+    </illustratedPartsCatalog>
+  </content>
+</dmodule>

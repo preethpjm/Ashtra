@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA — Procedure. Not an official S1000D schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+  <xs:include schemaLocation="common.xsd"/>
+  <xs:element name="supportEquip"><xs:complexType><xs:sequence>
+    <xs:element name="name" type="xs:string"/><xs:element name="toolRef" type="xs:string" minOccurs="0"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="supply"><xs:complexType><xs:sequence>
+    <xs:element name="name" type="xs:string"/><xs:element name="partRef" type="xs:string" minOccurs="0"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="preliminaryRqmts"><xs:complexType><xs:sequence>
+    <xs:element name="reqSupportEquips"><xs:complexType><xs:sequence><xs:element ref="supportEquip" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="reqSupplies"><xs:complexType><xs:sequence><xs:element ref="supply" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element ref="warning" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="proceduralStep"><xs:complexType><xs:sequence>
+    <xs:choice minOccurs="0" maxOccurs="unbounded"><xs:element ref="warning"/><xs:element ref="caution"/><xs:element ref="note"/></xs:choice>
+    <xs:element ref="para"/>
+    <xs:element ref="figure" minOccurs="0"/>
+    <xs:element ref="proceduralStep" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:sequence><xs:attribute name="id" type="xs:ID"/></xs:complexType></xs:element>
+  <xs:element name="procedure" substitutionGroup="contentBody"><xs:complexType><xs:sequence>
+    <xs:element ref="preliminaryRqmts"/>
+    <xs:element name="mainProcedure"><xs:complexType><xs:sequence><xs:element ref="proceduralStep" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="closeRqmts"><xs:complexType><xs:sequence><xs:element ref="para" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="dmodule" type="dmoduleType"/>
+</xs:schema>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA — provisioning exchange inspired by S2000M concepts.
+     NOT the official S2000M XML schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:asthra:synthetic:s2000m" targetNamespace="urn:asthra:synthetic:s2000m"
+           elementFormDefault="qualified">
+  <xs:simpleType name="partNumber"><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="32"/></xs:restriction></xs:simpleType>
+  <xs:simpleType name="cage"><xs:restriction base="xs:string"><xs:pattern value="[A-Z0-9]{5}"/></xs:restriction></xs:simpleType>
+  <xs:element name="provisioningExchange"><xs:complexType><xs:sequence>
+    <xs:element name="header"><xs:complexType><xs:sequence>
+      <xs:element name="exchangeId" type="xs:string"/>
+      <xs:element name="issue" type="xs:string"/>
+      <xs:element name="productIdentifier" type="xs:string"/>
+    </xs:sequence></xs:complexType></xs:element>
+    <xs:element name="parts"><xs:complexType><xs:sequence>
+      <xs:element name="part" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+        <xs:element name="partNumber" type="partNumber"/>
+        <xs:element name="cage" type="cage"/>
+        <xs:element name="nomenclature" type="xs:string"/>
+        <xs:element name="unitOfIssue" type="xs:string" minOccurs="0"/>
+      </xs:sequence><xs:attribute name="id" type="xs:ID" use="required"/></xs:complexType></xs:element>
+    </xs:sequence></xs:complexType></xs:element>
+    <xs:element name="ipdRecords"><xs:complexType><xs:sequence>
+      <xs:element name="ipdItem" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+        <xs:element name="figureNumber" type="xs:string"/>
+        <xs:element name="itemNumber" type="xs:string"/>
+        <xs:element name="indenture" type="xs:positiveInteger"/>
+        <xs:element name="quantityPerAssembly" type="xs:nonNegativeInteger"/>
+        <xs:element name="effectivity" type="xs:string" minOccurs="0"/>
+      </xs:sequence><xs:attribute name="partRef" type="xs:IDREF" use="required"/></xs:complexType></xs:element>
+    </xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

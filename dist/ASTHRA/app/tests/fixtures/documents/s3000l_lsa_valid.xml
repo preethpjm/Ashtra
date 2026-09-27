@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lsaExchange xmlns="urn:asthra:synthetic:s3000l">
+  <header><exchangeId>LSA-0001</exchangeId><productIdentifier>ASTHRA</productIdentifier></header>
+  <productBreakdown>
+    <breakdownElement id="be-32"><name>Landing gear</name></breakdownElement>
+    <breakdownElement id="be-32-10" parent="be-32"><name>Main landing gear shock strut</name><partNumber>SS-1000-1</partNumber></breakdownElement>
+  </productBreakdown>
+  <tasks>
+    <task id="t-520-01" breakdownElement="be-32-10">
+      <title>Remove the shock strut</title>
+      <taskType>removal</taskType>
+      <applicability>All synthetic test aircraft</applicability>
+      <resource kind="tool" ref="T-0042"/>
+      <subtask seq="1"><step>Remove the access panel.</step></subtask>
+      <subtask seq="2"><step>Disconnect the hydraulic line.</step><step>Cap the open line.</step></subtask>
+    </task>
+  </tasks>
+</lsaExchange>

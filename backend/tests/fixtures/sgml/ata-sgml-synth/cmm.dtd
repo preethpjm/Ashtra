@@ -1,0 +1,44 @@
+<!-- SYNTHETIC ASTHRA TEST DTD, SGML syntax, using ATA iSpec 2200-style element names.
+     It is NOT an ATA DTD and must not be used to validate real publications.
+     Public identifier: "-//ASTHRA//DTD Synthetic ATA-style CMM SGML//EN"               -->
+
+<!ENTITY % ISOnum PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN">
+%ISOnum;
+<!ENTITY % ISOpub PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN">
+%ISOpub;
+
+<!ELEMENT cmm      - -  (title, effect?, pgblk+)                              >
+<!ATTLIST cmm      chapnbr  CDATA #REQUIRED  sectnbr CDATA #REQUIRED
+                   subjnbr  CDATA #REQUIRED  model   CDATA #IMPLIED
+                   revdate  CDATA #IMPLIED                                      >
+<!ELEMENT effect   - O  (#PCDATA)                                              >
+<!ELEMENT pgblk    - -  (title, (warning | caution | note)*, task+)            >
+<!ATTLIST pgblk    pgblknbr CDATA #REQUIRED                                     >
+<!ELEMENT task     - -  (title, (warning | caution | note)*, subtask+)         >
+<!ATTLIST task     key      ID    #REQUIRED                                     >
+<!ELEMENT subtask  - -  (title?, (warning | caution | note | para | list1 | table)*) >
+<!ATTLIST subtask  key      ID    #IMPLIED                                      >
+<!ELEMENT list1    - -  (l1item+)                                              >
+<!ELEMENT l1item   - O  (para, (note | caution | list2)*)                      >
+<!ELEMENT list2    - -  (l2item+)                                              >
+<!ELEMENT l2item   - O  (para, (note | list3)*)                                >
+<!ELEMENT list3    - -  (l3item+)                                              >
+<!ELEMENT l3item   - O  (para)                                                 >
+<!ELEMENT (warning | caution | note) - - (para+)                               >
+<!ELEMENT para     - O  (#PCDATA | refint | torque | pn)*                      >
+<!ELEMENT refint   - O  EMPTY                                                  >
+<!ATTLIST refint   refid    IDREF #REQUIRED
+                   reftype  (figure | table | task) task                        >
+<!ELEMENT torque   - -  (#PCDATA)                                              >
+<!ATTLIST torque   unit     (lbf.in | lbf.ft | n.m) #REQUIRED                   >
+<!ELEMENT pn       - -  (#PCDATA)                                              >
+<!ELEMENT title    - O  (#PCDATA)                                              >
+<!ELEMENT table    - -  (title?, tgroup)                                       >
+<!ATTLIST table    id       ID    #IMPLIED                                      >
+<!ELEMENT tgroup   - O  (colspec*, thead?, tbody)                              >
+<!ATTLIST tgroup   cols     NUMBER #REQUIRED                                    >
+<!ELEMENT colspec  - O  EMPTY                                                  >
+<!ATTLIST colspec  colname  NAME  #IMPLIED  colwidth CDATA #IMPLIED             >
+<!ELEMENT (thead | tbody) - O (row+)                                           >
+<!ELEMENT row      - O  (entry+)                                               >
+<!ELEMENT entry    - O  (#PCDATA | pn)*                                        >

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="descript.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTHRA" systemDiffCode="A" systemCode="32" subSystemCode="1" subSubSystemCode="0" assyCode="00" disassyCode="00" disassyCodeVariant="A" infoCode="040" infoCodeVariant="A" itemLocationCode="A"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmTitle><techName>Main landing gear</techName><infoName>Description</infoName></dmTitle>
+    </dmAddress>
+    <dmStatus><applic><displayText>All synthetic test aircraft</displayText></applic></dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara id="par-0001">
+        <title>General</title>
+        <para>The main landing gear supports the aircraft on the ground. See <internalRef internalRefId="fig-0001"/>.</para>
+        <figure id="fig-0001"><title>Main landing gear — general view</title><graphic infoEntityIdent="ICN-ASTHRA-A-320000-A-00001-00001-A-01-1"/></figure>
+        <levelledPara><title>Operating principle</title><para>The shock strut absorbs landing loads.</para></levelledPara>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

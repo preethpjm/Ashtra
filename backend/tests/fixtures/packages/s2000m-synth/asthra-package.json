@@ -1,0 +1,31 @@
+{
+  "package_id": "asthra-fixture",
+  "name": "SYNTHETIC S2000M-style provisioning exchange",
+  "standard": "S2000M",
+  "issue": "synthetic-6-subset",
+  "provenance": "synthetic",
+  "licence_note": "Synthetic schema for ASTHRA tests; not the official S2000M schema.",
+  "namespaces": {
+    "m": "urn:asthra:synthetic:s2000m"
+  },
+  "doc_types": [
+    {
+      "id": "provisioning",
+      "label": "Provisioning exchange",
+      "content_family": "provisioning",
+      "match": {
+        "local_name": "provisioningExchange",
+        "namespace": "urn:asthra:synthetic:s2000m"
+      },
+      "identity_xpaths": {
+        "exchangeId": "/m:provisioningExchange/m:header/m:exchangeId",
+        "issue": "/m:provisioningExchange/m:header/m:issue",
+        "product": "/m:provisioningExchange/m:header/m:productIdentifier"
+      },
+      "schema_file": "xsd/provisioning.xsd"
+    }
+  ],
+  "files": [
+    "xsd/provisioning.xsd"
+  ]
+}

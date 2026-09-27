@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA — LSA exchange inspired by S3000L concepts.
+     NOT the official S3000L XML schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:asthra:synthetic:s3000l" targetNamespace="urn:asthra:synthetic:s3000l"
+           elementFormDefault="qualified">
+  <xs:element name="lsaExchange"><xs:complexType><xs:sequence>
+    <xs:element name="header"><xs:complexType><xs:sequence>
+      <xs:element name="exchangeId" type="xs:string"/>
+      <xs:element name="productIdentifier" type="xs:string"/>
+    </xs:sequence></xs:complexType></xs:element>
+    <xs:element name="productBreakdown"><xs:complexType><xs:sequence>
+      <xs:element name="breakdownElement" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="partNumber" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="required"/>
+        <xs:attribute name="parent" type="xs:IDREF"/>
+      </xs:complexType></xs:element>
+    </xs:sequence></xs:complexType></xs:element>
+    <xs:element name="tasks"><xs:complexType><xs:sequence>
+      <xs:element name="task" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+        <xs:element name="title" type="xs:string"/>
+        <xs:element name="taskType"><xs:simpleType><xs:restriction base="xs:string">
+          <xs:enumeration value="removal"/><xs:enumeration value="installation"/>
+          <xs:enumeration value="inspection"/><xs:enumeration value="servicing"/>
+        </xs:restriction></xs:simpleType></xs:element>
+        <xs:element name="applicability" type="xs:string" minOccurs="0"/>
+        <xs:element name="resource" minOccurs="0" maxOccurs="unbounded"><xs:complexType>
+          <xs:attribute name="kind" use="required"><xs:simpleType><xs:restriction base="xs:string">
+            <xs:enumeration value="tool"/><xs:enumeration value="consumable"/><xs:enumeration value="spare"/>
+          </xs:restriction></xs:simpleType></xs:attribute>
+          <xs:attribute name="ref" type="xs:string" use="required"/>
+        </xs:complexType></xs:element>
+        <xs:element name="subtask" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+          <xs:element name="step" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence><xs:attribute name="seq" type="xs:positiveInteger" use="required"/></xs:complexType></xs:element>
+      </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="required"/>
+        <xs:attribute name="breakdownElement" type="xs:IDREF" use="required"/>
+      </xs:complexType></xs:element>
+    </xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

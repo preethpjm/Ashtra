@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA — Description. Not an official S1000D schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+  <xs:include schemaLocation="common.xsd"/>
+  <xs:element name="levelledPara"><xs:complexType><xs:sequence>
+    <xs:element ref="title"/>
+    <xs:choice maxOccurs="unbounded"><xs:element ref="para"/><xs:element ref="figure"/><xs:element ref="note"/><xs:element ref="levelledPara"/></xs:choice>
+  </xs:sequence><xs:attribute name="id" type="xs:ID"/></xs:complexType></xs:element>
+  <xs:element name="description" substitutionGroup="contentBody"><xs:complexType><xs:sequence>
+    <xs:element ref="levelledPara" maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="dmodule" type="dmoduleType"/>
+</xs:schema>

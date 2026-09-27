@@ -1,0 +1,5 @@
+<!DOCTYPE cmm PUBLIC "-//OEM//DTD Synthetic CMM//EN">
+<cmm>
+<title>Synthetic SGML sample
+<para>Tag minimization: this paragraph is not closed
+</cmm>

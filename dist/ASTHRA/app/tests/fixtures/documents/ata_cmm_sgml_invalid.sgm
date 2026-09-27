@@ -1,0 +1,44 @@
+<!DOCTYPE CMM PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM SGML//EN">
+<!-- SYNTHETIC iSpec 2200-style SGML component maintenance manual extract, for ASTHRA tests.
+     Shows SGML features XML does not allow: omitted end tags (TITLE, PARA, L1ITEM ...),
+     upper-case tag names, unquoted attribute values and ISO SDATA entities.          -->
+<CMM CHAPNBR=29 SUBJNBR=41 MODEL="SYN-PUMP-1" REVDATE=20260926>
+<TITLE>Hydraulic Pump &mdash; Component Maintenance Manual (synthetic extract)
+<EFFECT>All synthetic pump configurations
+<PGBLK PGBLKNBR=3000>
+<TITLE>Disassembly
+<WARNING><PARA>Release all hydraulic pressure before you start. Fluid under pressure can cause injury.</WARNING>
+<TASK KEY=T001>
+<TITLE>Remove the pump cover
+<CAUTION><PARA>Do not use a metal scraper on the sealing face. You can cause damage to the seal.</CAUTION>
+<SUBTASK KEY=ST001>
+<TITLE>Preparation
+<PARA>Make sure that the pump is at room temperature, 20&deg;C &plusmn;5&deg;C.
+<LIST1>
+<L1ITEM><PARA>Put the pump on a &bogus; work bench.
+<L1ITEM><PARA>Remove the six cover bolts (<PN>SYN-BLT-220</PN>).
+<LIST2>
+<L2ITEM><PARA>Loosen the bolts in a diagonal sequence.
+<L2ITEM><PARA>At installation, torque the bolts to <TORQUE UNIT=LBF.IN>45</TORQUE> (<TORQUE UNIT=NM>5.1</TORQUE>).
+<LIST3><L3ITEM><PARA>Keep the bolts for reuse if they are not damaged.</LIST3>
+</LIST2>
+<L1ITEM><PARA>Lift the cover off. Refer to <REFINT REFID=T999 REFTYPE=TASK>.
+<NOTE><PARA>The cover is heavy. Two persons are necessary.</NOTE>
+</LIST1>
+<TABLE ID=TAB001>
+<TITLE>Cover bolts<BOGUS>
+<TGROUP COLS=3><COLSPEC COLNAME=C1><COLSPEC COLNAME=C2><COLSPEC COLNAME=C3>
+<THEAD><ROW><ENTRY>Item<ENTRY>Part number<ENTRY>Quantity
+<TBODY><ROW><ENTRY>Bolt<ENTRY><PN>SYN-BLT-220</PN><ENTRY>6
+<ROW><ENTRY>Washer<ENTRY><PN>SYN-WSH-110</PN><ENTRY>6
+</TABLE>
+</SUBTASK>
+</TASK>
+<TASK KEY=T002>
+<TITLE>Remove the impeller
+<SUBTASK>
+<PARA>Hold the shaft and turn the impeller nut counterclockwise.
+</SUBTASK>
+</TASK>
+</PGBLK>
+</CMM>

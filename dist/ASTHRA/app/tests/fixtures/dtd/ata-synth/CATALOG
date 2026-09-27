@@ -1,0 +1,3 @@
+-- SGML/TR9401 catalog for the synthetic ATA-style DTD set --
+PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM//EN" "cmm.dtd"
+PUBLIC "-//ASTHRA//ENTITIES Synthetic ISO subset//EN" "isoent.ent"

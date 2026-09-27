@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA. Structurally inspired by S1000D naming, but NOT an
+     official S1000D schema and not suitable for production validation. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xlink="http://www.w3.org/1999/xlink" elementFormDefault="unqualified">
+  <!-- Remote-looking location is mapped to a local file by the package catalog;
+       it must never be fetched. -->
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.example.invalid/xlink.xsd"/>
+
+  <xs:element name="dmCode">
+    <xs:complexType>
+      <xs:attribute name="modelIdentCode" use="required"><xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[A-Z0-9]{2,14}"/></xs:restriction></xs:simpleType></xs:attribute>
+      <xs:attribute name="systemDiffCode" use="required" type="xs:string"/>
+      <xs:attribute name="systemCode" use="required" type="xs:string"/>
+      <xs:attribute name="subSystemCode" use="required" type="xs:string"/>
+      <xs:attribute name="subSubSystemCode" use="required" type="xs:string"/>
+      <xs:attribute name="assyCode" use="required" type="xs:string"/>
+      <xs:attribute name="disassyCode" use="required" type="xs:string"/>
+      <xs:attribute name="disassyCodeVariant" use="required" type="xs:string"/>
+      <xs:attribute name="infoCode" use="required" type="xs:string"/>
+      <xs:attribute name="infoCodeVariant" use="required" type="xs:string"/>
+      <xs:attribute name="itemLocationCode" use="required">
+        <xs:simpleType><xs:restriction base="xs:string">
+          <xs:enumeration value="A"/><xs:enumeration value="B"/><xs:enumeration value="C"/>
+          <xs:enumeration value="D"/><xs:enumeration value="T"/>
+        </xs:restriction></xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="identAndStatusSection">
+    <xs:complexType><xs:sequence>
+      <xs:element name="dmAddress"><xs:complexType><xs:sequence>
+        <xs:element name="dmIdent"><xs:complexType><xs:sequence>
+          <xs:element ref="dmCode"/>
+          <xs:element name="issueInfo"><xs:complexType>
+            <xs:attribute name="issueNumber" use="required"><xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{3}"/></xs:restriction></xs:simpleType></xs:attribute>
+            <xs:attribute name="inWork" use="required"><xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]{2}"/></xs:restriction></xs:simpleType></xs:attribute>
+          </xs:complexType></xs:element>
+        </xs:sequence></xs:complexType></xs:element>
+        <xs:element name="dmTitle"><xs:complexType><xs:sequence>
+          <xs:element name="techName" type="xs:string"/>
+          <xs:element name="infoName" type="xs:string" minOccurs="0"/>
+        </xs:sequence></xs:complexType></xs:element>
+      </xs:sequence></xs:complexType></xs:element>
+      <xs:element name="dmStatus"><xs:complexType><xs:sequence>
+        <xs:element ref="applic"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:sequence></xs:complexType>
+  </xs:element>
+
+  <xs:element name="applic"><xs:complexType><xs:sequence>
+    <xs:element name="displayText" type="xs:string"/>
+  </xs:sequence></xs:complexType></xs:element>
+
+  <xs:element name="title" type="xs:string"/>
+  <xs:element name="para">
+    <xs:complexType mixed="true"><xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="internalRef"/><xs:element name="emphasis" type="xs:string"/>
+    </xs:choice></xs:complexType>
+  </xs:element>
+  <xs:element name="internalRef"><xs:complexType>
+    <xs:attribute name="internalRefId" type="xs:IDREF" use="required"/>
+    <xs:attribute ref="xlink:href"/>
+  </xs:complexType></xs:element>
+  <xs:element name="figure"><xs:complexType><xs:sequence>
+    <xs:element ref="title"/>
+    <xs:element name="graphic" maxOccurs="unbounded"><xs:complexType>
+      <xs:attribute name="infoEntityIdent" type="xs:string" use="required"/>
+    </xs:complexType></xs:element>
+  </xs:sequence><xs:attribute name="id" type="xs:ID" use="required"/></xs:complexType></xs:element>
+  <xs:element name="note"><xs:complexType><xs:sequence><xs:element ref="para" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="warning"><xs:complexType><xs:sequence><xs:element ref="para" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="caution"><xs:complexType><xs:sequence><xs:element ref="para" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+
+  <xs:complexType name="dmoduleType"><xs:sequence>
+    <xs:element ref="identAndStatusSection"/>
+    <xs:element name="content"><xs:complexType><xs:sequence>
+      <xs:element ref="contentBody"/>
+    </xs:sequence></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType>
+  <xs:element name="contentBody" abstract="true"/>
+</xs:schema>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<provisioningExchange xmlns="urn:asthra:synthetic:s2000m">
+  <header><exchangeId>PX-0001</exchangeId><issue>001</issue><productIdentifier>ASTHRA</productIdentifier></header>
+  <parts>
+    <part id="p1"><partNumber>SS-1000-1</partNumber><cage>ZZ001</cage><nomenclature>Shock strut assembly</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p2"><partNumber>BLT-220</partNumber><cage>ZZ001</cage><nomenclature>Bolt</nomenclature></part>
+  </parts>
+  <ipdRecords>
+    <ipdItem partRef="p9"><figureNumber>01</figureNumber><itemNumber>001</itemNumber><indenture>1</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p2"><figureNumber>01</figureNumber><itemNumber>010</itemNumber><indenture>2</indenture><quantityPerAssembly>four</quantityPerAssembly><effectivity>Post-SB 32-001</effectivity></ipdItem>
+  </ipdRecords>
+</provisioningExchange>

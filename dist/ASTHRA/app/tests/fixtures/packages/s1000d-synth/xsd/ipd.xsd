@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC ASTHRA TEST SCHEMA — Illustrated parts data. Not an official S1000D schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+  <xs:include schemaLocation="common.xsd"/>
+  <xs:element name="catalogSeqNumber"><xs:complexType><xs:sequence>
+    <xs:element name="itemSeqNumber" maxOccurs="unbounded"><xs:complexType><xs:sequence>
+      <xs:element name="quantityPerNextHigherAssy"><xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9]+|AR|REF"/></xs:restriction></xs:simpleType></xs:element>
+      <xs:element name="partRef"><xs:complexType>
+        <xs:attribute name="manufacturerCodeValue" type="xs:string" use="required"/>
+        <xs:attribute name="partNumberValue" type="xs:string" use="required"/>
+      </xs:complexType></xs:element>
+      <xs:element name="descrForPart" type="xs:string"/>
+      <xs:element ref="applic" minOccurs="0"/>
+    </xs:sequence><xs:attribute name="itemSeqNumberValue" type="xs:string" use="required"/></xs:complexType></xs:element>
+  </xs:sequence>
+    <xs:attribute name="figureNumber" type="xs:string" use="required"/>
+    <xs:attribute name="item" type="xs:string" use="required"/>
+    <xs:attribute name="indenture" type="xs:positiveInteger" use="required"/>
+  </xs:complexType></xs:element>
+  <xs:element name="illustratedPartsCatalog" substitutionGroup="contentBody"><xs:complexType><xs:sequence>
+    <xs:element ref="figure" maxOccurs="unbounded"/>
+    <xs:element ref="catalogSeqNumber" maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="dmodule" type="dmoduleType"/>
+</xs:schema>

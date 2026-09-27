@@ -1,0 +1,5 @@
+-- SGML catalog for the synthetic ATA-style CMM DTD set --
+OVERRIDE YES
+PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM SGML//EN"               "cmm.dtd"
+PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN"       "isonum.ent"
+PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN"                        "isopub.ent"

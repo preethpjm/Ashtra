@@ -1,0 +1,8 @@
+# What ASTHRA needs to run (no test tools). Used for the portable build.
+lxml>=5.2
+xmlschema>=3.3
+pydantic>=2.6
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+networkx>=3.2

@@ -1,0 +1,30 @@
+{
+  "package_id": "asthra-fixture",
+  "name": "SYNTHETIC S3000L-style LSA exchange",
+  "standard": "S3000L",
+  "issue": "synthetic-2-subset",
+  "provenance": "synthetic",
+  "licence_note": "Synthetic schema for ASTHRA tests; not the official S3000L schema.",
+  "namespaces": {
+    "l": "urn:asthra:synthetic:s3000l"
+  },
+  "doc_types": [
+    {
+      "id": "lsa",
+      "label": "Product breakdown and maintenance tasks",
+      "content_family": "maintenance-task",
+      "match": {
+        "local_name": "lsaExchange",
+        "namespace": "urn:asthra:synthetic:s3000l"
+      },
+      "identity_xpaths": {
+        "exchangeId": "/l:lsaExchange/l:header/l:exchangeId",
+        "product": "/l:lsaExchange/l:header/l:productIdentifier"
+      },
+      "schema_file": "xsd/lsa.xsd"
+    }
+  ],
+  "files": [
+    "xsd/lsa.xsd"
+  ]
+}

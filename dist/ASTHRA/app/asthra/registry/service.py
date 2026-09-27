@@ -1,0 +1,415 @@
+"""Versioned local schema registry (spec §4, §5)."""
+from __future__ import annotations
+
+import json
+import shutil
+import tempfile
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+
+import xmlschema
+from lxml import etree
+
+from ..security.hashing import tree_checksum
+from ..security.paths import PathViolation, confine, safe_extract_zip
+from ..security.xml_safe import BlockedResolution, ConfinedResolver, schema_parser
+from ..storage.db import Database
+from .package import DocType, Manifest
+
+MANIFEST_NAME = "asthra-package.json"
+
+
+class RegistryError(Exception):
+    pass
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+@dataclass
+class InstalledPackage:
+    manifest: Manifest
+    path: Path
+    checksum: str
+    enabled: bool
+
+    def summary(self) -> dict:
+        m = self.manifest
+        return {
+            "id": m.key, "name": m.name, "standard": m.standard, "issue": m.issue,
+            "provenance": m.provenance, "licence_note": m.licence_note,
+            "enabled": self.enabled, "checksum": self.checksum,
+            "doc_types": [{"id": d.id, "label": d.label, "content_family": d.content_family,
+                           "root": d.match.local_name, "namespace": d.match.namespace}
+                          for d in m.doc_types],
+            "dependencies": m.dependencies, "file_count": len(m.files),
+        }
+
+
+class SchemaRegistry:
+    def __init__(self, db: Database, root: Path):
+        self.db = db
+        self.root = root
+        self._compiled: dict[tuple[str, str], etree.XMLSchema] = {}
+        self._idref: dict[tuple[str, str], xmlschema.XMLSchema] = {}
+        self._models: dict[tuple[str, str, str], dict] = {}
+
+    # ---------------------------------------------------------------- install
+    def install(self, source: Path) -> InstalledPackage:
+        """Install from a directory or .zip. The source is copied; never modified."""
+        with tempfile.TemporaryDirectory() as tmp:
+            staging = Path(tmp) / "pkg"
+            if source.is_file() and source.suffix.lower() == ".zip":
+                try:
+                    safe_extract_zip(source, staging)
+                except PathViolation as e:
+                    raise RegistryError(f"unsafe archive rejected: {e}") from e
+                roots = [p.parent for p in staging.rglob(MANIFEST_NAME)]
+                if len(roots) != 1:
+                    raise RegistryError("archive must contain exactly one asthra-package.json")
+                staging = roots[0]
+            elif source.is_dir():
+                shutil.copytree(source, staging, symlinks=False)
+            else:
+                raise RegistryError(f"not a package directory or zip: {source}")
+            manifest, checksum = self._verify_staged(staging)
+            if self.db.one("SELECT 1 FROM schema_package WHERE id=?", (manifest.key,)):
+                raise RegistryError(f"package already installed: {manifest.key}")
+            dest = confine(self.root, manifest.key)
+            if dest.exists():
+                shutil.rmtree(dest)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(staging, dest)
+        with self.db.tx() as c:
+            c.execute(
+                "INSERT INTO schema_package VALUES (?,?,?,?,?,?,?,?,1,?)",
+                (manifest.key, manifest.standard, manifest.issue, manifest.name,
+                 manifest.provenance, str(dest), checksum, manifest.model_dump_json(), _now()),
+            )
+            c.execute("INSERT INTO audit_event(at,actor,action,subject,detail_json) VALUES (?,?,?,?,?)",
+                      (_now(), "local", "schema.install", manifest.key, json.dumps({"checksum": checksum})))
+        return InstalledPackage(manifest, dest, checksum, True)
+
+    def replace(self, source: Path) -> InstalledPackage:
+        """Replace an installed package with a new build of the same package id (for example
+        adding Description and IPD to a Procedure-only package). Documents keep their link to
+        the package; every schema is recompiled and the new checksum recorded."""
+        with tempfile.TemporaryDirectory() as tmp:
+            staging = Path(tmp) / "pkg"
+            if source.is_file() and source.suffix.lower() == ".zip":
+                try:
+                    safe_extract_zip(source, staging)
+                except PathViolation as e:
+                    raise RegistryError(f"unsafe archive rejected: {e}") from e
+                roots = [p.parent for p in staging.rglob(MANIFEST_NAME)]
+                if len(roots) != 1:
+                    raise RegistryError("archive must contain exactly one asthra-package.json")
+                staging = roots[0]
+            elif source.is_dir():
+                shutil.copytree(source, staging, symlinks=False)
+            else:
+                raise RegistryError(f"not a package directory or zip: {source}")
+            manifest, checksum = self._verify_staged(staging)
+            old = self.get(manifest.key)            # raises if not installed
+            used = {r["doc_type"] for r in self.db.query(
+                "SELECT DISTINCT doc_type FROM document WHERE package_id=?", (manifest.key,))}
+            dropped = used - {d.id for d in manifest.doc_types}
+            if dropped:
+                raise RegistryError(f"the new build no longer contains document types in use: {', '.join(sorted(dropped))}")
+            dest = confine(self.root, manifest.key)
+            backup = dest.with_name(dest.name + ".old")
+            if backup.exists():
+                shutil.rmtree(backup)
+            dest.rename(backup)
+            try:
+                shutil.copytree(staging, dest)
+            except Exception:
+                shutil.rmtree(dest, ignore_errors=True)
+                backup.rename(dest)
+                raise
+        shutil.rmtree(backup, ignore_errors=True)
+        with self.db.tx() as c:
+            c.execute("UPDATE schema_package SET name=?, install_path=?, checksum=?, manifest_json=?, installed_at=? WHERE id=?",
+                      (manifest.name, str(dest), checksum, manifest.model_dump_json(), _now(), manifest.key))
+            c.execute("INSERT INTO audit_event(at,actor,action,subject,detail_json) VALUES (?,?,?,?,?)",
+                      (_now(), "local", "schema.replace", manifest.key,
+                       json.dumps({"old_checksum": old.checksum, "checksum": checksum})))
+        self._compiled = {k: v for k, v in self._compiled.items() if k[0] != manifest.key}
+        self._idref = {k: v for k, v in self._idref.items() if k[0] != manifest.key}
+        return self.get(manifest.key)
+
+    # ---------------------------------------------------------------- remove / export
+    def documents_using(self, key: str) -> int:
+        return self.db.one("SELECT COUNT(*) n FROM document WHERE package_id=?", (key,))["n"]
+
+    def remove(self, key: str, force: bool = False) -> int:
+        """Uninstall. Refused while documents use the package unless force=True, in which case
+        those documents lose the link and are identified again when next opened.
+        Returns the number of documents that were unlinked."""
+        pkg = self.get(key)
+        used = self.documents_using(key)
+        if used and not force:
+            raise RegistryError(f"{used} document(s) use {key}. Remove anyway to unlink them "
+                                "(they are identified again when opened).")
+        with self.db.tx() as c:
+            if used:
+                rows = c.execute("SELECT id, identification_json FROM document WHERE package_id=?", (key,)).fetchall()
+                for r in rows:
+                    ident = json.loads(r["identification_json"] or "{}")
+                    ident.pop("selection", None)
+                    ident["status"] = "unidentified"
+                    ident.setdefault("notes", []).append(f"Schema package {key} was removed.")
+                    c.execute("""UPDATE document SET package_id=NULL, standard=NULL, issue=NULL, doc_type=NULL,
+                                 identity_json='{}', identification_json=? WHERE id=?""", (json.dumps(ident), r["id"]))
+            c.execute("UPDATE validation_run SET package_id=NULL WHERE package_id=?", (key,))
+            c.execute("DELETE FROM schema_package WHERE id=?", (key,))
+            c.execute("INSERT INTO audit_event(at,actor,action,subject,detail_json) VALUES (?,?,?,?,?)",
+                      (_now(), "local", "schema.remove", key, json.dumps({"unlinked_documents": used})))
+        shutil.rmtree(pkg.path, ignore_errors=True)
+        self._compiled = {k: v for k, v in self._compiled.items() if k[0] != key}
+        self._idref = {k: v for k, v in self._idref.items() if k[0] != key}
+        return used
+
+    def export_package(self, key: str, out: Path) -> Path:
+        """The installed package as a zip that installs unchanged on another system."""
+        import zipfile
+        pkg = self.get(key)
+        if not self.verify_integrity(key):
+            raise RegistryError(f"package {key} failed its integrity check; reinstall it before exporting")
+        with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.write(pkg.path / MANIFEST_NAME, MANIFEST_NAME)
+            for rel in pkg.manifest.files:
+                zf.write(pkg.path / rel, rel)
+        return out
+
+    def export_set(self, out: Path) -> Path:
+        """Every installed package in one file: configure a new system with import_set()."""
+        import zipfile
+        pkgs = self.list()
+        with tempfile.TemporaryDirectory() as tmp, zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as zf:
+            index = []
+            for p in pkgs:
+                name = p.manifest.key.replace("/", "__") + ".zip"
+                z = Path(tmp) / name
+                self.export_package(p.manifest.key, z)
+                zf.write(z, f"packages/{name}")
+                index.append({"id": p.manifest.key, "file": f"packages/{name}", "enabled": p.enabled,
+                              "checksum": p.checksum})
+            zf.writestr("asthra-schema-set.json", json.dumps({"format_version": 1, "packages": index}, indent=2))
+        return out
+
+    def import_set(self, source: Path) -> list[dict]:
+        """Install every package of a schema set. Already-installed identical packages are
+        skipped; a different build of an installed package is replaced."""
+        import zipfile
+        results = []
+        with tempfile.TemporaryDirectory() as tmp:
+            try:
+                safe_extract_zip(source, Path(tmp))
+            except PathViolation as e:
+                raise RegistryError(f"unsafe archive rejected: {e}") from e
+            idx_path = Path(tmp) / "asthra-schema-set.json"
+            if not idx_path.is_file():
+                raise RegistryError("this is not an ASTHRA schema set (asthra-schema-set.json missing)")
+            index = json.loads(idx_path.read_text(encoding="utf-8"))
+            for entry in index.get("packages", []):
+                z = confine(Path(tmp), entry["file"])
+                try:
+                    existing = self.get(entry["id"])
+                except RegistryError:
+                    existing = None
+                try:
+                    if existing and existing.checksum == entry.get("checksum"):
+                        results.append({"id": entry["id"], "result": "already installed"})
+                        continue
+                    pkg = self.replace(z) if existing else self.install(z)
+                    if not entry.get("enabled", True):
+                        self.set_enabled(pkg.manifest.key, False)
+                    results.append({"id": entry["id"], "result": "replaced" if existing else "installed"})
+                except RegistryError as e:
+                    results.append({"id": entry["id"], "result": f"failed: {e}"})
+        return results
+
+    def schema_model(self, key: str, doc_type_id: str) -> dict:
+        """The editor's schema model for one document type (see asthra/schema/model.py), cached per build."""
+        from ..schema.model import dtd_model, sgml_dtd_model, xsd_model
+        pkg = self.get(key)
+        ck = (key, doc_type_id, pkg.checksum)
+        if ck in self._models:
+            return self._models[ck]
+        dt = next((d for d in pkg.manifest.doc_types if d.id == doc_type_id), None)
+        if dt is None:
+            raise RegistryError(f"package {key} does not define doc type {doc_type_id}")
+        if dt.schema_kind == "xsd":
+            model = xsd_model(self.identity_checker(key, doc_type_id), dt.match.local_name)
+        elif dt.schema_kind == "dtd":
+            from ..validation.dtd import validate_dtd
+            roots, catalog = self.dtd_context(pkg)
+            name = dt.match.local_name
+            _, _, dtd, blocked = validate_dtd(f"<{name}/>", name, roots, catalog, dt.schema_file)
+            if dtd is None:
+                raise RegistryError(f"the DTD for {doc_type_id} could not be loaded: {blocked or 'unknown error'}")
+            model = dtd_model(dtd, name)
+        else:
+            from .dtd_builder import read_catalogs
+            model = sgml_dtd_model(pkg.path / dt.schema_file, dt.match.local_name, read_catalogs(pkg.path))
+        model["kind"] = dt.schema_kind
+        self._models[ck] = model
+        return model
+
+    def _verify_staged(self, root: Path) -> tuple[Manifest, str]:
+        mf = root / MANIFEST_NAME
+        if not mf.is_file():
+            raise RegistryError("missing asthra-package.json")
+        try:
+            manifest = Manifest.model_validate_json(mf.read_text(encoding="utf-8"))
+        except Exception as e:
+            raise RegistryError(f"invalid manifest: {e}") from e
+        for rel in manifest.files:
+            try:
+                p = confine(root, rel)
+            except PathViolation as e:
+                raise RegistryError(str(e)) from e
+            if not p.is_file():
+                raise RegistryError(f"manifest lists missing file: {rel}")
+        listed = {f.replace("\\", "/") for f in manifest.files}
+        for dt in manifest.doc_types:
+            if dt.schema_file not in listed:
+                raise RegistryError(f"doc type {dt.id}: entry schema {dt.schema_file} not listed in files")
+        for dep in manifest.dependencies:
+            if not self.db.one("SELECT 1 FROM schema_package WHERE id=?", (dep,)):
+                raise RegistryError(f"unresolved package dependency: {dep} (install it first)")
+        checksum = tree_checksum(root, manifest.files)
+        if manifest.checksum and manifest.checksum != checksum:
+            raise RegistryError("package checksum does not match publisher-declared checksum")
+        # Compile every entry schema / load every DTD now, so missing files fail at install.
+        for dt in manifest.doc_types:
+            if dt.schema_kind == "xsd":
+                self._compile(root, manifest, dt)
+            elif dt.schema_kind == "dtd":
+                self._check_dtd(root, manifest, dt)
+            else:
+                self._check_sgml(root, manifest, dt)
+        return manifest, checksum
+
+    # ---------------------------------------------------------------- query
+    def list(self, include_disabled: bool = True) -> list[InstalledPackage]:
+        rows = self.db.query("SELECT * FROM schema_package ORDER BY standard, issue, id")
+        out = [self._row(r) for r in rows]
+        return [p for p in out if include_disabled or p.enabled]
+
+    def get(self, key: str) -> InstalledPackage:
+        r = self.db.one("SELECT * FROM schema_package WHERE id=?", (key,))
+        if not r:
+            raise RegistryError(f"no such package: {key}")
+        return self._row(r)
+
+    def _row(self, r) -> InstalledPackage:
+        return InstalledPackage(Manifest.model_validate_json(r["manifest_json"]),
+                                Path(r["install_path"]), r["checksum"], bool(r["enabled"]))
+
+    def set_enabled(self, key: str, enabled: bool) -> None:
+        self.get(key)
+        with self.db.tx() as c:
+            c.execute("UPDATE schema_package SET enabled=? WHERE id=?", (int(enabled), key))
+            c.execute("INSERT INTO audit_event(at,actor,action,subject) VALUES (?,?,?,?)",
+                      (_now(), "local", "schema.enable" if enabled else "schema.disable", key))
+
+    def verify_integrity(self, key: str) -> bool:
+        pkg = self.get(key)
+        return tree_checksum(pkg.path, pkg.manifest.files) == pkg.checksum
+
+    # ---------------------------------------------------------------- schemas
+    def dependency_roots(self, manifest: Manifest) -> list[Path]:
+        roots: list[Path] = []
+        for dep in manifest.dependencies:
+            d = self.get(dep)
+            roots.append(d.path)
+            roots.extend(self.dependency_roots(d.manifest))
+        return roots
+
+    def _compile(self, root: Path, manifest: Manifest, dt: DocType) -> etree.XMLSchema:
+        roots = [root] + self.dependency_roots(manifest)
+        catalog = dict(manifest.catalog)
+        resolver = ConfinedResolver(roots, catalog)
+        entry = confine(root, dt.schema_file)
+        try:
+            doc = etree.parse(str(entry), schema_parser(resolver))
+            return etree.XMLSchema(doc)
+        except (etree.XMLSchemaParseError, etree.XMLSyntaxError, BlockedResolution) as e:
+            detail = "; ".join(resolver.log[-3:])
+            raise RegistryError(f"schema {dt.schema_file} for {dt.id} failed to compile: {e} {detail}".strip()) from e
+
+    def _check_dtd(self, root: Path, manifest: Manifest, dt: DocType) -> None:
+        from ..validation.dtd import validate_dtd
+        name = dt.match.local_name
+        _, entries, dtd, blocked = validate_dtd(f"<{name}/>", name, [root] + self.dependency_roots(manifest),
+                                                manifest.catalog, dt.schema_file)
+        if blocked:
+            raise RegistryError(f"DTD {dt.schema_file} for {dt.id} needs a file that is not in the package: {blocked}")
+        bad = [e for e in entries if e.filename and not e.filename.startswith("<")]
+        if bad or dtd is None:
+            detail = "; ".join(f"{Path(e.filename).name}:{e.line} {e.message}" for e in bad[:3]) or "DTD did not load"
+            raise RegistryError(f"DTD {dt.schema_file} for {dt.id} has errors: {detail}")
+
+    def _check_sgml(self, root: Path, manifest: Manifest, dt: DocType) -> None:
+        """If OpenSP is available, the DTD must load cleanly; otherwise it is checked at first use."""
+        from ..validation.sgml import SgmlToolError, find_tools, run
+        tools = find_tools()
+        if not tools:
+            return
+        name = dt.match.local_name
+        try:
+            res = run(f"<{name}>", name, root, dt.schema_file, manifest.sgml.get("catalogs", []),
+                      manifest.sgml.get("declaration"), tools, render=False)
+        except SgmlToolError:
+            return          # OpenSP itself is broken; the DTD is checked once it works
+        bad = [m for m in res.messages if m[0] is None and m[2] in "E" and "document type" not in m[3]]
+        if bad:
+            raise RegistryError(f"SGML DTD {dt.schema_file} for {dt.id} has errors: " + "; ".join(m[3] for m in bad[:3]))
+
+    def dtd_context(self, pkg: InstalledPackage) -> tuple[list[Path], dict[str, str]]:
+        return [pkg.path] + self.dependency_roots(pkg.manifest), dict(pkg.manifest.catalog)
+
+    def schema_for(self, key: str, doc_type_id: str) -> tuple[etree.XMLSchema | None, InstalledPackage, DocType]:
+        """Compiled XSD (None for DTD doc types, which are validated per document)."""
+        pkg = self.get(key)
+        if not pkg.enabled:
+            raise RegistryError(f"package disabled: {key}")
+        dt = next((d for d in pkg.manifest.doc_types if d.id == doc_type_id), None)
+        if dt is None:
+            raise RegistryError(f"package {key} does not define doc type {doc_type_id}")
+        if dt.schema_kind in ("dtd", "sgml"):
+            if not self.verify_integrity(key):
+                raise RegistryError(f"package {key} failed integrity check; reinstall it")
+            return None, pkg, dt
+        ck = (key, doc_type_id)
+        if ck not in self._compiled:
+            if not self.verify_integrity(key):
+                raise RegistryError(f"package {key} failed integrity check; reinstall it")
+            self._compiled[ck] = self._compile(pkg.path, pkg.manifest, dt)
+        return self._compiled[ck], pkg, dt
+
+    def identity_checker(self, key: str, doc_type_id: str) -> xmlschema.XMLSchema:
+        """Second, independent XSD engine used for ID/IDREF integrity, which libxml2's
+        XSD validator does not enforce. Same local catalog; remote access disallowed."""
+        ck = (key, doc_type_id)
+        if ck not in self._idref:
+            _, pkg, dt = self.schema_for(key, doc_type_id)
+            roots = [pkg.path] + self.dependency_roots(pkg.manifest)
+            catalog = {}
+            for url, rel in pkg.manifest.catalog.items():
+                for r in roots:
+                    cand = confine(r, rel)
+                    if cand.is_file():
+                        catalog[url] = cand.as_uri()
+                        break
+
+            def mapper(uri: str) -> str:
+                return catalog.get(uri, uri)
+
+            self._idref[ck] = xmlschema.XMLSchema(str(confine(pkg.path, dt.schema_file)), allow="local",
+                                                  defuse="always", uri_mapper=mapper)
+        return self._idref[ck]

@@ -1,0 +1,3 @@
+<!-- SYNTHETIC subset of ISO 8879 Publishing entities -->
+<!ENTITY mdash  SDATA "[mdash ]" -- em dash -->
+<!ENTITY ndash  SDATA "[ndash ]" -- en dash -->

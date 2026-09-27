@@ -1,0 +1,4 @@
+<!-- SYNTHETIC subset of ISO character entities for ASTHRA tests -->
+<!ENTITY mdash "&#x2014;">
+<!ENTITY deg "&#x00B0;">
+<!ENTITY plusmn "&#x00B1;">

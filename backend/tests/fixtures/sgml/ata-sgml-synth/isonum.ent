@@ -1,0 +1,4 @@
+<!-- SYNTHETIC subset of ISO 8879 Numeric and Special Graphic entities -->
+<!ENTITY deg    SDATA "[deg   ]" -- degree sign -->
+<!ENTITY plusmn SDATA "[plusmn]" -- plus-or-minus sign -->
+<!ENTITY times  SDATA "[times ]" -- multiply sign -->

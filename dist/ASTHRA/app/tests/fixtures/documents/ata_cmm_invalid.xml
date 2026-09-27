@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cmm PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM//EN" "cmm.dtd">
+<!-- SYNTHETIC ATA-style component maintenance manual extract for ASTHRA tests -->
+<cmm chapnbr="29" subjnbr="41" model="SYN-PUMP-1">
+<title>Hydraulic pump &mdash; synthetic test extract</title>
+<pgblk pgblknbr="3000">
+<title>Disassembly</title>
+<task key="T-001">
+<title>Remove the pump cover</title>
+<warning><para>Release the hydraulic pressure before you start. Fluid under pressure can cause injury.</para></warning>
+<subtask key="ST-001">
+<title>Preparation</title>
+<list1>
+<l1item><para>Put the pump on a &bogus; bench.</para></l1item>
+<l1item><para>Remove the cover bolts.</para>
+<list2>
+<l2item><para>Loosen the bolts in a diagonal sequence.</para></l2item>
+<l2item><para>Torque value for installation is <torque unit="lbf.in">45</torque> (<torque unit="Nm">5.1</torque>).</para>
+<list3><l3item><para>Keep the bolts for reuse.</para></l3item></list3>
+</l2item>
+</list2>
+</l1item>
+<l1item><para>Heat the housing to 120&deg;F &plusmn;5&deg;F. Refer to <refint refid="T-999"/>.</para>
+<note><para>Use a calibrated heat gun.</para></note>
+</l1item>
+</list1>
+<table id="TAB-1">
+<title>Cover bolts</title><bogus/>
+<tgroup cols="2"><colspec colname="c1"/><colspec colname="c2"/>
+<thead><row><entry>Item</entry><entry>Quantity</entry></row></thead>
+<tbody><row><entry>Bolt</entry><entry>6</entry></row></tbody>
+</tgroup>
+</table>
+</subtask>
+</task>
+</pgblk>
+</cmm>
