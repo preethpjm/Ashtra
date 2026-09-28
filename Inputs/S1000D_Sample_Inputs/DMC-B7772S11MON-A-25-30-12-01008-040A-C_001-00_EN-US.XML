@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TP002-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TP002-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TP003-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TP003-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="008" infoCode="040" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Modification placards</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>Modification Placards</title>
+        <levelledPara>
+          <title>Equipment Modification Placard</title>
+          <para>
+            <randomList>
+              <listItem>
+                <para>For Equipment Modification Placard, refer to <internalRef internalRefId="B7772S11MONA25301201008040AC_fig-04" /> Modification Placard.</para>
+              </listItem>
+            </randomList>
+          </para>
+          <note>
+            <notePara>The equipment modification placard PN 00-6414 ALT PN F0554722 must be installed near the existing equipment identification placard.</notePara>
+          </note>
+          <note>
+            <notePara>Use self-adhesive transparent plastic film PN AE404 ALT PN F261378 to prevent damage to the surface of the equipment modification placard PN 00-6414 ALT PN F0554722.</notePara>
+          </note>
+          <para>Add or complete the equipment modification placard PN 00-6414 ALT PN F0554722 on each modified equipment to indicate to indicate that a Service Bulletin and its revision has been completed.</para>
+          <figure id="B7772S11MONA25301201008040AC_fig-04">
+            <title>Modification Placard</title>
+            <graphic id="B7772S11MONA25301201008040AC_fig-04-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TP002-A-001-01" />
+          </figure>
+        </levelledPara>
+        <levelledPara>
+          <title>Component Modification Placard</title>
+          <para>
+            <randomList>
+              <listItem>
+                <para>For Equipment Modification Placard, refer to <internalRef internalRefId="B7772S11MONA25301201008040AC_fig-04-2" /> Modification Placard.</para>
+              </listItem>
+            </randomList>
+          </para>
+          <note>
+            <notePara>The component modification placard PN F0523885 ALT PN F0555661 must be installed near the existing Component identification Placard.</notePara>
+          </note>
+          <note>
+            <notePara>Use self-adhesive transparent plastic film PN AE404 ALT PN F261378 to prevent damage to
+the surface of the component modification placard PN F0523885 ALT PN F0555661.</notePara>
+          </note>
+          <para>Add or complete the equipment modification placard PN 00-6414 ALT PN F0554722 on each
+modified equipment to indicate to indicate that a Service Bulletin and its revision has been
+completed.</para>
+          <para>In the case when an equipment has the previous identification placard PN 00-5008, 00-5007-1,
+00-5007-2 , 00-7219, 00-7219-1 or ETSO placard 00-7367 or, modification placard PN 00-6414 or
+00-7371 or bar code PN 00-7370 containing a legible information of equipment, it is not
+mandatory to replace them.</para>
+          <para>When a SB kit is ordered containing the previous identification placard PN 00-5008, 00-5007-1,
+00-5007-200-7219, 00-7219-1 or ETSO placard 00-7367 or modification placard PN 00-6414, 00-
+7371 or bar code placard PN 00-7370 or plug-in table placard PN F0537611, the new
+identification placard PN F0554720, F0554715, F0554716 , F0554721 or ETSO placard
+F0554712 or modification placard PN F0554722, F0554723 or bar code placard F0554713 or
+plug-in table placard F0554719 will be received instead.</para>
+          <para>The transparent film PN PDFILMPP100X65 (article code F261378) is replaced by PN AE404
+(article code F261378). If it is available in stock, the PN PDFILMPP100X65 (article code
+F261378) can be used. It is not mandatory to replace those which are already on the equipments.</para>
+          <para>When a SB kit is ordered containing the previous transparent film PN PDFILMPP100X65 (article code F261378), the new PN AE404 (article code F261378) will be received instead.</para>
+          <para>This SIL0005 can be used as an interchangeability document regarding the identification,
+modification placards and the transparent film.</para>
+        </levelledPara>
+      </levelledPara>
+      <figure id="B7772S11MONA25301201008040AC_fig-04-2">
+        <title>Modification Placard</title>
+        <graphic id="B7772S11MONA25301201008040AC_fig-04-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TP003-A-001-01" />
+      </figure>
+    </description>
+  </content>
+</dmodule>

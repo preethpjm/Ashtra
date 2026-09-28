@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/frontmatter.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <rdf:Description>
+    <dc:title>FRONT ROW MONUMENT ASSEMBLY - Title Page</dc:title>
+    <dc:creator>F0465</dc:creator>
+    <dc:subject>FRONT ROW MONUMENT ASSEMBLY - Title Page</dc:subject>
+    <dc:publisher>F0465</dc:publisher>
+    <dc:contributor>F0465</dc:contributor>
+    <dc:date>2025-05-30</dc:date>
+    <dc:type>text</dc:type>
+    <dc:format>text/xml</dc:format>
+    <dc:identifier />
+    <dc:language>en-GB</dc:language>
+    <dc:rights>01</dc:rights>
+  </rdf:Description>
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode assyCode="12" disassyCode="00" disassyCodeVariant="001" infoCode="001" infoCodeVariant="A" itemLocationCode="C" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="3" systemCode="25" systemDiffCode="A" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Title Page</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+          <exportControl>
+            <exportRegistrationStmt>
+              <simplePara>The technical data in this document (or file) is controlled for export under the Export Administration Regulations (EAR), 15 CFR Parts 730-774, ECCN9E991. Violations of these laws may be subject to fines and penalties under the Export Administration Act.</simplePara>
+            </exportRegistrationStmt>
+          </exportControl>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="FAPE3" />
+      <originator enterpriseCode="F0465" />
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <frontMatter>
+      <frontMatterTitlePage>
+        <pmTitle>FRONT ROW MONUMENT ASSEMBLY</pmTitle>
+        <pmCode modelIdentCode="B7772S11MON" pmIssuer="F0465" pmNumber="C0001" pmVolume="00" />
+        <issueInfo inWork="00" issueNumber="001" />
+        <issueDate day="24" month="06" year="2026" />
+        <productAndModel>
+          <productName>
+            <name>FRONT ROW MONUMENT ASSEMBLY</name>
+          </productName>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0013L</name>
+            </modelName>
+          </productModel>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0014R</name>
+            </modelName>
+          </productModel>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0005S</name>
+            </modelName>
+          </productModel>
+        </productAndModel>
+        <productAndModel>
+          <productName>
+            <name>FRONT ROW MONUMENT ASSEMBLY</name>
+          </productName>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0009S</name>
+            </modelName>
+          </productModel>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0011L</name>
+            </modelName>
+          </productModel>
+          <productModel>
+            <modelName>
+              <name>2S11ZD0012R</name>
+            </modelName>
+          </productModel>
+        </productAndModel>
+        <security securityClassification="01" />
+        <dataRestrictions>
+          <restrictionInstructions>
+            <dataDistribution>No Restrictions</dataDistribution>
+            <exportControl>
+              <exportRegistrationStmt>
+                <simplePara>Export of this technology is possibly controlled under the United States Export Administration Regulations (EAR) (CFR 730-774). An export license can be required before you use it for development, production, or use by foreign persons from specific countries. The controller of this data has the individual responsibility to follow all export laws.<?sr ?>
+ECCN Number 9E991.</simplePara>
+              </exportRegistrationStmt>
+            </exportControl>
+          </restrictionInstructions>
+        </dataRestrictions>
+        <enterpriseSpec>
+          <enterpriseIdent manufacturerCodeValue="F0465" />
+          <enterpriseName>Safran Seats France</enterpriseName>
+          <businessUnit>
+            <businessUnitName>Safran Seats France</businessUnitName>
+            <businessUnitAddress>
+              <street>ZI LA LIMOISE</street>
+              <postalZipCode>36100</postalZipCode>
+              <city>ISSOUDUN</city>
+              <country>FRANCE</country>
+              <building>RUE ROBERT MARECHAL</building>
+              <email>tech.pubs.fr.sst@customer.safrangroup.com</email>
+            </businessUnitAddress>
+          </businessUnit>
+        </enterpriseSpec>
+        <responsiblePartnerCompany enterpriseCode="FAPE3">
+          <enterpriseName>Airbus</enterpriseName>
+        </responsiblePartnerCompany>
+      </frontMatterTitlePage>
+    </frontMatter>
+  </content>
+</dmodule>

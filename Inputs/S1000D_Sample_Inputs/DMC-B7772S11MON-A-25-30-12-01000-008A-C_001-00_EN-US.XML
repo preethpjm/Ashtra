@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode assyCode="12" disassyCode="01" disassyCodeVariant="000" infoCode="008" infoCodeVariant="A" itemLocationCode="C" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="3" systemCode="25" systemDiffCode="A" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Technical Standard Record</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN
+SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="96" disassyCode="00" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" modelIdentCode="B7772S11MON" subSubSystemCode="4" subSystemCode="0" systemCode="25" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+      <?Pub Caret -2?>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>Technical Standard Record</title>
+        <table frame="topbot">
+          <tgroup cols="5" rowsep="0" colsep="0">
+            <colspec colname="col1" colwidth="1.00*" />
+            <colspec colname="col2" colwidth="0.50*" />
+            <colspec colname="col3" colwidth="1.50*" />
+            <colspec colname="col4" colwidth="1.00*" />
+            <colspec colname="col5" colwidth="1.00*" />
+            <thead>
+              <row rowsep="1">
+                <entry valign="top">
+                  <?PubTbl cell border-bottom-width="0.50pt" border-left-style="none"
+border-top-width="0.50pt"?>
+                  <para>SB/SIL Number</para>
+                </entry>
+                <entry valign="top">
+                  <?PubTbl cell border-bottom-width="0.50pt" border-top-width="0.50pt"?>
+                  <para>SB/SIL Rev.</para>
+                </entry>
+                <entry valign="top">
+                  <?PubTbl cell border-bottom-width="0.50pt" border-top-width="0.50pt"?>
+                  <para>Title</para>
+                </entry>
+                <entry valign="top">
+                  <?PubTbl cell border-bottom-width="0.50pt" border-top-width="0.50pt"?>
+                  <para>Date</para>
+                </entry>
+                <entry valign="top">
+                  <?PubTbl cell border-bottom-width="0.50pt" border-right-style="none"
+border-top-width="0.50pt"?>
+                  <para>Incorporated in Issue</para>
+                </entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>
+                  <para>SIL0003</para>
+                </entry>
+                <entry>
+                  <para>21</para>
+                </entry>
+                <entry>
+                  <para>Interchangeability Information for Hardware Parts</para>
+                </entry>
+                <entry>
+                  <para>2025-11-05</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0005</para>
+                </entry>
+                <entry>
+                  <para>8</para>
+                </entry>
+                <entry>
+                  <para>Placards and Transparent Film Replacement</para>
+                </entry>
+                <entry>
+                  <para>2023-01-04</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0006</para>
+                </entry>
+                <entry>
+                  <para>1</para>
+                </entry>
+                <entry>
+                  <para>Rivnut Removal and Installation Procedures</para>
+                </entry>
+                <entry>
+                  <para>2020-03-04</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0009</para>
+                </entry>
+                <entry>
+                  <para>0</para>
+                </entry>
+                <entry>
+                  <para>Information from the SAE Aircraft Seat Committee Concerning the Use of Cleaners and Disinfectants on Aircraft Seats</para>
+                </entry>
+                <entry>
+                  <para>2020-12-17</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0012</para>
+                </entry>
+                <entry>
+                  <para>0</para>
+                </entry>
+                <entry>
+                  <para>RFID Information</para>
+                </entry>
+                <entry>
+                  <para>2021-07-01</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0013</para>
+                </entry>
+                <entry>
+                  <para>2</para>
+                </entry>
+                <entry>
+                  <para>Part Number Codification and Interchangeability</para>
+                </entry>
+                <entry>
+                  <para>2024-02-29</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0014</para>
+                </entry>
+                <entry>
+                  <para>1</para>
+                </entry>
+                <entry>
+                  <para>Handling Information for Electrostatic Discharge Sensitive
+Devices</para>
+                </entry>
+                <entry>
+                  <para>2022-05-06</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0019</para>
+                </entry>
+                <entry>
+                  <para>0</para>
+                </entry>
+                <entry>
+                  <para>Damaged Screw Removal</para>
+                </entry>
+                <entry>
+                  <para>2022-03-04</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>SIL0022</para>
+                </entry>
+                <entry>
+                  <para>0</para>
+                </entry>
+                <entry>
+                  <para>Self-fasteners Securing</para>
+                </entry>
+                <entry>
+                  <para>2025-02-18</para>
+                </entry>
+                <entry>
+                  <para>001</para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

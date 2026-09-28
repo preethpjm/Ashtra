@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3203301SEATA25049601005663AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="004" infoCode="663" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Small Areas of Damaged Paint Repair (Painted Surface)</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This section gives the procedure to repair the Small Areas of damaged paint.</para>
+        <para>The repair scheme shown below is intended for repairs to small areas of damaged paint of less than 5806.44 mm² (9 in²) area and isolated from other areas of damaged by minimum 304.80 mm (12 in). It is possible that the finished repair will not be to the initial production quality standard.</para>
+        <note>
+          <notePara>For larger repairs refer to Safran Seats France.</notePara>
+        </note>
+        <para />
+        <note>
+          <notePara>This repair is for small areas of damaged paint contained in a maximum area of 76.2 x 76.2 mm (3 x 3 in). The damaged paint must be a minimum of 304.80 mm (12 in) away from other areas of damage.</notePara>
+        </note>
+        <para />
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <noSupportEquips />
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <note>
+              <notePara>Only approved personnel must do the maintenance to the component.</notePara>
+            </note>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Procedure</title>
+          <proceduralStep>
+            <title>Small areas of damaged paint repair procedure</title>
+            <warning>
+              <warningAndCautionPara>Do all paint/lacquer spray-gun procedures in an area
+with good airflow. do not breathe paint/solvent fumes and use manufacturer’s
+recommended breathing masks and equipment. obey health and safety
+warning recommended by the manufacturer and the local health and
+safety regulator. obey applicable fire precautions. this will help
+prevent injury.</warningAndCautionPara>
+            </warning>
+            <warning>
+              <warningAndCautionPara>when you use cleaning agents, obey the manufacturer’s
+instructions.</warningAndCautionPara>
+            </warning>
+            <caution>
+              <warningAndCautionPara>when you use fillers, primers and paints, obey the
+manufacturer’s instructions.</warningAndCautionPara>
+            </caution>
+            <caution>
+              <warningAndCautionPara>do not clean the repaired area for 48 hours.</warningAndCautionPara>
+            </caution>
+            <proceduralStep>
+              <para>Remove paint back to the surface of the material.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Prepare surface to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Apply a layer of filler, refer to <dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Trim and Finish</infoName></dmTitle></dmRefAddressItems></dmRef>, to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Prepare surface to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Apply a layer of primer, refer to <dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Trim and Finish</infoName></dmTitle></dmRefAddressItems></dmRef>, to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Prepare surface to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Apply a layer of top coat paint, refer to <dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Trim and Finish</infoName></dmTitle></dmRefAddressItems></dmRef>, to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Finish surface to the paint manufacturer’s instructions.</para>
+            </proceduralStep>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

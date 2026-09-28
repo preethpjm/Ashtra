@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!NOTATION tiff PUBLIC "+//ISBN 0-7923-9432-1::Graphic Notation//NOTATION Aldus/Microsoft Tagged Interchange File Format//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60002-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60002-A-001-01.CGM" NDATA cgm>
+<!ENTITY SIL_0006_R1_RIVNUT_REMOVAL_INSTALLATION-4 SYSTEM "SIL_0006_R1_RIVNUT_REMOVAL_INSTALLATION-4.TIF" NDATA tiff>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3203301SEATA25049601003663AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="003" infoCode="663" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Rivnut Removal and Installation Procedures (SIL0006)</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This procedure gives the information regarding the removal and installation
+of rivnuts.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <supportEquipDescrGroup>
+            <supportEquipDescr>
+              <name>Standard Mechanician Tools</name>
+              <toolRef toolNumber="No specific" manufacturerCodeValue="Commercially available" />
+              <reqQuantity unitOfMeasure="As Required" />
+            </supportEquipDescr>
+          </supportEquipDescrGroup>
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <note>
+              <notePara>Only approved personnel must do the maintenance to the component.</notePara>
+            </note>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Procedure</title>
+          <proceduralStep>
+            <title>Removal procedure of rivnuts with cylinder and countersunk head shapes</title>
+            <para>Refer to <internalRef internalRefId="B7772S11MONA25301201003663AC_fig-05" /> Rivnut Removal and Installation</para>
+            <proceduralStep>
+              <caution>
+                <warningAndCautionPara>MUST BE CAREFUL NOT TO MAKE THE EXISTING HOLE BIGGER.</warningAndCautionPara>
+              </caution>
+              <para>With a drill bit of 6.1 mm (0.24 in) (for rivnut thread size 6/32 or 8/32) and 7.1 mm (0.28 in) for rivnut thread size 10/32, drill slowly by making circular movements to cut and remove the rivnut head.</para>
+            </proceduralStep>
+          </proceduralStep>
+          <proceduralStep>
+            <title>Installation procedure of rivnuts with cylinder and countersunk head shapes</title>
+            <para>Refer to <internalRef internalRefId="B7772S11MONA25301201003663AC_fig-05" /> Rivnut Removal and Installation</para>
+            <proceduralStep>
+              <caution>
+                <warningAndCautionPara>EXAMINE THAT THE CORRECT SIZE PULL-UP STUD IS INSTALLED
+IN THE HEADER DEPENDING UPON THE RIVNUT THREAD SIZE.</warningAndCautionPara>
+              </caution>
+              <para>Place new rivnut head-first on the pull-up stud of the manual tool and screw till the anvil. Follow supplier manual for more instructions.</para>
+              <note>
+                <notePara>The necessary pull-up stud(s) must be procured from the tool supplier depending upon the rivnut thread size.</notePara>
+              </note>
+              <note>
+                <notePara>If the pull-up stud necessary to be changed, follow the steps given in the tool supplier manual.</notePara>
+              </note>
+            </proceduralStep>
+            <proceduralStep>
+              <para>The rivnut head must be in touch with the anvil and the pull-up stud must be flush with the rivnut open end. Follow supplier manual if adjustment is necessary.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Place the tool with the rivnut in the hole and press tightly the handle refer to <internalRef internalRefId="B7772S11MONA25301201003663AC_tab-001" />.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Upon releasing the handle, the tool will be released from the rivnut. Follow supplier manual for more instructions.</para>
+              <?pb ?>
+              <figure id="B7772S11MONA25301201003663AC_fig-05">
+                <title>Rivnut Removal and Installation</title>
+                <graphic id="B7772S11MONA25301201003663AC_fig-05-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60002-A-001-01" />
+              </figure>
+              <table id="B7772S11MONA25301201003663AC_tab-001" frame="topbot">
+                <title>Recommended installation force by diameter and material</title>
+                <tgroup cols="5" rowsep="0" colsep="0">
+                  <thead valign="bottom">
+                    <row rowsep="1">
+                      <entry>
+                        <para>
+                          <symbol infoEntityIdent="SIL_0006_R1_RIVNUT_REMOVAL_INSTALLATION-4" reproductionScale="90" />
+                        </para>
+                      </entry>
+                      <entry>
+                        <para>Steel</para>
+                        <para>(kN (Kipf))</para>
+                      </entry>
+                      <entry>
+                        <para>Stainless steel (kN (Kipf))</para>
+                      </entry>
+                      <entry>
+                        <para>Stainless steel A4 (kN (Kipf))</para>
+                      </entry>
+                      <entry>
+                        <para>Aluminum (kN (Kipf))</para>
+                      </entry>
+                    </row>
+                  </thead>
+                  <tbody valign="top">
+                    <row>
+                      <entry>
+                        <para>M3</para>
+                      </entry>
+                      <entry>
+                        <para>3.5 (0.79)</para>
+                      </entry>
+                      <entry>
+                        <para>3.5 (0.79)</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                      <entry>
+                        <para>1.9 (0.43)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M4</para>
+                      </entry>
+                      <entry>
+                        <para>5.5 (1.24)</para>
+                      </entry>
+                      <entry>
+                        <para>5.5 (1.24)</para>
+                      </entry>
+                      <entry>
+                        <para>9.5 (2.14)</para>
+                      </entry>
+                      <entry>
+                        <para>3.0 (0.67)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M5</para>
+                      </entry>
+                      <entry>
+                        <para>8.0 (1.80)</para>
+                      </entry>
+                      <entry>
+                        <para>8.0 (1.80)</para>
+                      </entry>
+                      <entry>
+                        <para>12.0 (2.70)</para>
+                      </entry>
+                      <entry>
+                        <para>3.8 (0.85)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M6</para>
+                      </entry>
+                      <entry>
+                        <para>12.0 (2.70)</para>
+                      </entry>
+                      <entry>
+                        <para>13.0 (2.92)</para>
+                      </entry>
+                      <entry>
+                        <para>15.0 (3.37)</para>
+                      </entry>
+                      <entry>
+                        <para>5.5 (1.24)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M8</para>
+                      </entry>
+                      <entry>
+                        <para>18.0 (4.05)</para>
+                      </entry>
+                      <entry>
+                        <para>20.0 (4.50)</para>
+                      </entry>
+                      <entry>
+                        <para>20.0 (4.50)</para>
+                      </entry>
+                      <entry>
+                        <para>10.0 (2.25)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M10</para>
+                      </entry>
+                      <entry>
+                        <para>21.0 (4.72)</para>
+                      </entry>
+                      <entry>
+                        <para>22.0 (4.95)</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                      <entry>
+                        <para>12.0 (2.70)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M12</para>
+                      </entry>
+                      <entry>
+                        <para>23.0 (5.17)</para>
+                      </entry>
+                      <entry>
+                        <para>28.0 (6.29)</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                      <entry>
+                        <para>15.0 (3.37)</para>
+                      </entry>
+                    </row>
+                    <row>
+                      <entry>
+                        <para>M14</para>
+                      </entry>
+                      <entry>
+                        <para>50.0 (11.24)</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                      <entry>
+                        <para>-</para>
+                      </entry>
+                    </row>
+                  </tbody>
+                </tgroup>
+              </table>
+              <note>
+                <notePara>Tool represented for illustration.</notePara>
+              </note>
+            </proceduralStep>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

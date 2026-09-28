@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule [
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60007-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60007-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3203301SEATA25049601006663AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="006" infoCode="663" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Self-fasteners Securing (SIL0022)</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This procedure gives the information regarding the securing
+of the self fasteners.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <supportEquipDescrGroup>
+            <supportEquipDescr>
+              <name>Standard Mechanician Tools</name>
+              <toolRef manufacturerCodeValue="Commercially available" toolNumber="No specific" />
+              <reqQuantity unitOfMeasure="AR" />
+            </supportEquipDescr>
+          </supportEquipDescrGroup>
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <note>
+              <notePara>Only approved personnel must do the maintenance to the component.</notePara>
+            </note>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <?pb?>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Procedure</title>
+          <proceduralStep>
+            <title>Securing self fasteners procedure</title>
+            <para>Refer to <internalRef internalRefId="B7772S11MONA25301201006663AC_fig-09" /> Self-fasteners Securing</para>
+            <proceduralStep>
+              <para>To improve adhesion on non-metallic surface, if possible, sand the area where the self-fastener will be installed. Mask as necessary.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Clean the surfaces with applicable solvent (acetone
+on metals, isopropyl alcohol on non metallics), with a clean cloth.</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Remove the protective tape from the adhesive
+side of the self fastener. Apply gradually, smoothing down from one
+end to the other to prevent wrinkles or trapped air. When handling,
+prevent touching the adhesive side (otherwise degrade the adhesive
+properties of the self fastener).</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>The self-fasteners must be secured with adhesive (SW 3532 B/A) on edges as shown in the <internalRef internalRefId="B7772S11MONA25301201006663AC_fig-09" />. 
+</para>
+            </proceduralStep>
+            <proceduralStep>
+              <para>The adhesive must cover approximately 5 mm (0.20
+in) on either side of the edge of the self fastener.</para>
+              <note>
+                <notePara>The full polymerization is done after 24h at 24&deg;C (75.2&deg;F).</notePara>
+              </note>
+              <figure id="B7772S11MONA25301201006663AC_fig-09">
+                <title>Self-fasteners Securing</title>
+                <graphic id="B7772S11MONA25301201006663AC_fig-09-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60007-A-001-01" />
+              </figure>
+            </proceduralStep>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

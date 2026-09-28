@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-D1B04-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-D1B04-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-D1B03-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-D1B03-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-D1B02-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-D1B02-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-D1B01-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-D1B01-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3303S01SEATA25060101000941AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/ipd.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode assyCode="12" disassyCode="01" disassyCodeVariant="00B" infoCode="941" infoCodeVariant="A" itemLocationCode="C" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="3" systemCode="25" systemDiffCode="A" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Fig 01B S1C / S2C Front Row Monument</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <illustratedPartsCatalog>
+      <figure id="B7772S11MONA2530120100B941AC_fig-01B">
+        <title>S1C / S2C Front Row Monument</title>
+        <graphic id="B7772S11MONA2530120100B941AC_fig-01B-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-D1B01-A-001-01" />
+        <graphic id="B7772S11MONA2530120100B941AC_fig-01B-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-D1B02-A-001-01" />
+        <graphic id="B7772S11MONA2530120100B941AC_fig-01B-gra-003" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-D1B03-A-001-01" />
+        <graphic id="B7772S11MONA2530120100B941AC_fig-01B-gra-004" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-D1B04-A-001-01" />
+      </figure>
+      <catalogSeqNumber figureNumber="01" figureNumberVariant="B" indenture="0" item="001">
+        <itemSeqNumber itemSeqNumberValue="000">
+          <quantityPerNextHigherAssy>RF</quantityPerNextHigherAssy>
+          <partRef manufacturerCodeValue="F0465" partNumberValue="2S11ZD0005S" />
+          <partSegment>
+            <itemIdentData>
+              <descrForPart>MONUMENT ASSY, CTR SIDE, S1C (M5)</descrForPart>
+            </itemIdentData>
+          </partSegment>
+          <applicabilitySegment>
+            <usableOnCodeEquip>A</usableOnCodeEquip>
+          </applicabilitySegment>
+          <genericPartDataGroup>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>ALT PN: F0675620 (F0465)</genericPartDataValue>
+            </genericPartData>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>ALT PN: H14540-017A (56135)</genericPartDataValue>
+            </genericPartData>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>REFER TO CMM 25-23-89 FOR DET.</genericPartDataValue>
+            </genericPartData>
+          </genericPartDataGroup>
+        </itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber figureNumber="01" figureNumberVariant="B" indenture="0" item="001" itemVariant="A">
+        <itemSeqNumber itemSeqNumberValue="000">
+          <quantityPerNextHigherAssy>RF</quantityPerNextHigherAssy>
+          <partRef manufacturerCodeValue="F0465" partNumberValue="2S11ZD0009S" />
+          <partSegment>
+            <itemIdentData>
+              <descrForPart>MONUMENT ASSY, CTR SIDE, S2C (M9)</descrForPart>
+            </itemIdentData>
+          </partSegment>
+          <applicabilitySegment>
+            <usableOnCodeEquip>B</usableOnCodeEquip>
+          </applicabilitySegment>
+          <genericPartDataGroup>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>ALT PN: F0678828 (F0465)</genericPartDataValue>
+            </genericPartData>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>ALT PN: H14540-019A (56135)</genericPartDataValue>
+            </genericPartData>
+            <genericPartData genericPartDataName="additionalText">
+              <genericPartDataValue>REFER TO CMM 25-23-89 FOR DET.</genericPartDataValue>
+            </genericPartData>
+          </genericPartDataGroup>
+        </itemSeqNumber>
+      </catalogSeqNumber>
+    </illustratedPartsCatalog>
+  </content>
+</dmodule>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode assyCode="12" disassyCode="01" disassyCodeVariant="001" infoCode="258" infoCodeVariant="A" itemLocationCode="C" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="3" systemCode="25" systemDiffCode="A" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Cleaning Procedures</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN
+SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="01" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" modelIdentCode="B7772S11MON" subSubSystemCode="6" subSystemCode="0" systemCode="25" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <warningsAndCautions>
+      <warning>
+        <warningAndCautionPara>ALL THE CLEANING MATERIAL USED MUST BE VALIDATED
+BY SAFRAN SEATS FRANCE. IF THE CLEANING MATERIAL IS NOT VALIDATED
+BY SAFRAN SEATS FRANCE, THE PARTS WILL DECREASE THE GUARANTEE.</warningAndCautionPara>
+      </warning>
+      <warning>
+        <warningAndCautionPara>OBEY THE MANUFACTURERS' INSTRUCTIONS WHEN USING
+PROPRIETARY CLEANERS.</warningAndCautionPara>
+      </warning>
+      <warning>
+        <warningAndCautionPara>USE CLEANING AGENTS ONLY IN AN AREA WITH A
+GOOD SUPPLY OF AIR. OBEY LOCAL SAFETY AND HEALTH INSTRUCTIONS. OBEY
+THE MANUFACTURERS INSTRUCTIONS. WEAR PROTECTION CLOTHING. DO NOT DRINK
+SOLVENTS/CLEANING AGENTS. DO NOT SMOKE. DO NOT BREATHE THE FUMES.
+SOLVENT/CLEANING AGENTS ARE POISONOUS AND FLAMMABLE. USE THE APPROVED
+HAND AND EYE PROTECTION WHEN YOU APPLY THE CLEANING AGENT. IF YOU
+GET THE CLEANING AGENT ON YOUR SKIN OR IN YOUR EYES, FLUSH IT AWAY
+WITH CLEAN WATER AND GET MEDICAL AID.</warningAndCautionPara>
+      </warning>
+      <caution>
+        <warningAndCautionPara>DO NOT STEAM CLEAN THE ASSEMBLY. DO NOT LET LIQUIDS FLOW INTO AREAS WHERE IT WILL NOT DRY.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>TO PREVENT DAMAGE TO SURFACES DO NOT USE SOLVENTS.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>NEWLY PAINTED SURFACES MUST NOT BE CLEANED FOR FOURTEEN (14) DAYS.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>DO NOT ALLOW CLEANER TO DRY ON PAINTED SURFACES.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>USE ONLY SPECIFIED MATERIALS OR THEIR EQUIVALENT. MATERIALS THAT ARE NOT
+SPECIFIED CAN DAMAGE THE SURFACE PROTECTION.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>DO ALL THE WORK WITH A FULLY CLEAN WORKBENCH, TOOLS AND PART.</warningAndCautionPara>
+      </caution>
+      <caution>
+        <warningAndCautionPara>ALL THE CONSUMABLES SUPPLIED BY SAFRAN AND LISTED INTO THE CMP CAN HAVE
+A LIMITED LIFETIME. PLEASE REVIEW LABELS ON CONTAINER OR EXAMINE THE
+TECHNICAL DATA SHEET BEFORE USE OR STORE.</warningAndCautionPara>
+      </caution>
+    </warningsAndCautions>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This procedure gives how to clean the different parts of the
+Equipment assembly.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <noSupportEquips />
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <noSafety />
+        </reqSafety>
+      </preliminaryRqmts>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Cleaning procedure</title>
+          <proceduralStep>
+            <title>Introduction</title>
+            <para>This chapter gives instructions for the cleaning procedure of the Front Row Monument Assembly.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <title>General</title>
+            <para>Refer to CMM S1L LH / S1R RH FRONT ROW MONUMENT 25-23-86 for series H14510.</para>
+            <para>Refer to CMM S2L LH / S2R RH FRONT ROW MONUMENT 25-23-88 for series H14530.</para>
+            <para>Refer to CMM S1C / S2C CENTER FRONT ROW MONUMENT 25-23-89 for series H14540.</para>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <?Pub Caret -2?>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

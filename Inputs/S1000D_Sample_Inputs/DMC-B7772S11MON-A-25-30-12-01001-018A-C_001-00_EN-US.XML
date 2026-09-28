@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule [
+<!NOTATION svg PUBLIC "-//TEI//NOTATION W3C Scalable Vector Graphics Format//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90023-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90023-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90034-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90034-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90001-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90001-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90011-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90011-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90010-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90010-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90009-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90009-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90008-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90008-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90007-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90007-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90006-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90006-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90005-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90005-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90004-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90004-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90003-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90003-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90002-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90002-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90044-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90044-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90043-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90043-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90042-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90042-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90041-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90041-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90040-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90040-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90039-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90039-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90038-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90038-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90037-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90037-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90036-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90036-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90035-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90035-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90033-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90033-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90032-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90032-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90031-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90031-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90030-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90030-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90029-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90029-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90028-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90028-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90027-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90027-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90026-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90026-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90025-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90025-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90024-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90024-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90022-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90022-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90021-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90021-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90020-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90020-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90019-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90019-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90018-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90018-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90017-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90017-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90016-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90016-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90015-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90015-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90014-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90014-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90013-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90013-A-001-01.SVG" NDATA svg>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-90012-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-90012-A-001-01.SVG" NDATA svg>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="001" infoCode="018" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Introduction</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>Information</title>
+        <caution>
+          <warningAndCautionPara>
+				ONLY APPROVED PERSONS WITH THE NECESSARY SKILLS MUST BE USED FOR THE MAINTENANCE PROCEDURES IN THIS MANUAL.
+            </warningAndCautionPara>
+        </caution>
+        <levelledPara>
+          <para>This Component Maintenance Publication (CMP)
+gives all the procedures supplied by the manufacturer for use in
+the workshop, so that all persons can repair and fully overhaul
+the component.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>The technical content of this document has
+successfully passed a verification process on testing, inspection,
+disassembly and assembly procedures. The supplier declares the content
+of this document accurate and adequate.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>The publication gives maintenance on the component
+in a workshop. It does not define or show the level of maintenance
+for all special units, but gives all the procedures necessary to
+let the person do a test, disassemble, clean, check and assemble
+a panel which has been rejected from serviceable use. The manual does
+not give maintenance on the component when it is installed on the
+aircraft.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>Only approved persons are allowed to do the
+maintenance procedures given in this manual.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>Where the data or procedures specified in this
+manual are different from those specified by the regulatory agency
+which controls operation of your aircraft, obey the data and procedures
+of the regulatory authority.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>This publication contains:
+<randomList listItemPrefix="pf03"><listItem><para>Technical data for the component,</para></listItem><listItem><para>Maintenance and repair procedures,</para></listItem><listItem><para>An Illustrated Parts Data (IPD) with data for the component parts. The IPD Figure and item number identifies in all sections of the manual.</para></listItem></randomList></para>
+        </levelledPara>
+      </levelledPara>
+      <levelledPara>
+        <title>How to use the publication</title>
+        <levelledPara>
+          <para>Make sure that the publication contains the
+information applicable to your component. Look on the Title Page
+for the part number.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>If it is necessary to identify a part or find
+a part number, refer to the IPD, which has an introduction to show
+the procedure.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>The instructions in this publication must be
+used for all component maintenance. Read all the applicable WARNINGS
+and CAUTIONS before you do the work on the component.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>This publication will be updated as required
+by revisions, Service Bulletin can be issued separately. Their effect
+on the publication will be made evident by reissue of the Service
+Bulletins List as applicable.</para>
+        </levelledPara>
+        <?pb?>
+        <levelledPara>
+          <para>These adjuncts to the text are expressed by
+these headings:</para>
+        </levelledPara>
+        <levelledPara>
+          <para>Read all the applicable WARNINGS and CAUTIONS
+before to start any maintenance instruction.</para>
+          <levelledPara>
+            <warning>
+              <warningAndCautionPara>WARNINGS GIVE INSTRUCTIONS TO THE USE OF MATERIALS, PROCEDURES OR
+LIMITS THAT CAN CAUSE INJURY OR DEATH OF PERSONS IF NOT CORRECTLY
+FOLLOWED.</warningAndCautionPara>
+            </warning>
+            <caution>
+              <warningAndCautionPara>CAUTIONS GIVE INSTRUCTIONS TO THE USE OF MATERIALS, PROCEDURES OR LIMITS
+THAT CAN CAUSE DAMAGE TO THE EQUIPMENT IF NOT CORRECTLY FOLLOWED.</warningAndCautionPara>
+            </caution>
+            <note>
+              <notePara>Notes give instructions to follow that can make the job easier.</notePara>
+            </note>
+          </levelledPara>
+        </levelledPara>
+      </levelledPara>
+      <levelledPara>
+        <title>Modification</title>
+        <levelledPara>
+          <para>All result data and illustrations in this publication
+are the last revision available at the time of printing. Safran
+Seats (Safran Seats France) supplies updates to this publication
+when necessary. When Safran Seats (Safran Seats France) issue a
+modification to units included in this publication, Safran Seats
+(Safran Seats France) will revise the publication to include the
+information.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>When there is a change, each updating gives
+the full instructions about the page number of the pages which must
+be replaced, added or removed. Revised texts or new texts are found
+with a vertical black line in the margin.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>Service Bulletins can be issued separately.
+They will be included into the CMP and IPD at the next issue and
+will be shown in the TECHNICAL STANDARD RECORD.</para>
+        </levelledPara>
+      </levelledPara>
+      <levelledPara>
+        <title>Publication guidelines</title>
+        <levelledPara>
+          <para>The CMP is divided in sections as follow:</para>
+          <para>
+            <randomList listItemPrefix="pf03">
+              <listItem>
+                <para>Front matter and introduction</para>
+              </listItem>
+              <listItem>
+                <para>Functional &amp; technical descriptions
+<randomList listItemPrefix="pf07"><listItem><para>Description of function</para></listItem><listItem><para>Technical description</para></listItem><listItem><para>Diagrams and schematics</para></listItem></randomList></para>
+              </listItem>
+            </randomList>
+            <randomList listItemPrefix="pf03">
+              <listItem>
+                <para>Maintenance and servicing
+
+<randomList listItemPrefix="pf07"><listItem><para>Servicing</para></listItem><listItem><para>Examination, test, checks and fault Isolation</para></listItem><listItem><para>Disassemble</para></listItem><listItem><para>Repair</para></listItem><listItem><para>Assemble</para></listItem><listItem><para>Storage</para></listItem></randomList></para>
+              </listItem>
+            </randomList>
+            <randomList listItemPrefix="pf03">
+              <listItem>
+                <para>IPD
+
+<randomList listItemPrefix="pf07"><listItem><para>Introduction</para></listItem><listItem><para>Numerical Index</para></listItem><listItem><para>Equipment Designators Index</para></listItem><listItem><para>Detailed Parts Data</para></listItem></randomList></para>
+              </listItem>
+            </randomList>
+          </para>
+        </levelledPara>
+        <levelledPara>
+          <title>Technical Event</title>
+          <levelledPara>
+            <para>For any technical event please fill the Technical
+Event form and send it by e-mail to Product Support Department.</para>
+            <note>
+              <notePara>The document is accessible on SAFRAN SEATS TECHNICAL DOCUMENTATION portal.</notePara>
+            </note>
+          </levelledPara>
+        </levelledPara>
+        <levelledPara>
+          <title>Related documentation</title>
+          <levelledPara>
+            <para>Document reference:</para>
+            <para>CMM S1L LH / S1R RH FRONT ROW MONUMENT 25-23-86 for series H14510.</para>
+            <note>
+              <notePara>These documents are accessible on OEM website (56135).</notePara>
+            </note>
+            <para>CMM S2L LH / S2R RH FRONT ROW MONUMENT 25-23-88 for series H14530.</para>
+            <note>
+              <notePara>These documents are accessible on OEM website (56135).</notePara>
+            </note>
+            <para>CMM S1C / S2C CENTER FRONT ROW MONUMENT 25-23-89 for series H14540.</para>
+            <note>
+              <notePara>These documents are accessible on OEM website (56135).</notePara>
+            </note>
+            <para>CMM SEAT 25-06-12 for series 2S11.</para>
+            <note>
+              <notePara>These documents are accessible on OEM website (F0465).</notePara>
+            </note>
+            <para>CMM SHELL 25-36-12 for series 2S11.</para>
+            <note>
+              <notePara>These documents are accessible on OEM website (F0465).</notePara>
+            </note>
+          </levelledPara>
+        </levelledPara>
+        <levelledPara>
+          <title>Contact</title>
+          <levelledPara>
+            <para>For In Service Events &amp; Technical Queries, please contact:
+</para>
+            <para>
+              <?tul =1?>product.support.fr.sst@customer.safrangroup.com<?tul?></para>
+            <note>
+              <notePara>Please use the Technical Event form.</notePara>
+            </note>
+          </levelledPara>
+          <levelledPara>
+            <para>For Warranty Claim, please contact:</para>
+            <para>
+              <?tul =1?>claims.sst@customer.safrangroup.com<?tul?></para>
+          </levelledPara>
+          <levelledPara>
+            <para>For Technical Publication dispatch, please contact:
+</para>
+            <para>
+              <?tul =1?>tech.pubs.fr.sst@customer.safrangroup.com<?tul?></para>
+          </levelledPara>
+        </levelledPara>
+        <?pb?>
+        <levelledPara>
+          <title>Customer Gateways</title>
+          <levelledPara>
+            <para>The technical publication of Safran Seats France is
+accessible on our portal:</para>
+            <para>
+              <?tul =1?>https://techpubs.customers.safran-seats.com/<?tul?></para>
+          </levelledPara>
+          <levelledPara>
+            <para>The Spare Parts Orders follow up of Safran Seat France is
+accessible on our portal:</para>
+            <para>
+              <?tul =1?>http://customer-support-orderfollowup.safran-seats.com/<?tul?></para>
+          </levelledPara>
+          <levelledPara>
+            <para>The Repair Capability List of Safran Seats France is
+accessible on our portal:</para>
+            <para>
+              <?tul =1?>http://capabilitylist.safran-seats.com/<?tul?></para>
+          </levelledPara>
+        </levelledPara>
+      </levelledPara>
+      <levelledPara>
+        <title>Measurements</title>
+        <levelledPara>
+          <para>The measurements given in this manual are taken
+from the original reference document of the manufacturer.</para>
+        </levelledPara>
+        <levelledPara>
+          <para>All values given in this manual are in System
+International (SI) units or sub-divisions of these units. The Imperial
+unit is given in parenthesis immediately after the metric unit,
+e.g. 25.4 mm (1.00 in).</para>
+        </levelledPara>
+        <levelledPara>
+          <para>Units of measure used in this manual:</para>
+          <table id="B7772S11MONA25301201001018AC_tab-001" frame="topbot" rowsep="0" colsep="0">
+            <title>Measurement Units</title>
+            <tgroup cols="4">
+              <colspec colnum="1" colname="col1" colwidth="1*" />
+              <colspec colnum="2" colname="col2" colwidth="1*" />
+              <colspec colnum="3" colname="col3" colwidth="1*" />
+              <colspec colnum="4" colname="col4" colwidth="1*" />
+              <thead>
+                <row rowsep="1">
+                  <entry>
+                    <para>Symbol</para>
+                  </entry>
+                  <entry>
+                    <para>Term</para>
+                  </entry>
+                  <entry>
+                    <para>Symbol</para>
+                  </entry>
+                  <entry>
+                    <para>Term</para>
+                  </entry>
+                </row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>
+                    <para>l</para>
+                  </entry>
+                  <entry>
+                    <para>Liter</para>
+                  </entry>
+                  <entry>
+                    <para>US gal</para>
+                  </entry>
+                  <entry>
+                    <para>US gallon</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>kg</para>
+                  </entry>
+                  <entry>
+                    <para>Kilogram</para>
+                  </entry>
+                  <entry>
+                    <para>lb</para>
+                  </entry>
+                  <entry>
+                    <para>Pound</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>mm</para>
+                  </entry>
+                  <entry>
+                    <para>Millimeter</para>
+                  </entry>
+                  <entry>
+                    <para>in</para>
+                  </entry>
+                  <entry>
+                    <para>Inch</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>N.m</para>
+                  </entry>
+                  <entry>
+                    <para>Newton meters</para>
+                  </entry>
+                  <entry>
+                    <para>lbf.in</para>
+                  </entry>
+                  <entry>
+                    <para>Pound force inch</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>kPa</para>
+                  </entry>
+                  <entry>
+                    <para>kiloPascal</para>
+                  </entry>
+                  <entry>
+                    <para>psi</para>
+                  </entry>
+                  <entry>
+                    <para>Pounds per square
+inch</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>°C</para>
+                  </entry>
+                  <entry>
+                    <para>Celsius degrees</para>
+                  </entry>
+                  <entry>
+                    <para>°F</para>
+                  </entry>
+                  <entry>
+                    <para>Fahrenheit degrees</para>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+        </levelledPara>
+        <levelledPara>
+          <para>Measurements conversion:</para>
+          <table id="B7772S11MONA25301201001018AC_tab-002" frame="topbot">
+            <title>Measurement conversion</title>
+            <tgroup cols="2" rowsep="0" colsep="0">
+              <thead valign="bottom">
+                <row rowsep="1">
+                  <entry>
+                    <para>From SI measurement</para>
+                  </entry>
+                  <entry>
+                    <para>To Imperial system measurement</para>
+                  </entry>
+                </row>
+              </thead>
+              <tbody valign="top">
+                <row>
+                  <entry>
+                    <para>1 l</para>
+                  </entry>
+                  <entry>
+                    <para>0.2642 gal (U.S.)</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>3.785 l</para>
+                  </entry>
+                  <entry>
+                    <para>1 gal (U.S.)</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>1 kg</para>
+                  </entry>
+                  <entry>
+                    <para>2.2046 lb</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>0.4536 kg</para>
+                  </entry>
+                  <entry>
+                    <para>1 lb</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>1 mm</para>
+                  </entry>
+                  <entry>
+                    <para>0.0394 in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>25.4 mm</para>
+                  </entry>
+                  <entry>
+                    <para>1 in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>1 N.m</para>
+                  </entry>
+                  <entry>
+                    <para>8.8507 lbf.in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>0.1130 N.m</para>
+                  </entry>
+                  <entry>
+                    <para>1 lbf.in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>1 daN.m</para>
+                  </entry>
+                  <entry>
+                    <para>88.507 lbf.in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>0.01130 daN.m</para>
+                  </entry>
+                  <entry>
+                    <para>1 lbf.in</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>[°C]</para>
+                  </entry>
+                  <entry>
+                    <para>[°F] = [°C] x 9/5 + 32</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>1 kPa</para>
+                  </entry>
+                  <entry>
+                    <para>0.1450 psi</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>6.8947 kPa</para>
+                  </entry>
+                  <entry>
+                    <para>1 psi</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>4448.22161 N</para>
+                  </entry>
+                  <entry>
+                    <para>1 kipf</para>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+        </levelledPara>
+      </levelledPara>
+      <?pb?>
+      <levelledPara>
+        <title>Standard mechanics technician’s tool</title>
+        <table id="B7772S11MONA25301201000018AC_tab-002" frame="topbot">
+          <title>Standard mechanics technician &rsquo;s tool</title>
+          <tgroup align="center" cols="4" colsep="0" rowsep="0">
+            <colspec colname="col1" colwidth="0.8*" />
+            <colspec colname="col2" colwidth="0.8*" />
+            <colspec colname="col3" colwidth="1.23*" />
+            <colspec colname="col4" colwidth="0.8*" />
+            <thead valign="bottom">
+              <row rowsep="1">
+                <entry valign="middle">
+                  <para>Part No</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Description</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Supplier Code or Name and Address</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Qty</para>
+                </entry>
+              </row>
+            </thead>
+            <tbody valign="top">
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>35&deg; angle jaws needle nose plier<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90044-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Bit kit<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90002-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Cable tie gun<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90003-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Center punch<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90004-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Combination plier<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90005-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Cordless hand drill<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90006-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Cutter<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90007-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Deep socket set<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90008-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Digital caliper<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90009-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Digital tester<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90010-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Drill hand<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90011-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Flank drive open end<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90012-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Flat tip screwdriver<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90013-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Flashlight<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90014-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Flexible magnet<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90015-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Forge gauge<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90016-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Vacuum machine<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90017-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Harness hand crimper<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90018-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Headlamp<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90019-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Helicoil thread repair kit<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90020-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Hexagonal wrench set<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90021-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Lock on wrench<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90022-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Long bit kit<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90023-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Magnetic ratchet screwdriver bit<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90024-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Measuring Tape<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90025-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Multi-grip plier<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90026-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Needle nose plier<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90001-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Nut setter tool<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90027-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Heat gun<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90028-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Phillips tip screwdriver<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90029-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Pin punch set<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90030-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Ratchet set (Inch)<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90031-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Ratchet wrench<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90032-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Retaining ring plier <acronym><acronymTerm>Ext</acronymTerm><acronymDefinition>External</acronymDefinition></acronym><symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90033-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Retaining ring plier <acronym><acronymTerm>Int</acronymTerm><acronymDefinition>Internal</acronymDefinition></acronym><symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90034-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Rivet tool<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90035-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Rubber head mallet<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90036-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Shears<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90037-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Steel rule<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90038-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Swiss needle files<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90039-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Tap and die sets<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90040-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Tool box visual detection<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90041-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Torque wrench<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90042-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+              <row>
+                <entry valign="middle">
+                  <para>No specific</para>
+                </entry>
+                <entry valign="middle">
+                  <para>Wire cutter<symbol infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-90043-A-001-01" /></para>
+                </entry>
+                <entry valign="middle">
+                  <para>Commercially available</para>
+                </entry>
+                <entry valign="middle">
+                  <para>As Required</para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

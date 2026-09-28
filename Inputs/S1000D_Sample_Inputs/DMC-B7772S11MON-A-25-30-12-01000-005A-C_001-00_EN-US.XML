@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="000" infoCode="005" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>List of Abbreviations</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="6" assyCode="01" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>List of abbreviations</title>
+      </levelledPara>
+      <table id="A3303S01SEATA25060101000005AC_tab-001" pgwide="1" frame="topbot">
+        <title>List of Abbreviations</title>
+        <tgroup cols="2" colsep="0" rowsep="0">
+          <colspec colnum="1" colname="1" colwidth="1*" />
+          <colspec colnum="2" colname="2" colwidth="1*" />
+          <thead>
+            <row>
+              <entry rowsep="1">
+                <para>Abbreviation</para>
+              </entry>
+              <entry rowsep="1">
+                <para>Definition</para>
+              </entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>
+                <para>AC OU</para>
+              </entry>
+              <entry>
+                <para>AC Outlet Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ACT</para>
+              </entry>
+              <entry>
+                <para>Action Codes</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>AD</para>
+              </entry>
+              <entry>
+                <para>Airworthiness Directive</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ADE</para>
+              </entry>
+              <entry>
+                <para>Airbus Defined Equipment</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ALT</para>
+              </entry>
+              <entry>
+                <para>Alternative</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ALT PN</para>
+              </entry>
+              <entry>
+                <para>Alternative PN</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ARM TAB</para>
+              </entry>
+              <entry>
+                <para>Arm Table</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>AR</para>
+              </entry>
+              <entry>
+                <para>As required</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ASSY or AY</para>
+              </entry>
+              <entry>
+                <para>Assembly</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ATA</para>
+              </entry>
+              <entry>
+                <para>Air Transport Association</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>AVU</para>
+              </entry>
+              <entry>
+                <para>Audio Video Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>B/C</para>
+              </entry>
+              <entry>
+                <para>Business Class</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>B/O</para>
+              </entry>
+              <entry>
+                <para>Breakover</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>BACK</para>
+              </entry>
+              <entry>
+                <para>Backrest</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>BAG</para>
+              </entry>
+              <entry>
+                <para>Baggage</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>BAJ</para>
+              </entry>
+              <entry>
+                <para>Bluetooth Audio Jack</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>BFE</para>
+              </entry>
+              <entry>
+                <para>Buyer Furnished Equipment</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CAN</para>
+              </entry>
+              <entry>
+                <para>Controller Area Network (CAN LS = Low Speed // CAN HS = High
+Speed)</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CAS</para>
+              </entry>
+              <entry>
+                <para>Cabin Attendant Seat</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CFU</para>
+              </entry>
+              <entry>
+                <para>Cabin Fiber Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CMM</para>
+              </entry>
+              <entry>
+                <para>Component Maintenance Manual</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CMP</para>
+              </entry>
+              <entry>
+                <para>Component Maintenance Publication</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CS</para>
+              </entry>
+              <entry>
+                <para>Canted Spreader</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CTL</para>
+              </entry>
+              <entry>
+                <para>Central</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>CTR</para>
+              </entry>
+              <entry>
+                <para>Center</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DBL</para>
+              </entry>
+              <entry>
+                <para>Double</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DDS</para>
+              </entry>
+              <entry>
+                <para>Display Docking Station</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DET</para>
+              </entry>
+              <entry>
+                <para>Detail</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DET BKDN</para>
+              </entry>
+              <entry>
+                <para>Detail Breakdown</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DFM</para>
+              </entry>
+              <entry>
+                <para>Double Floor-Mounted</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DHPS</para>
+              </entry>
+              <entry>
+                <para>Dual Headphone Power System</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DISC</para>
+              </entry>
+              <entry>
+                <para>Disconnect</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DLVY</para>
+              </entry>
+              <entry>
+                <para>Delivery</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DPD</para>
+              </entry>
+              <entry>
+                <para>Detailed Parts Data</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DSEB</para>
+              </entry>
+              <entry>
+                <para>Digital Seat Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>DPCU</para>
+              </entry>
+              <entry>
+                <para>Digital Passenger Control Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ECCN</para>
+              </entry>
+              <entry>
+                <para>Export Control Classification Number</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ECU</para>
+              </entry>
+              <entry>
+                <para>Electronic Control Unit (generic term)</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EFFEC</para>
+              </entry>
+              <entry>
+                <para>Effectivity</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EFFECT</para>
+              </entry>
+              <entry>
+                <para>Effective</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EM</para>
+              </entry>
+              <entry>
+                <para>Electro-Magnet</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EMA</para>
+              </entry>
+              <entry>
+                <para>Electronic Module Assembly</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EPCU</para>
+              </entry>
+              <entry>
+                <para>Electrical Passenger Control Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EPML</para>
+              </entry>
+              <entry>
+                <para>Emergency Path Marking Light</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ESCUT</para>
+              </entry>
+              <entry>
+                <para>Escutcheon</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ESDS</para>
+              </entry>
+              <entry>
+                <para>Electrostatic Discharge Devices</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ETSO</para>
+              </entry>
+              <entry>
+                <para>European Technical Standard Order</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>EXTL</para>
+              </entry>
+              <entry>
+                <para>External</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FAA</para>
+              </entry>
+              <entry>
+                <para>Federal Aviation Administration</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FAR</para>
+              </entry>
+              <entry>
+                <para>Federal Aviation Regulations</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FBL</para>
+              </entry>
+              <entry>
+                <para>Fire Blocking Layer</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>F/C</para>
+              </entry>
+              <entry>
+                <para>First Class</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FIG</para>
+              </entry>
+              <entry>
+                <para>Figure</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FLDG</para>
+              </entry>
+              <entry>
+                <para>Folding</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FWD</para>
+              </entry>
+              <entry>
+                <para>Forward</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>F/R</para>
+              </entry>
+              <entry>
+                <para>Front Row</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>FR</para>
+              </entry>
+              <entry>
+                <para>Fluid Resistant</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>HAND</para>
+              </entry>
+              <entry>
+                <para>Handicapped</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>HD</para>
+              </entry>
+              <entry>
+                <para>Head</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>HEX</para>
+              </entry>
+              <entry>
+                <para>Hexagonal</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>H/S</para>
+              </entry>
+              <entry>
+                <para>Handset</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>HZ</para>
+              </entry>
+              <entry>
+                <para>Hertz</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IAT</para>
+              </entry>
+              <entry>
+                <para>In Arm Table</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IFE</para>
+              </entry>
+              <entry>
+                <para>In-Flight Entertainment</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IFD</para>
+              </entry>
+              <entry>
+                <para>Identification Force Deflection</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>INB</para>
+              </entry>
+              <entry>
+                <para>Inboard</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>INSTL</para>
+              </entry>
+              <entry>
+                <para>Installation</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>INTL</para>
+              </entry>
+              <entry>
+                <para>Internal</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IPD</para>
+              </entry>
+              <entry>
+                <para>Illustrated Parts Data</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IPL</para>
+              </entry>
+              <entry>
+                <para>Illustrated Parts List</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ISO</para>
+              </entry>
+              <entry>
+                <para>International System Organization</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ISPC</para>
+              </entry>
+              <entry>
+                <para>In Seat Power Control</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ISPS</para>
+              </entry>
+              <entry>
+                <para>In Seat Power Supply</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IUL</para>
+              </entry>
+              <entry>
+                <para>In-Use Light</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IVASEB</para>
+              </entry>
+              <entry>
+                <para>Individual Video Seat Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IVPC</para>
+              </entry>
+              <entry>
+                <para>Individual Video Cassette Player</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>IVS</para>
+              </entry>
+              <entry>
+                <para>Individual Video System</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>JAA</para>
+              </entry>
+              <entry>
+                <para>Joint Airworthiness Authority</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>JAR</para>
+              </entry>
+              <entry>
+                <para>Joint Airworthiness Requirements</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>J-BOX</para>
+              </entry>
+              <entry>
+                <para>Junction Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LATL</para>
+              </entry>
+              <entry>
+                <para>Lateral</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LCD</para>
+              </entry>
+              <entry>
+                <para>Liquid Cristal Display</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LEC</para>
+              </entry>
+              <entry>
+                <para>Linear Elbow Actuator</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LED</para>
+              </entry>
+              <entry>
+                <para>Light Emitting Diode</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LH</para>
+              </entry>
+              <entry>
+                <para>Left-Hand</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LPC</para>
+              </entry>
+              <entry>
+                <para>Linear Pass-through actuator</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>L/R</para>
+              </entry>
+              <entry>
+                <para>Lower</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>LRU</para>
+              </entry>
+              <entry>
+                <para>Line Replaceable Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MCSU</para>
+              </entry>
+              <entry>
+                <para>Mechanical Crash Sensor Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MECS</para>
+              </entry>
+              <entry>
+                <para>Multiple Envelop Convertible Seats</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MISCL</para>
+              </entry>
+              <entry>
+                <para>Miscellaneous</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MPB</para>
+              </entry>
+              <entry>
+                <para>Motor Power Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MPC</para>
+              </entry>
+              <entry>
+                <para>Micro Pass through actuator</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>MVB</para>
+              </entry>
+              <entry>
+                <para>Manual oVerride System</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>N/A</para>
+              </entry>
+              <entry>
+                <para>Not Applicable</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>No</para>
+              </entry>
+              <entry>
+                <para>Number</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>NAR</para>
+              </entry>
+              <entry>
+                <para>Narrow</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>NHA</para>
+              </entry>
+              <entry>
+                <para>Next Higher Assembly</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>N°</para>
+              </entry>
+              <entry>
+                <para>Number</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>NP</para>
+              </entry>
+              <entry>
+                <para>Not Procurable</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>OEM</para>
+              </entry>
+              <entry>
+                <para>Original Equipment Manufacturer</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>OPT</para>
+              </entry>
+              <entry>
+                <para>Optional</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>OS</para>
+              </entry>
+              <entry>
+                <para>Operating System</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>OUTBD</para>
+              </entry>
+              <entry>
+                <para>Outboard</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PAX</para>
+              </entry>
+              <entry>
+                <para>Passenger</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>P4C</para>
+              </entry>
+              <entry>
+                <para>4-way Pneumatic lumbar system</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PC</para>
+              </entry>
+              <entry>
+                <para>Polycarbonate</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PCB</para>
+              </entry>
+              <entry>
+                <para>Printed Circuit Board</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PCU</para>
+              </entry>
+              <entry>
+                <para>Passenger Control Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PJB</para>
+              </entry>
+              <entry>
+                <para>Power Junction Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>P/N</para>
+              </entry>
+              <entry>
+                <para>Part Number</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PROX</para>
+              </entry>
+              <entry>
+                <para>Proximity</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PSU</para>
+              </entry>
+              <entry>
+                <para>Power Supply Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PVT</para>
+              </entry>
+              <entry>
+                <para>Pivot</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>PVP</para>
+              </entry>
+              <entry>
+                <para>Passenger Video Player</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>QTY</para>
+              </entry>
+              <entry>
+                <para>Quantity</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>R</para>
+              </entry>
+              <entry>
+                <para>Revised</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RAJ</para>
+              </entry>
+              <entry>
+                <para>Remote Audio Jack</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RDU</para>
+              </entry>
+              <entry>
+                <para>Removable Display Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RECL</para>
+              </entry>
+              <entry>
+                <para>Recline</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>REPLS</para>
+              </entry>
+              <entry>
+                <para>Replaces</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>REU</para>
+              </entry>
+              <entry>
+                <para>Remote Extender Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>REV</para>
+              </entry>
+              <entry>
+                <para>Revision</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RF</para>
+              </entry>
+              <entry>
+                <para>Reference:
+Indicates parts whose quantities are indicated in another part of the
+illustrated list.</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RFID</para>
+              </entry>
+              <entry>
+                <para>Radio Frequency IDentification</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RH</para>
+              </entry>
+              <entry>
+                <para>Right-Hand</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RJM</para>
+              </entry>
+              <entry>
+                <para>Remote Jack Module</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RJU</para>
+              </entry>
+              <entry>
+                <para>Remote Jack Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RLB</para>
+              </entry>
+              <entry>
+                <para>Reading light -Rotary type</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RPC</para>
+              </entry>
+              <entry>
+                <para>Rotary Pass-through actuator</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RPD</para>
+              </entry>
+              <entry>
+                <para>Replaced</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RPLD BY</para>
+              </entry>
+              <entry>
+                <para>Replaced By</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RPLS</para>
+              </entry>
+              <entry>
+                <para>Replaces</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>RPU</para>
+              </entry>
+              <entry>
+                <para>Remote Peripheral Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SB</para>
+              </entry>
+              <entry>
+                <para>Service Bulletin</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SDU</para>
+              </entry>
+              <entry>
+                <para>Seat Demodular Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SEB</para>
+              </entry>
+              <entry>
+                <para>Seat Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SELF-SKIN</para>
+              </entry>
+              <entry>
+                <para>Self-Skinning</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SET</para>
+              </entry>
+              <entry>
+                <para>Seat Electronic Terminal</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SEU</para>
+              </entry>
+              <entry>
+                <para>Seat Electronic Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SFR</para>
+              </entry>
+              <entry>
+                <para>Safran Seats France</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SFM</para>
+              </entry>
+              <entry>
+                <para>Single Floor-Mounted</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SI</para>
+              </entry>
+              <entry>
+                <para>System International</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SIB</para>
+              </entry>
+              <entry>
+                <para>Seat Interface Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SIL</para>
+              </entry>
+              <entry>
+                <para>Service Information Letter</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>S/H</para>
+              </entry>
+              <entry>
+                <para>Smoke Hood</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SPB</para>
+              </entry>
+              <entry>
+                <para>Seat Power Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SPD</para>
+              </entry>
+              <entry>
+                <para>Superseded</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SPM</para>
+              </entry>
+              <entry>
+                <para>Seat Power Module</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SPU</para>
+              </entry>
+              <entry>
+                <para>Seat Power Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SRP</para>
+              </entry>
+              <entry>
+                <para>Seat Reference Point</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SPCL</para>
+              </entry>
+              <entry>
+                <para>Special </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SRU</para>
+              </entry>
+              <entry>
+                <para>Shop Replaceable Unit </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>S/S</para>
+              </entry>
+              <entry>
+                <para>Shipset </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SST</para>
+              </entry>
+              <entry>
+                <para>Stainless Steel </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>STD</para>
+              </entry>
+              <entry>
+                <para>Standard </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>STRUCT</para>
+              </entry>
+              <entry>
+                <para>Structure</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SUPSD BY</para>
+              </entry>
+              <entry>
+                <para>Superseded By</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SUPSDS</para>
+              </entry>
+              <entry>
+                <para>Supersedes</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SVD</para>
+              </entry>
+              <entry>
+                <para>Seat Video Display</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>SWM</para>
+              </entry>
+              <entry>
+                <para>Single Wall-Mounted</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TBD</para>
+              </entry>
+              <entry>
+                <para>To Be Defined</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>T/C</para>
+              </entry>
+              <entry>
+                <para>Tourist Class </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TCU</para>
+              </entry>
+              <entry>
+                <para>Tape Control Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TEI</para>
+              </entry>
+              <entry>
+                <para>Text Element Identifier</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TPL</para>
+              </entry>
+              <entry>
+                <para>Triple</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TSO</para>
+              </entry>
+              <entry>
+                <para>Technical Standard Order</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TSVD</para>
+              </entry>
+              <entry>
+                <para>Touch Screen Video Display</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>TTL</para>
+              </entry>
+              <entry>
+                <para>Taxi, Take-off and Landing</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>UEB</para>
+              </entry>
+              <entry>
+                <para>Unit Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>U/O</para>
+              </entry>
+              <entry>
+                <para>Used On</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>UPCU</para>
+              </entry>
+              <entry>
+                <para>Universal Passenger Control Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>USB</para>
+              </entry>
+              <entry>
+                <para>Universal Serial Bus</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>U/R</para>
+              </entry>
+              <entry>
+                <para>Upper</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>V</para>
+              </entry>
+              <entry>
+                <para>Vendor</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>VASEB</para>
+              </entry>
+              <entry>
+                <para>Video Audio Seat Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>VDB</para>
+              </entry>
+              <entry>
+                <para>Video Distribution Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>VDU</para>
+              </entry>
+              <entry>
+                <para>Video Display Unit</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>VSEB</para>
+              </entry>
+              <entry>
+                <para>Video Seat Electronic Box</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>W/</para>
+              </entry>
+              <entry>
+                <para>With</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>WLS</para>
+              </entry>
+              <entry>
+                <para>Work Light Switch</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>W/O</para>
+              </entry>
+              <entry>
+                <para>Without</para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>ZTB</para>
+              </entry>
+              <entry>
+                <para>Zone Telephony Box</para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </description>
+  </content>
+</dmodule>

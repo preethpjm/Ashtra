@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60005-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60005-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60004-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60004-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60003-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60003-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60006-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60006-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3203301SEATA25049601004663AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="663" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Damaged Screw Removal (SIL0019)</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This procedure gives the information to remove damaged screws.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <supportEquipDescrGroup>
+            <supportEquipDescr>
+              <name>Standard Mechanician Tools</name>
+              <toolRef manufacturerCodeValue="Commercially available" toolNumber="No specific" />
+              <reqQuantity unitOfMeasure="As Required" />
+            </supportEquipDescr>
+          </supportEquipDescrGroup>
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <note>
+              <notePara>Only approved personnel must do the maintenance to the component.</notePara>
+            </note>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <?pb ?>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Procedure</title>
+          <para>Refer to <internalRef internalRefId="B7772S11MONA25301201004663AC_fig-16" /> Damaged Screw Removal.</para>
+          <note>
+            <notePara>Examples of damaged screws are shown in sheet 1.</notePara>
+          </note>
+          <proceduralStep>
+            <para>Remove the damaged head by drilling or milling or filling it.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Drill a hole into the remaining screw (sheet 2).</para>
+            <note>
+              <notePara>Drill with a drill bit having a diameter smaller than the thread diameter.</notePara>
+            </note>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Mount a screw extractor fitted on an screwing machine.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Set the screwing machine to a slow speed and high torque.</para>
+            <note>
+              <notePara>Refer to the screw extractor instructions for speed and torque value if indicated.</notePara>
+            </note>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Screw slowly the extractor into the screw while applying pressure to extract it (sheets 3 and 4).</para>
+            <note>
+              <notePara>The extractor is turned counter-clockwise to screw it.</notePara>
+            </note>
+          </proceduralStep>
+          <proceduralStep>
+            <para>If the extractor do not extract the screw, go back from step 1.2 and drill a hole one size bigger.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Clean the part and remove any particle of screw.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Examine the thread of the part to make sure it is not damaged before a new screw is installed.</para>
+            <?pb ?>
+            <figure id="B7772S11MONA25301201004663AC_fig-16">
+              <title>Damaged Screw Removal</title>
+              <graphic id="B7772S11MONA25301201004663AC_fig-16-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60003-A-001-01" />
+              <graphic id="B7772S11MONA25301201004663AC_fig-16-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60004-A-001-01" />
+              <graphic id="B7772S11MONA25301201004663AC_fig-16-gra-003" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60005-A-001-01" />
+              <graphic id="B7772S11MONA25301201004663AC_fig-16-gra-004" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60006-A-001-01" />
+            </figure>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-80001-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-80001-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="002" infoCode="800" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Handling Information for Electrostatic Discharge Sensitive Devices (SIL0014)</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <warningsAndCautions>
+      <warning>
+        <warningAndCautionPara>MAKE SURE THAT THE EQUIPMENT IS DE-ENERGIZED WHILE
+SERVICING. THIS WILL PREVENT INJURY TO PERSONNEL AND/OR DAMAGE TO
+THE COMPONENT.</warningAndCautionPara>
+      </warning>
+      <caution>
+        <warningAndCautionPara>ALL THE CONSUMABLES SUPPLIED BY SAFRAN AND LISTED INTO THE CMP CAN HAVE A LIMITED LIFETIME. PLEASE REVIEW LABELS ON CONTAINER OR EXAMINE THE TECHNICAL DATA SHEET BEFORE USE OR STORE.</warningAndCautionPara>
+      </caution>
+    </warningsAndCautions>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>Some equipment installed on Safran Seats France seats are ElectroStatic Discharge Sensitive (ESDS) devices. ElectroStatic Discharge (ESD) can cause immediate or latent damages to these devices and can make them unserviceable.</para>
+        <para>The static sensitive devices are identified by a label, with a hand crossed out in a  triangle, or three arrows and a circle.</para>
+        <para>The electrostatic handling procedure makes sure that ElectroStatic Discharge Sensitive (ESDS) are not subject to discharge of static electricity.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <noSupportEquips />
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <warning>
+              <warningAndCautionPara>MAKE SURE THAT THE EQUIPMENT IS DE-ENERGIZED WHILE
+SERVICING. THIS WILL PREVENT INJURY TO PERSONNEL AND/OR DAMAGE TO
+THE COMPONENT.</warningAndCautionPara>
+            </warning>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Job Set-Up</title>
+          <proceduralStep>
+            <para>Change into an antistatic overall which fully puts cover on all clothing likely to touch the ESDS devices.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Attach a wrist strap and grounding lead. Make sure the wrist wrap is correctly in touch with the wrist, and connect the grounding lead to a static ground point.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Make sure that all tools, devices and work pieces are situated on a conductive work surface.</para>
+          </proceduralStep>
+          <proceduralStep>
+            <para>Obey the above precautions during all operations until the ESDS devices are safely repackaged in conductive packaging or fully assembled in an assembly which is declared safe by its assembly instructions and packed in an approved container.</para>
+            <note>
+              <notePara>If ESDS devices are accidentally handled without the above specified conditions, or they come into touch with unwanted items, their serviceability must be fully examined.</notePara>
+            </note>
+          </proceduralStep>
+        </proceduralStep>
+        <proceduralStep>
+          <title>Procedure</title>
+          <proceduralStep>
+            <title>Electrostatic Discharge Sensitive Device Handling</title>
+            <para>Refer to  <internalRef internalRefId="B7772S11MONA25301201001800AC_fig-01" /> Examples of Label Identifying Electrostatic Discharge Sensitive Devices</para>
+            <proceduralStep>
+              <title>General handling rules for ESDS devices</title>
+              <proceduralStep>
+                <para>Prevent having all items, specially non-conductive items (for example plastic trays or bags, packaging material, handbags, drawings or personal objects) in the limits of the Special Handling Area which are not necessary for the work immediately. Drawings which are necessary, are correctly attached to a rail or rigid structure to make sure that they cannot move into the work area.</para>
+              </proceduralStep>
+              <proceduralStep>
+                <para>Wear gloves or finger stalls when handling ESDS devices, unless they are made of an approved conductive material.</para>
+              </proceduralStep>
+              <proceduralStep>
+                <para>Before removing a device from its conductive packaging, first touch the conductive packaging, similarly when repackaging. The conductive packaging is touched by hand before putting it in touch with the device. Be careful that the device terminals do not come in touch with all plastics or papers outer containers.</para>
+              </proceduralStep>
+              <proceduralStep>
+                <para>Remind that ESDS devices can be destroyed by only momentarily touching any part of the device or its case with all non-conducting or unwanted objects and that the damage is inflicted at the moment of touch.</para>
+              </proceduralStep>
+              <proceduralStep>
+                <para>Know that the use of conductive surfaces in the Special Handling Area starts from the correct procedure supplying electrical insulated work surfaces. Be careful that not approved electrical equipment is not moved into the Special Handling Area and that covers are not removed from all "life" equipment.</para>
+              </proceduralStep>
+              <proceduralStep>
+                <para>Always refer to the documentation of the equipment manufacturer and apply their handling procedure if it is specified.</para>
+                <?pb ?>
+              </proceduralStep>
+            </proceduralStep>
+          </proceduralStep>
+        </proceduralStep>
+        <figure id="B7772S11MONA25301201001800AC_fig-01">
+          <title>Examples of Label Identifying Electrostatic Discharge Sensitive Devices</title>
+          <graphic id="B7772S11MONA25301201001800AC_fig-01-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-80001-A-001-01" />
+        </figure>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

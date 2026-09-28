@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="001" infoCode="040" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Technical Description</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>Technical Description</title>
+        <levelledPara>
+          <title>Introduction</title>
+          <para>The front row monument assembly is secured to the metal floor tracks installed in the aircraft
+cabin.</para>
+        </levelledPara>
+        <levelledPara>
+          <title>General</title>
+          <para>
+            <randomList listItemPrefix="pf03">
+              <listItem>
+                <para>For Part Number List, refer to <dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="002" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Part Number List</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>For Interior Arrangement, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="003" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Interior Arrangement</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>For Dimensions, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="004" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Dimensions</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>Fort Trim and Finish, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Trim and Finish</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>For Labels, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="006" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Labels</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>For Identification Placards, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="007" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Identification Placards</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+              <listItem>
+                <para>For Modification Placards, refer to 
+<dmRef><dmRefIdent><dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="008" infoCode="040" infoCodeVariant="A" itemLocationCode="C" /></dmRefIdent><dmRefAddressItems><dmTitle><techName>Front Row Monument Assembly</techName><infoName>Modification placards</infoName></dmTitle></dmRefAddressItems></dmRef></para>
+              </listItem>
+            </randomList>
+          </para>
+        </levelledPara>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

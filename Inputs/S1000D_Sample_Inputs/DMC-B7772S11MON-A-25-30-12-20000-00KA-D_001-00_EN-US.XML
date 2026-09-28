@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/comrep.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode assyCode="12" disassyCode="20" disassyCodeVariant="000" infoCode="00K" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="3" systemCode="25" systemDiffCode="A" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Vendor List</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN ELECTRONICS
+&amp; DEFENSE AVIONICS USA, LLC</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="96" disassyCode="00" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" modelIdentCode="B7772S11MON" subSubSystemCode="4" subSystemCode="0" systemCode="25" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+      <?Pub Caret -2?>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <commonRepository>
+      <enterpriseRepository>
+        <enterpriseSpec>
+          <enterpriseIdent manufacturerCodeValue="56135" />
+          <enterpriseName>SAFRAN CABIN</enterpriseName>
+          <businessUnit>
+            <businessUnitName />
+            <businessUnitAddress>
+              <street>5701 BOLSA AVE</street>
+              <postalZipCode>92647 - 2063</postalZipCode>
+              <city>HUNTINGTON BEACH</city>
+              <country>USA</country>
+              <state>CA</state>
+            </businessUnitAddress>
+          </businessUnit>
+        </enterpriseSpec>
+        <enterpriseSpec>
+          <enterpriseIdent manufacturerCodeValue="F0465" />
+          <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+          <businessUnit>
+            <businessUnitName />
+            <businessUnitAddress>
+              <street>RUE ROBERT MARECHAL SENIOR Z.I.La limoise</street>
+              <postalZipCode>36100</postalZipCode>
+              <city>ISSOUDUN</city>
+              <country>FRA</country>
+              <?sr ?>
+              <phoneNumber>TEL: +33(0)2 54 03 39 39</phoneNumber>
+              <?sr ?>
+              <faxNumber>FAX: +33(0)2 54 03 39 00</faxNumber>
+              <internet>www.safran-seats.com</internet>
+            </businessUnitAddress>
+          </businessUnit>
+        </enterpriseSpec>
+      </enterpriseRepository>
+    </commonRepository>
+  </content>
+</dmodule>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-60001-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-60001-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule id="A3203301SEATA25049601002663AC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="002" infoCode="663" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="sx" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Helicoil Installation Procedure</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo>
+        <title>Job description</title>
+        <para>This section gives the helicoil installation procedures for the Equipment Assembly.</para>
+      </commonInfo>
+      <preliminaryRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+        <reqSupportEquips>
+          <noSupportEquips />
+        </reqSupportEquips>
+        <reqSupplies>
+          <noSupplies />
+        </reqSupplies>
+        <reqSpares>
+          <noSpares />
+        </reqSpares>
+        <reqSafety>
+          <safetyRqmts>
+            <note>
+              <notePara>Only approved personnel must do the maintenance to the component.</notePara>
+            </note>
+          </safetyRqmts>
+        </reqSafety>
+      </preliminaryRqmts>
+      <?pb ?>
+      <mainProcedure>
+        <proceduralStep>
+          <title>Procedure</title>
+          <proceduralStep>
+            <title>Helicoil Installation</title>
+            <para>Refer to <internalRef internalRefId="B7772S11MONA25301201002663AC_fig-03" /> Helicoil Installation</para>
+            <proceduralStep>
+              <para>Insertion of thread insert</para>
+              <proceduralStep>
+                <para>The installation can be done manually, automatically or with machine tools. The helicoil is screwed onto the installation mandrel with the tang down (a), inserted into the leader cartridge (b) or placed on the fly-over tool (c). Then, the tool is placed over the tapped hole.</para>
+              </proceduralStep>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Installation</para>
+              <proceduralStep>
+                <para>By turning the threaded mandrel (d), the mandrel (e) or the fly-over tool (f), respectively, manually or triggering the drive, the thread insert is screwed in. It must be installed minimum 1/4 thread pitch below the top surface.</para>
+              </proceduralStep>
+            </proceduralStep>
+            <proceduralStep>
+              <para>Breaking off the tang</para>
+              <proceduralStep>
+                <para>To produce a through-hole thread, the tang is broken off at the notch. For that, a tang break-off tool is used (g and h). For threads from M 14 (fine and normal pitch), the tang can be removed with long nose pliers (i).</para>
+                <?pb ?>
+                <figure id="B7772S11MONA25301201002663AC_fig-03">
+                  <title>Helicoil Installation</title>
+                  <graphic id="B7772S11MONA25301201002663AC_fig-03-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-60001-A-001-01" />
+                </figure>
+              </proceduralStep>
+            </proceduralStep>
+          </proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts>
+        <reqCondGroup>
+          <noConds />
+        </reqCondGroup>
+      </closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

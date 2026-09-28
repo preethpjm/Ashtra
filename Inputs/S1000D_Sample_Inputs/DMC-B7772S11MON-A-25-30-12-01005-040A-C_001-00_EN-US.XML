@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dmodule[
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN">
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT009-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT009-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT018-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT018-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT019-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT019-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT017-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT017-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT008-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT008-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT016-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT016-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT007-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT007-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT015-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT015-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT006-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT006-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT014-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT014-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT005-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT005-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT013-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT013-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT004-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT004-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT012-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT012-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT003-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT003-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT011-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT011-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT002-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT002-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT010-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT010-A-001-01.CGM" NDATA cgm>
+<!ENTITY ICN-B7772S11MON-A-253012-A-F0465-TT001-A-001-01 SYSTEM "ICN-B7772S11MON-A-253012-A-F0465-TT001-A-001-01.CGM" NDATA cgm>
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc/elements/1.1/">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="3" subSubSystemCode="0" assyCode="12" disassyCode="01" disassyCodeVariant="005" infoCode="040" infoCodeVariant="A" itemLocationCode="C" />
+        <language countryIsoCode="US" languageIsoCode="en" />
+        <issueInfo inWork="00" issueNumber="001" />
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate day="24" month="06" year="2026" />
+        <dmTitle>
+          <techName>Front Row Monument Assembly</techName>
+          <infoName>Trim and Finish</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01" />
+      <dataRestrictions>
+        <restrictionInstructions>
+          <dataDistribution>To be made available to all users.</dataDistribution>
+        </restrictionInstructions>
+        <restrictionInfo>
+          <copyright>
+            <copyrightPara>© Safran Seats</copyrightPara>
+          </copyright>
+        </restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </responsiblePartnerCompany>
+      <originator enterpriseCode="F0465">
+        <enterpriseName>SAFRAN SEATS (SAFRAN SEATS FRANCE)</enterpriseName>
+      </originator>
+      <applicCrossRefTableRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode modelIdentCode="B7772S11MON" systemDiffCode="A" systemCode="25" subSystemCode="0" subSubSystemCode="4" assyCode="96" disassyCode="01" disassyCodeVariant="AA" infoCode="00W" infoCodeVariant="A" itemLocationCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </applicCrossRefTableRef>
+      <applic>
+        <displayText>
+          <simplePara>All</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef>
+        <dmRef>
+          <dmRefIdent>
+            <dmCode assyCode="00" disassyCode="10" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D" modelIdentCode="B7772S11MON" subSubSystemCode="0" subSystemCode="0" systemCode="00" systemDiffCode="A" />
+          </dmRefIdent>
+        </dmRef>
+      </brexDmRef>
+      <qualityAssurance>
+        <firstVerification verificationType="tabtop" />
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara>
+        <title>Trim and Finish</title>
+        <para>This chapter gives information on the Trim and Finish of the Front Row Monument Assembly.</para>
+        <levelledPara>
+          <title>General</title>
+          <para>For Monument Trim and Finish, refer to:<randomList listItemPrefix="pf03"><listItem><para><internalRef internalRefId="B7772S11MONA25301201005040AC_fig-03" /> Trim and Finish - S1L/S1R</para></listItem><listItem><para><internalRef internalRefId="B7772S11MONA25301201005040AC_fig-04" /> Trim and Finish - S2L/S2R</para></listItem><listItem><para><internalRef internalRefId="B7772S11MONA25301201005040AC_fig-05" /> Trim and Finish - S1C/S2C</para></listItem></randomList></para>
+          <?pb ?>
+          <figure id="B7772S11MONA25301201005040AC_fig-03">
+            <title>Trim and Finish - S1L/S1R</title>
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT001-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT002-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-003" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT003-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-004" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT004-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-005" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT005-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-03-gra-006" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT006-A-001-01" />
+          </figure>
+          <figure id="B7772S11MONA25301201005040AC_fig-04">
+            <title>Trim and Finish - S2L/S2R</title>
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT007-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT008-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-003" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT009-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-004" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT010-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-005" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT011-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-006" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT012-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-04-gra-007" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT013-A-001-01" />
+          </figure>
+          <figure id="B7772S11MONA25301201005040AC_fig-05">
+            <title>Trim and Finish - S1C/S2C</title>
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-001" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT014-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-002" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT015-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-003" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT016-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-004" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT017-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-005" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT018-A-001-01" />
+            <graphic id="B7772S11MONA25301201005040AC_fig-05-gra-006" infoEntityIdent="ICN-B7772S11MON-A-253012-A-F0465-TT019-A-001-01" />
+          </figure>
+        </levelledPara>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>
