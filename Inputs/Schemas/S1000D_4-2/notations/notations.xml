@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<notations>
+	<!-- Graphic notation declarations -->
+	<notation name="adi" public="-//S1000D//NOTATION AutoCAD Device Independent Encoding//EN"/>
+	<notation name="bmp" public="-//S1000D//NOTATION Microsoft Bitmap Graphics Format Encoding//EN"/>
+	<notation name="cgm" public="-//USA-DOD//NOTATION Computer Graphics Metafile//EN"/>
+	<notation name="dxf" public="-//USA-DOD//NOTATION DXF Encoding//EN"/>
+	<notation name="fax" public="-//USA-DOD//NOTATION CCITT Group 4 Facsimile//EN"/>
+	<notation name="fpx" public="-//S1000D//NOTATION Flash PiX Encoding//EN"/>
+	<notation name="gif" public="+//ISBN 0-7923-9432-1::Graphic Notation//NOTATION CompuServe Graphic Interchange Format//EN"/>
+	<notation name="gks" public="-//S1000D//NOTATION Graphics Kernel System Encoding//EN"/>
+	<notation name="jpeg" public="+//ISBN 0-7923-9432-1::Graphic Notation//NOTATION Joint Photographic Experts Group Raster//EN"/>
+	<notation name="mng" public="-//S1000D//NOTATION Multiple Network Graphics Encoding//EN"/>
+	<notation name="pbm" public="-//S1000D//NOTATION Jeff Poskanzer, Portable Bit Map Encoding//EN"/>
+	<notation name="pcx" public="+//ISBN 0-7923-94.2-1::Graphic Notation//NOTATION ZSoft PCX bitmap//EN"/>
+	<notation name="pict" public="-//S1000D//NOTATION Macintosh Drawing Format Encoding//EN"/>
+	<notation name="png" public="-//W3C//NOTATION Portable Network Graphics//EN"/>
+	<notation name="ras" public="-//S1000D//NOTATION SUN Raster Format Encoding//EN"/>
+	<notation name="svg" public="-//TEI//NOTATION W3C Scalable Vector Graphics Format//EN"/>
+	<notation name="tga" public="-//S1000D//NOTATION Truevision File Format Encoding//EN"/>
+	<notation name="tiff" public="+//ISBN 0-7923-9432-1::Graphic Notation//NOTATION Aldus/Microsoft Tagged Interchange File Format//EN"/>
+	<notation name="wmf" public="+//ISBN 0-7923-9432-1::Graphic Notation//NOTATION Microsoft Windows Metafile//EN"/>
+	
+	<!-- Audio notation declarations -->
+	<notation name="aif" public="-//S1000D//NOTATION Audio AIFF Format sound Encoding//EN"/>
+	<notation name="aifc" public="-//S1000D//NOTATION Audio AIFF Format sound Encoding//EN"/>
+	<notation name="au" public="-//W3O//NOTATION Sun Audio//EN"/>
+	<notation name="cda" public="-//S1000D//NOTATION CD Audio Encoding//EN"/>
+	<notation name="cdda" public="-//S1000D//NOTATION Audio AIFF Format sound Encoding//EN"/>
+	<notation name="kar" public="-//S1000D//NOTATION MIDI Encoding//EN"/>
+	<notation name="m3u" public="-//S1000D//NOTATION MP3  format sound Encoding//EN"/>
+	<notation name="m3url" public="-//S1000D//NOTATION MP3  format sound Encoding//EN"/>
+	<notation name="mid" public="-//S1000D//NOTATION Audio MIDI Encoding//EN"/>
+	<notation name="midi" public="-//S1000D//NOTATION Audio MIDI Encoding//EN"/>
+	<notation name="mp3" public="-//S1000D//NOTATION MP3  format sound Encoding//EN"/>
+	<notation name="pls" public="-//S1000D//NOTATION Audio Playlist Encoding//EN"/>
+	<notation name="rmi" public="-//S1000D//NOTATION Audio MIDI Encoding//EN"/>
+	<notation name="smf" public="-//S1000D//NOTATION MIDI Encoding//EN"/>
+	<notation name="snd" public="-//S1000D//NOTATION Sun Audio Encoding//EN"/>
+	<notation name="swa" public="-//S1000D//NOTATION MP3  format sound Encoding//EN"/>
+	<notation name="ulw" public="-//S1000D//NOTATION ULaW Encoding//EN"/>
+	<notation name="wav" public="-//Microsoft//NOTATION Microsoft RIFF chunk for Waveform Data//EN"/>
+	<notation name="wma" public="-//S1000D//NOTATION Windows Media Audio Encoding//EN"/>
+	
+	<!-- 3D notation declarations -->
+	<notation name="asm" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="catdrawing" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="catpart" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="catproduct" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="cgr" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="ct" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="dcr" public="-//S1000D//NOTATION X-DIRECTOR 3D Models Encoding//EN"/>
+	<notation name="drw" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="ds-3dxml" public="-//S1000D//NOTATION DASSAULT SYSTEMS 3DXML Encoding//EN"/>
+	<notation name="dwf" public="-//S1000D//NOTATION VND 3D Models Encoding//EN"/>
+	<notation name="ed" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="edz" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="frm" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="iges" public="-//USA-DOD//NOTATION (ASME/ANSI Y14.26M-1987) Initial Graphics Exchange Specification//EN"/>
+	<notation name="model" public="-//S1000D//NOTATION Catia 3D Models Encoding//EN"/>
+	<notation name="prt" public="-//S1000D//NOTATION Pro Engineer 3D Models Encoding//EN"/>
+	<notation name="rh" public="-//S1000D//NOTATION RightHemisphere 3D Models Encoding//EN"/>
+	<notation name="sldasm" public="-//S1000D//NOTATION SolidWorks 3D Models Encoding//EN"/>
+	<notation name="slddrw" public="-//S1000D//NOTATION SolidWorks 3D Models Encoding//EN"/>
+	<notation name="sldprt" public="-//S1000D//NOTATION SolidWorks 3D Models Encoding//EN"/>
+	<notation name="smg" public="-//S1000D//NOTATION DS 3DVIA-Composer 3D Models Encoding//EN"/>
+	<notation name="smgGeom" public="-//S1000D//NOTATION DS 3DVIA-Composer 3D Models Encoding//EN"/>
+	<notation name="smgXml" public="-//S1000D//NOTATION DS 3DVIA-Composer 3D Models Encoding//EN"/>
+	<notation name="step" public="-//S1000D//NOTATION STEP AP203 3D Models Encoding//EN"/>
+	<notation name="swf" public="-//S1000D//NOTATION X-SHOCKWAVE-FLASH 3D Models Encoding//EN"/>
+	<notation name="u3d" public="-//ECMA//NOTATION Universal 3D Models Encoding//EN"/>
+	<notation name="ugs" public="-//S1000D//NOTATION JT 3D Models Encoding//EN"/>
+	<notation name="w3d" public="-//S1000D//NOTATION Web3D 3D Models Encoding//EN"/>
+	<notation name="wrl" public="-//S1000D//NOTATION VRML  3D Models Encoding//EN"/>
+	<notation name="x3d" public="-//S1000D//NOTATION X3D 3D Models Encoding//EN"/>
+	<notation name="xv0" public="-//S1000D//NOTATION Lattice 3D Models Encoding//EN"/>
+	<notation name="xv2" public="-//S1000D//NOTATION Lattice 3D Models Encoding//EN"/>
+	<notation name="xv3" public="-//S1000D//NOTATION Lattice 3D Models Encoding//EN"/>
+	<notation name="xvl" public="-//S1000D//NOTATION Lattice 3D Models Encoding//EN"/>
+	
+	<!-- Video notation declarations -->
+	<notation name="asf" public="-//S1000D//NOTATION Video X-MS-ASF Encoding//EN"/>
+	<notation name="asr" public="-//S1000D//NOTATION Windows media Encoding//EN"/>
+	<notation name="asx" public="-//S1000D//NOTATION Windows media Encoding//EN"/>
+	<notation name="avi" public="-//Microsoft//NOTATION Microsoft RIFF chunk for Audio/Visual Interleaved Data//EN"/>
+	<notation name="dif" public="-//S1000D//NOTATION Digital Video Encoding//EN"/>
+	<notation name="dv" public="-//S1000D//NOTATION Digital Video Encoding//EN"/>
+	<notation name="fla" public="-//S1000D//NOTATION Macromedia Flash encoding//EN"/>
+	<notation name="fli" public="-//Autodesk//NOTATION Autodesk Animator FLIC Format FLI//EN"/>
+	<notation name="flv" public="-//S1000D//NOTATION Video X-FLV Encoding//EN"/>
+	<notation name="mheg" public="-//S1000D//NOTATION Multimedia and Hypermedia Experts Group encoding//EN"/>
+	<notation name="mlv" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mov" public="-//S1000D//NOTATION Video/quicktime Encoding//EN"/>
+	<notation name="mp2" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mp2v" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mp4" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpe" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpeg" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpeg-1" public="ISO/IEC 11172//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpeg-2" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpg" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="mpg4" public="-//S1000D//NOTATION Motion Picture Experts Group video encoding//EN"/>
+	<notation name="qt" public="-//S1000D//NOTATION Video/quicktime Encoding//EN"/>
+	<notation name="qtr" public="-//S1000D//NOTATION Video/quicktime Encoding//EN"/>
+	<notation name="qtx" public="-//S1000D//NOTATION Video/quicktime Encoding//EN"/>
+	<notation name="ra" public="-//S1000D//NOTATION Real Audio-Video Encoding//EN"/>
+	<notation name="ram" public="-//S1000D//NOTATION Real Audio-Video Encoding//EN"/>
+	<notation name="rgb" public="-//S1000D//NOTATION Video RGB Encoding//EN"/>
+	<notation name="rm" public="-//S1000D//NOTATION Real Audio-Video Encoding//EN"/>
+	<notation name="rmj" public="-//S1000D//NOTATION Real Audio-Video Encoding//EN"/>
+	<notation name="rts" public="-//S1000D//NOTATION Streaming Movie Encoding//EN"/>
+	<notation name="rtsp" public="-//S1000D//NOTATION Streaming Movie Encoding//EN"/>
+	<notation name="sdp" public="-//S1000D//NOTATION Streaming Movie Encoding//EN"/>
+	<notation name="smi" public="-//S1000D//NOTATION SMI Video Encoding//EN"/>
+	<notation name="sml" public="-//S1000D//NOTATION SML Video Encoding//EN"/>
+	<notation name="vfw" public="-//S1000D//NOTATION VFW Video Encoding//EN"/>
+	<notation name="wm" public="-//S1000D//NOTATION Windows Media audio/video Encoding//EN"/>
+	<notation name="wmp" public="-//S1000D//NOTATION Windows Media audio/video Encoding//EN"/>
+	<notation name="wmv" public="-//S1000D//NOTATION Windows Media audio/video Encoding//EN"/>
+	<notation name="wmx" public="-//S1000D//NOTATION Windows Media audio/video Encoding//EN"/>
+	
+	<!-- Miscellaneous notation declarations -->
+	<notation name="doc" public="-//S1000D//NOTATION Microsoft Word encoding//EN"/>
+	<notation name="mdb" public="-//S1000D//NOTATION Microsoft Access encoding//EN"/>
+	<notation name="mpp" public="-//S1000D//NOTATION Microsoft Project encoding//EN"/>
+	<notation name="pdf" public="-//Adobe Inc.//NOTATION Portable Document Format//EN"/>
+	<notation name="pps" public="-//S1000D//NOTATION Microsoft Powerpoint encoding//EN"/>
+	<notation name="ppt" public="-//S1000D//NOTATION Microsoft Powerpoint encoding//EN"/>
+	<notation name="smil" public="-//S1000D//NOTATION Synchronized Multimedia Integration Language encoding//EN"/>
+	<notation name="xls" public="-//S1000D//NOTATION Microsoft Excel encoding//EN"/>
+</notations>
