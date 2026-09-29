@@ -1,0 +1,10 @@
+{
+  "title": "Attribute that the schema does not allow",
+  "clean": false,
+  "expect": [
+    {
+      "category": "attribute-not-allowed",
+      "line": 6
+    }
+  ]
+}

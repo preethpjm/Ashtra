@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Adm, InlineItem, addAttribute, ancestorsOf, applyTextEdits, childElements, deleteElement, diagRange, documentIds,
-  editText, headerInfo, insertChild, localName, moveElement, parentOf, removeAttribute, xmlToSgml, leafDescendants, setEntityValues, elementAtOffset, kindOf, lineAt, parseAdm, readablePath, renderTarget, resolvePath, setAttributeValue, setTextContent } from "./adm";
+  calsTable, editText, headerInfo, insertChild, localName, moveElement, nextCell, parentOf, removeAttribute, tableAddColumn,
+  tableAddRow, tableContext, tableDeleteColumn, tableDeleteRow, tidy, xmlToSgml, leafDescendants, setEntityValues, elementAtOffset, kindOf, lineAt, parseAdm, readablePath, renderTarget, resolvePath, setAttributeValue, setTextContent } from "./adm";
 import { api, Check, Diagnostic, Doc, Outline, OutlineNode, Pkg, Project, RenderProfile, Report, Revision, SchemaOption } from "./api";
 import { SourceEditor, SrcMarker } from "./SourceEditor";
 import { Tree } from "./Tree";
 import { SchemaManager } from "./SchemaManager";
 import { Sheet, usePrintPage } from "./Sheet";
-import { AttrDialog, AttributeEditor, InsertGroup, InsertMenu } from "./StructureUI";
+import { AttributeEditor, AttrPopover, AttrRow, InsertGroup, InsertMenu, ShortcutHelp, TablePopover, TableSpec } from "./StructureUI";
 import { fillTemplate, idAttributes, inlineAllowed, insertable, isCompletable, isValid, SchemaModel, template, uniqueId } from "./schemaModel";
-import type { TextSel } from "./VisualEditor";
+import type { KeyAction, TextSel } from "./VisualEditor";
+import { humanize } from "./VisualEditor";
 import { VisualEditor } from "./VisualEditor";
 
 type Mode = "doc" | "source" | "split";
@@ -47,7 +49,7 @@ export function App() {
   const [schemaOpts, setSchemaOpts] = useState<SchemaOption[] | null>(null);
   const entitiesKey = useRef("");
   const [selected, setSelected] = useState<number | null>(null);
-  const [focusReq, setFocusReq] = useState<{ nid: number; n: number } | null>(null);
+  const [focusReq, setFocusReq] = useState<{ nid: number; n: number; offset?: number; focus?: boolean } | null>(null);
   const [reveal, setReveal] = useState<{ line: number; endLine?: number; n: number } | null>(null);
   const [bottom, setBottom] = useState<"problems" | "revisions" | "stages">("problems");
   const [bottomOpen, setBottomOpen] = useState(true);
@@ -95,9 +97,15 @@ export function App() {
   // ---- schema model (drives insertion, attributes, delete/move checks)
   const [model, setModel] = useState<SchemaModel | null>(null);
   const [menuFor, setMenuFor] = useState<number | null>(null);
-  const [attrAsk, setAttrAsk] = useState<{ title: string; t: ReturnType<typeof template>; commit: (xml: string) => void } | null>(null);
+  const [attrAsk, setAttrAsk] = useState<{ nid: number; title: string; rows: AttrRow[]; ok: string; commit: (vals: Record<string, string>) => void } | null>(null);
+  const [tableAsk, setTableAsk] = useState<{ nid: number; canHead: boolean; canTitle: boolean; commit: (s: TableSpec) => void } | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const editorApi = useRef<{ focus: () => void } | null>(null);
+  const backToTyping = () => setTimeout(() => editorApi.current?.focus(), 0);
   const selRef = useRef<TextSel | null>(null);
   const pendingFocus = useRef<number | null>(null);
+  const pendingCaret = useRef<{ nid: number; offset: number } | null>(null);
+  const escalated = useRef(false);
   const header = useMemo(() => headerInfo(viewAdm), [viewAdm, gen]);
   usePrintPage(header, meta?.original_name ?? "ASTHRA");
   const printDoc = () => {
@@ -252,6 +260,29 @@ export function App() {
   }, [mode]);
 
   const applyFix = (d: Diagnostic) => {
+    if (d.fix?.kind === "insert" && d.fix.element) {
+      // schema-aware insertion of the missing element (with its required content and values)
+      const A = editAdm, el = d.fix.element, pos = d.fix.position;
+      if (!A?.ok || !model) { say("Structure fixes need the document's schema model; wait for it to load.", "info"); return; }
+      const k = resolvePath(A, d.element_path);
+      if (k === undefined) { say("The element has moved since validation; wait for the check to finish and try again.", "info"); return; }
+      const t = template(model, el, new Set(docIds.map(([i]) => i)));
+      const commit = (xml: string) => {
+        try {
+          let res: [string, number];
+          if (pos === "end") res = insertChild(A, k, childElements(A, k).length, xml);
+          else {
+            const p = parentOf(A, k);
+            if (p === undefined) return;
+            res = insertChild(A, p, childElements(A, p).indexOf(k), xml);
+          }
+          applyStructure(res[0], res[1]);
+          say(`Inserted <${el}>. Revalidating…`, "ok");
+        } catch (e) { fail(e); }
+      };
+      withValues(k, `Insert ${el}`, t, commit);
+      return;
+    }
     if (!d.fix || !adm.ok) return;
     const k = resolvePath(adm, d.element_path);
     if (k === undefined) { say("The element has moved since validation; wait for the check to finish and try again.", "info"); return; }
@@ -329,6 +360,7 @@ export function App() {
   }) : [];
   const nErr = (report?.counts.error ?? 0) + (report?.counts.fatal ?? 0);
   const nWarn = report?.counts.warning ?? 0;
+  const nIndep = (report?.diagnostics ?? []).filter((d) => (d.severity === "error" || d.severity === "fatal") && !d.consequence_of).length;
   const pkg = pkgs.find((p) => p.id === meta?.package_id);
   const visualEditable = isSgml ? !!sgmlAdm?.ok && !!model : (adm.ok && !adm.visualBlocked && meta?.syntax === "xml");
   const editAdm = isSgml ? sgmlAdm : (adm.ok ? adm : null);
@@ -338,8 +370,52 @@ export function App() {
     if (off === null || !editAdm?.ok) return;
     const k = editAdm.spans.findIndex((sp) => sp.start === off);
     pendingFocus.current = null;
-    if (k >= 0) { setSelected(k); setFocusReq({ nid: k, n: ++counter.current }); }
+    if (k >= 0) { setSelected(k); setFocusReq({ nid: k, n: ++counter.current, focus: true }); }
   }, [editAdm]);
+  useEffect(() => {
+    const c = pendingCaret.current;
+    if (!c || !editAdm?.ok) return;
+    pendingCaret.current = null;
+    setFocusReq({ nid: c.nid, offset: c.offset, n: ++counter.current, focus: true });
+  }, [editAdm]);
+
+  const needRows = (t: ReturnType<typeof template>): AttrRow[] =>
+    t.needs.map((n) => ({ id: n.id, element: n.element, attr: n.attr, value: n.attr.values[0] ?? "", present: false }));
+
+  /** Insert a template: ask for required values inline first if there are any. */
+  const withValues = (nid: number, title: string, t: ReturnType<typeof template>, commit: (xml: string) => void) => {
+    if (t.needs.length) setAttrAsk({ nid, title, rows: needRows(t), ok: "Insert", commit: (vals) => commit(fillTemplate(t.xml, vals)) });
+    else commit(t.xml);
+  };
+
+  /** Alt+Enter: every attribute of the element, inline. */
+  const editAttributes = (k: number) => {
+    const A = editAdm;
+    if (!A?.ok || !model) return;
+    const el = A.elements[k];
+    const defs = model.elements[localName(el)]?.attrs ?? [];
+    const rows: AttrRow[] = defs.map((d) => ({ id: d.name, element: localName(el), attr: d, value: el.getAttribute(d.name) ?? "", present: el.hasAttribute(d.name) }));
+    for (const a of Array.from(el.attributes)) {
+      if (!defs.some((d) => d.name === a.name) && !a.name.startsWith("xmlns") && !a.name.startsWith("xsi:"))
+        rows.push({ id: a.name, element: localName(el), attr: { name: a.name, required: false, kind: "text", values: [], default: null, fixed: null }, value: a.value, present: true });
+    }
+    setAttrAsk({ nid: k, title: `${humanize(localName(el))} — attributes`, rows, ok: "Apply", commit: (vals) => {
+      let text = A.text;
+      for (const r of rows) {
+        const v = vals[r.id] ?? "";
+        const cur = parseAdm(text);
+        if (!cur.ok) break;
+        if (r.present && v === "" && !r.attr.required) text = removeAttribute(cur, k, r.attr.name);
+        else if (!r.present && v !== "") text = addAttribute(cur, k, r.attr.name, v);
+        else if (r.present && v !== r.value) text = setAttributeValue(cur, k, r.attr.name, v);
+      }
+      if (text !== A.text) applyStructure(text, A.spans[k].start);
+      else backToTyping();
+    } });
+  };
+
+  const TABLE_CMDS: Record<string, string> = { "row-below": "Add row below", "row-above": "Add row above",
+    "col-right": "Add column to the right", "del-row": "Delete this row", "del-col": "Delete this column" };
 
   const insertGroups = (k: number): InsertGroup[] => {
     const A = editAdm;
@@ -363,6 +439,7 @@ export function App() {
       if (kids.length) groups.push({ key: "end", label: `Inside, at the end`, names: insertable(model, name, kids, kids.length, ancestorsOf(A, k)) });
     }
     if (d?.mixed && selRef.current?.nid === k) groups.unshift({ key: "inline", label: "At the cursor (inline)", names: inlineAllowed(model, name, ancestorsOf(A, k)) });
+    if (tableContext(A, k)) groups.unshift({ key: "table-cmd", label: "Table", names: Object.keys(TABLE_CMDS), labels: TABLE_CMDS });
     return groups;
   };
 
@@ -371,7 +448,34 @@ export function App() {
     if (!A || !model) return;
     setMenuFor(null);
     const used = new Set(docIds.map(([i]) => i));
+    if (where === "table-cmd") {
+      const ctx = tableContext(A, k);
+      if (!ctx) return;
+      const entry = template(model, "entry", used).xml;
+      try {
+        if (name === "row-below" || name === "row-above") { const r = tableAddRow(A, ctx, entry, name === "row-above"); applyStructure(r[0], r[1]); }
+        else if (name === "col-right") applyStructure(tableAddColumn(A, ctx, entry));
+        else if (name === "del-row") applyStructure(tableDeleteRow(A, ctx));
+        else if (name === "del-col") applyStructure(tableDeleteColumn(A, ctx));
+        say(`${TABLE_CMDS[name]}: done.`, "ok");
+      } catch (e) { fail(e); backToTyping(); }
+      return;
+    }
     const t = template(model, name, used);
+    const tableDef = model.elements[name];
+    const namesIn = (x: any): string[] => !x ? [] : x.k === "el" ? [x.n] : (x.items ?? []).flatMap(namesIn);
+    if (name.toLowerCase() === "table" && namesIn(tableDef?.content).includes("tgroup") && where !== "inline") {
+      // CALS table: ask rows x columns, then build it with the schema's own element names
+      const tg = namesIn(model.elements.tgroup?.content);
+      setTableAsk({ nid: k, canHead: tg.includes("thead"), canTitle: namesIn(tableDef.content).includes("title"), commit: (spec) => {
+        const open = (t.xml.match(/^<[^>]+>/) ?? [`<${name}>`])[0].replace(/\/>$/, ">");
+        const xml = calsTable(open, `</${name}>`, { ...spec, colspec: tg.includes("colspec") }, template(model, "entry", used).xml);
+        // only the table element's own required values: tgroup/cols etc. are set from the chosen size
+        const own = t.needs.filter((n) => n.element === name && t.xml.slice(0, t.xml.indexOf(">") + 1).includes(`@@${n.id}@@`));
+        withValues(k, `Insert ${name}`, { xml, needs: own }, (x) => placeAt(k, where, name, x));
+      } });
+      return;
+    }
     const commit = (xml: string) => {
       try {
         if (where === "inline") {
@@ -393,6 +497,7 @@ export function App() {
             pos += len;
           }
           if (!placed) items.push({ kind: "atom", raw: xml });
+          pendingCaret.current = { nid: k, offset: sel.offset + 1 };      // just after the new element: keep typing
           applyStructure(applyTextEdits(A, new Map([[k, items]])));
           return;
         }
@@ -408,8 +513,21 @@ export function App() {
         say(`Inserted ${name}.`, "ok");
       } catch (e) { fail(e); }
     };
-    if (t.needs.length) setAttrAsk({ title: `Insert ${name}`, t, commit: (xml) => commit(xml) });
-    else commit(t.xml);
+    withValues(k, `Insert ${name}`, t, commit);
+  };
+
+  /** Place element XML after/before/inside k (used by table creation). */
+  const placeAt = (k: number, where: string, name: string, xml: string) => {
+    const A = editAdm;
+    if (!A) return;
+    try {
+      const p = parentOf(A, k);
+      const res = where === "after" || where === "before"
+        ? insertChild(A, p!, childElements(A, p!).indexOf(k) + (where === "after" ? 1 : 0), xml)
+        : insertChild(A, k, where === "start" ? 0 : childElements(A, k).length, xml);
+      applyStructure(res[0], res[1]);
+      say(`Inserted ${name}.`, "ok");
+    } catch (e) { fail(e); }
   };
 
   const deleteSelected = () => {
@@ -443,22 +561,46 @@ export function App() {
     if (t) applyStructure(t, dir < 0 ? A.spans[sibs[j]].start : undefined);
   };
 
-  const onEnter = (mod: boolean): boolean => {
+  const onKey = (a: KeyAction): boolean => {
     const A = editAdm;
     const sel = selRef.current;
-    if (!A || !model || !visualEditable) return false;
-    const k = sel?.nid ?? selected;
+    if (!A || !model || !visualEditable) return a === "menu" || a === "attrs";   // swallow, nothing to do
+    // after Esc (select parent) actions apply to the selected element; otherwise to where the caret is
+    const k = (escalated.current || a === "up" || a === "down" || a === "delete" || a === "escape") && selected !== null
+      ? selected : (sel?.nid ?? selected);
     if (k === null || k === undefined || k < 0) return false;
-    if (mod || !sel?.atEnd) { setMenuFor(k); return true; }
-    const p = parentOf(A, k);
-    const name = localName(A.elements[k]);
-    if (p !== undefined) {
-      const sibs = childElements(A, p);
-      const ok = insertable(model, localName(A.elements[p]), sibs.map((i) => localName(A.elements[i])), sibs.indexOf(k) + 1, ancestorsOf(A, p));
-      if (ok.includes(name)) { doInsert(k, "after", name); return true; }
+    switch (a) {
+      case "menu": setMenuFor(k); return true;
+      case "attrs": editAttributes(k); return true;
+      case "up": moveSelected(-1); return true;
+      case "down": moveSelected(1); return true;
+      case "delete": deleteSelected(); return true;
+      case "escape": { const p = parentOf(A, k); if (p !== undefined) { setSelected(p); escalated.current = true; } return true; }
+      case "tab": case "shift-tab": {
+        const ctx = tableContext(A, sel?.nid ?? k);
+        if (!ctx) return false;
+        const nxt = nextCell(A, ctx, a === "tab" ? 1 : -1);
+        if (nxt !== null) { setSelected(nxt); setFocusReq({ nid: nxt, n: ++counter.current }); return true; }
+        if (a === "tab") {                                    // Tab in the last cell: a new row
+          const r = tableAddRow(A, ctx, template(model, "entry", new Set(docIds.map(([i]) => i))).xml);
+          applyStructure(r[0], r[1]);
+        }
+        return true;
+      }
+      case "enter": {
+        if (!sel?.atEnd) { setMenuFor(k); return true; }
+        const p = parentOf(A, k);
+        const name = localName(A.elements[k]);
+        if (p !== undefined) {
+          const sibs = childElements(A, p);
+          const ok = insertable(model, localName(A.elements[p]), sibs.map((i) => localName(A.elements[i])), sibs.indexOf(k) + 1, ancestorsOf(A, p));
+          if (ok.includes(name)) { doInsert(k, "after", name); return true; }
+        }
+        setMenuFor(k);
+        return true;
+      }
     }
-    setMenuFor(k);
-    return true;
+    return false;
   };
   const shownDiags = diags.filter((d) => sevFilter === "all" || d.severity === "error" || d.severity === "fatal");
 
@@ -510,15 +652,16 @@ export function App() {
     <div className="pane visual-pane">
       {isSgml && <div className="banner info">{visualEditable
         ? "SGML document. Edits here are written back as SGML and checked by OpenSP; the SGML is saved in normalised form (all end tags written, attribute values quoted)."
-        : "SGML document, shown through OpenSP's conversion. Editing needs its schema model; edit the SGML in Source meanwhile."}</div>}
+        : report?.render_note ?? "SGML document, shown through OpenSP's conversion. Editing needs its schema model; edit the SGML in Source meanwhile."}</div>}
       {!isSgml && !adm.ok && <div className="banner warn">The source has XML errors, so the visual view is paused at the last valid version. Fix the source to continue.</div>}
       {adm.ok && adm.visualBlocked && <div className="banner info">{adm.visualBlocked}</div>}
       {meta && ["needs-choice", "ambiguous"].includes(meta.identification.status) && !meta.package_id &&
         <div className="banner info">{meta.identification.notes[0]} Pick one in the panel on the right.</div>}
       <div className="desk"><Sheet info={header} standardLine={meta?.standard ? `${meta.standard} ${meta.issue ?? ""} · ${meta.doc_type ?? ""}` : undefined}>
       <VisualEditor adm={viewAdm} generation={gen} editable={!!visualEditable} mode={tags ? "tags" : "clean"} render={render}
-        errorNids={errorNids} selected={selected} focusRequest={focusReq} onEdits={onEdits} onSelect={setSelected}
-        onEnter={onEnter} selectionRef={selRef}
+        errorNids={errorNids} selected={selected} focusRequest={focusReq} onEdits={onEdits}
+        onSelect={(k) => { escalated.current = false; setSelected(k); }}
+        onKey={onKey} selectionRef={selRef} apiRef={editorApi}
         onBlocked={() => say(model ? "Use Insert (Ctrl+Enter) to add elements, or the Delete and move buttons in the Element panel." : "Structure editing needs the document's schema; choose or install it first.", "info")} />
       </Sheet></div>
     </div>
@@ -614,12 +757,14 @@ export function App() {
               <input type="checkbox" checked={tags} onChange={(e) => setTags(e.target.checked)} disabled={mode === "source"} />
               <span className="track"><span className="thumb" /></span> Tags
             </label>
+            <button className="icon kbd-btn" title="Keyboard shortcuts" aria-label="Keyboard shortcuts" onClick={() => setHelpOpen(true)}>⌨</button>
             <div className="actions">
               <button onClick={save} disabled={!dirty} title="Ctrl+S">Save draft</button>
               <button className="primary" onClick={() => setCommitOpen(true)}>Commit revision</button>
               <details className="menu"><summary>Export</summary>
                 <div className="menu-body">
                   <button onClick={printDoc}>Print / Save as PDF…</button>
+                  {meta.syntax === "xml" && <button onClick={() => { if (adm.ok) { updateText(tidy(adm), "external"); say("Source layout tidied (text content unchanged).", "ok"); } else say("Fix the XML errors first.", "info"); }}>Tidy source layout</button>}
                   <a href={api.exportUrl(meta.id, "current")} onClick={(e) => { if (dirty) { e.preventDefault(); say("Save the draft first so the export matches what you see.", "info"); } }}>Current version</a>
                   <a href={api.exportUrl(meta.id, "original")}>Imported original</a>
                   <button onClick={() => { const b = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `${meta.original_name}.validation.json`; a.click(); }}>Validation report (JSON)</button>
@@ -772,7 +917,7 @@ export function App() {
             <button className="icon" onClick={() => stepProblem(-1)} title="Previous problem (Shift+F8)" aria-label="Previous problem">↑</button>
             <button className="icon" onClick={() => stepProblem(1)} title="Next problem (F8)" aria-label="Next problem">↓</button></span>}
           {bottom === "problems" && bottomOpen && <select value={sevFilter} onChange={(e) => setSevFilter(e.target.value as any)} aria-label="Filter"><option value="all">All problems</option><option value="errors">Errors only</option></select>}
-          <span className="muted small">{checking ? "Checking…" : report ? `${nErr} errors, ${nWarn} warnings` : ""}</span>
+          <span className="muted small">{checking ? "Checking…" : report ? `${nErr} errors${nIndep < nErr ? ` (${nIndep} independent)` : ""}, ${nWarn} warnings` : ""}</span>
           <button className="icon" onClick={() => setBottomOpen(!bottomOpen)} aria-label={bottomOpen ? "Collapse panel" : "Expand panel"}>{bottomOpen ? "▾" : "▴"}</button>
         </div>
         {bottomOpen && <div className="bottom-body">
@@ -784,7 +929,9 @@ export function App() {
                   <td className="msg" title={d.raw_message ?? undefined}>
                     <span className="msg-main">{d.message}</span>
                     {d.suggestion && <span className="msg-hint">{d.suggestion}</span>}
-                    {d.fix && <button className="fix" onClick={(e) => { e.stopPropagation(); applyFix(d); }} disabled={!adm.ok}>{d.fix.label}</button>}
+                    {d.consequence_of && <span className="msg-cons">Probably follows from an earlier problem ({d.consequence_of}).</span>}
+                    {d.fix && <button className="fix" onClick={(e) => { e.stopPropagation(); applyFix(d); }}
+                      disabled={d.fix.kind === "insert" ? !(editAdm?.ok && model && visualEditable) : !adm.ok}>{d.fix.label}</button>}
                   </td>
                   <td className="where">{d.line ? `line ${d.line}` : ""}</td>
                   <td className="rule" title={`${d.rule_id}${d.reference ? "\n" + d.reference : ""}`}>{d.rule_id}</td>
@@ -817,10 +964,15 @@ export function App() {
       </section>
 
       {commitOpen && meta && <CommitDialog status={report?.statuses.structural} errors={nErr} onCancel={() => setCommitOpen(false)} onCommit={commit} />}
-      {menuFor !== null && editAdm && <InsertMenu anchorNid={menuFor} groups={insertGroups(menuFor)} onClose={() => setMenuFor(null)}
+      {menuFor !== null && editAdm && <InsertMenu anchorNid={menuFor} groups={insertGroups(menuFor)} onClose={() => { setMenuFor(null); backToTyping(); }}
         onPick={(g, n) => doInsert(menuFor, g, n)} />}
-      {attrAsk && <AttrDialog title={attrAsk.title} needs={attrAsk.t.needs} ids={docIds} onCancel={() => setAttrAsk(null)}
-        onOk={(vals) => { const a = attrAsk; setAttrAsk(null); a.commit(fillTemplate(a.t.xml, vals)); }} />}
+      {attrAsk && <AttrPopover anchorNid={attrAsk.nid} title={attrAsk.title} rows={attrAsk.rows} ids={docIds} okLabel={attrAsk.ok}
+        onCancel={() => { setAttrAsk(null); backToTyping(); }}
+        onOk={(vals) => { const a = attrAsk; setAttrAsk(null); a.commit(vals); }} />}
+      {tableAsk && <TablePopover anchorNid={tableAsk.nid} canHead={tableAsk.canHead} canTitle={tableAsk.canTitle}
+        onCancel={() => { setTableAsk(null); backToTyping(); }}
+        onOk={(spec) => { const t = tableAsk; setTableAsk(null); t.commit(spec); }} />}
+      {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
       {managerOpen && <SchemaManager onClose={() => setManagerOpen(false)} say={say}
         onChanged={() => { refreshPkgs(); refreshDocs(); if (docId) api.state(docId).then((st) => { setMeta(st.document); setRender(st.render); }).catch(() => {}); }} />}
       {toast && <div className={`toast ${toast.kind}`} role="status">{toast.text}</div>}

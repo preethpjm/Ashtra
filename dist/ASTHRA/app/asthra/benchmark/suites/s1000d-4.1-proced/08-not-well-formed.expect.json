@@ -1,0 +1,9 @@
+{
+  "title": "Mismatched end tag",
+  "clean": false,
+  "expect": [
+    {
+      "category": "not-well-formed"
+    }
+  ]
+}

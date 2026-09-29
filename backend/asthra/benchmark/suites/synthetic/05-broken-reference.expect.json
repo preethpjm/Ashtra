@@ -1,0 +1,11 @@
+{
+  "title": "Reference to an ID that does not exist",
+  "clean": false,
+  "expect": [
+    {
+      "category": "broken-reference",
+      "value": "stp-9999",
+      "line": 18
+    }
+  ]
+}

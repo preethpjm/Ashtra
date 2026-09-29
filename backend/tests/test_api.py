@@ -1,3 +1,4 @@
+import re
 import io
 import zipfile
 
@@ -78,10 +79,10 @@ def test_edit_save_commit_restore_cycle(client):
     st = client.get(f"/api/documents/{did}/state").json()
     assert st["origin"] == "original" and st["revisions"] == []
     fixed = st["text"].replace('issueNumber="1"', 'issueNumber="001" inWork="00"')
-    fixed = fixed.replace("""          <para>Disconnect the hydraulic line.</para>
-          <caution><para>Do not damage the seal.</para></caution>""",
-                          """          <caution><para>Do not damage the seal.</para></caution>
-          <para>Disconnect the hydraulic line.</para>""")
+    # swap the two lines whatever the line endings are (Git on Windows checks files out with CRLF)
+    fixed = re.sub(r"(<para>Disconnect the hydraulic line\.</para>)(\r?\n\s*)(<caution><para>Do not damage the seal\.</para></caution>)",
+                   r"\3\2\1", fixed, count=1)
+    assert "<caution><para>Do not damage the seal.</para></caution>" in fixed.split("Disconnect the hydraulic line")[0]
     chk = client.post(f"/api/documents/{did}/check", json={"text": fixed}).json()
     assert chk["report"]["statuses"]["structural"] == "passed"
     assert chk["outline"]["root"]["name"] == "dmodule"

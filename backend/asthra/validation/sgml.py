@@ -131,6 +131,58 @@ def tool_env(tools: tuple[str, str]) -> dict:
     return env
 
 
+_DT_IDS = re.compile(r"""<!DOCTYPE\s+([^\s\[>]+)(?:\s+PUBLIC\s+("[^"]*"|'[^']*')(?:\s+("[^"]*"|'[^']*'))?|\s+SYSTEM\s+("[^"]*"|'[^']*'))?""", re.I)
+_EXT_PE = re.compile(r"""<!ENTITY\s+%\s+([\w.:-]+)\s+(?:PUBLIC\s+("[^"]*"|'[^']*')(?:\s+("[^"]*"|'[^']*'))?|SYSTEM\s+("[^"]*"|'[^']*'))\s*>""", re.I)
+
+
+def doctype_ids(text: str) -> tuple[str, str | None, str | None]:
+    """(document type name, public id, system id) from the DOCTYPE."""
+    m = _DT_IDS.search(text)
+    if not m:
+        return "", None, None
+    q = lambda v: v[1:-1] if v else None
+    return m.group(1), q(m.group(2)), q(m.group(3) or m.group(4))
+
+
+def _subset_bounds(text: str) -> tuple[int, int] | None:
+    m = re.search(r"<!DOCTYPE[^\[>]*\[", text, re.I)
+    if not m:
+        return None
+    depth, q, i = 1, "", m.end()
+    while i < len(text) and depth:
+        c = text[i]
+        if q:
+            if c == q:
+                q = ""
+        elif c in "\"'":
+            q = c
+        elif c == "[":
+            depth += 1
+        elif c == "]":
+            depth -= 1
+        i += 1
+    return m.end(), i - 1
+
+
+def skip_missing_entity_sets(text: str, available: set[str]) -> tuple[str, list[str]]:
+    """External parameter entities in the internal subset whose file is not available (e.g. the
+    XML ISO entity set 'ent/ISOEntities' Arbortext adds) are not loaded: their references are
+    removed from the working copy. Entities the document then lacks are reported where used."""
+    b = _subset_bounds(text)
+    if not b:
+        return text, []
+    subset = text[b[0]:b[1]]
+    skipped = []
+    for m in _EXT_PE.finditer(subset):
+        name = m.group(1)
+        ids = [x[1:-1] for x in (m.group(2), m.group(3), m.group(4)) if x]
+        if any(i in available or re.split(r"[\\/]", i)[-1] in available for i in ids):
+            continue
+        skipped.append(ids[-1] if ids else name)
+        subset = re.sub(rf"%{re.escape(name)};?", "", subset)
+    return text[:b[0]] + subset + text[b[1]:], skipped
+
+
 @dataclass
 class SgmlResult:
     messages: list[tuple[int | None, int | None, str, str]] = field(default_factory=list)   # line, col, type, text
@@ -138,6 +190,8 @@ class SgmlResult:
     removed_urls: int = 0
     refused: list[str] = field(default_factory=list)
     entities: dict[str, str] = field(default_factory=dict)
+    skipped_sets: list[str] = field(default_factory=list)
+    note: str | None = None
 
 
 def sdata_char(name: str) -> str:
@@ -151,8 +205,11 @@ def _sdata_to_entities(xml: str) -> tuple[str, dict[str, str]]:
     """Keep ISO SDATA characters as entity references (&deg;), declared in a DOCTYPE with the
     character they stand for. The view shows the character; writing SGML back keeps &deg;."""
     names: dict[str, str] = {}
+    xml_own = {"amp": "&amp;", "lt": "&lt;", "gt": "&gt;", "quot": "&quot;", "apos": "&apos;"}
     def rep(m):
         n = m.group(1)
+        if n in xml_own:                   # reserved in XML: use XML's own reference, never redeclare
+            return xml_own[n]
         names[n] = sdata_char(n)
         return f"&{n};"
     body = re.sub(r"<\?sdataEntity\s+([A-Za-z0-9._-]+)\s[^?]*\?>", rep, xml)
@@ -187,6 +244,12 @@ def run(text: str, root: str, pkg_dir: Path, dtd_rel: str, catalogs: list[str], 
     pkg_dir = Path(pkg_dir).resolve()        # OpenSP runs in a temporary folder
     res = SgmlResult()
     copy, res.removed_urls = redirect_doctype(text, root, dtd_rel)
+    available = {p.name for p in pkg_dir.rglob("*") if p.is_file()}
+    for c in catalogs:
+        cat = pkg_dir / c
+        if cat.is_file():
+            available |= set(re.findall(r'PUBLIC\s+"([^"]+)"', cat.read_text(encoding="utf-8", errors="ignore")))
+    copy, res.skipped_sets = skip_missing_entity_sets(copy, available)
     env = tool_env(tools)
     with tempfile.TemporaryDirectory() as tmp:
         # OpenSP only ever sees relative names inside its private working folder: the DTD set is
@@ -329,3 +392,82 @@ def probe(tools: tuple[str, str]) -> tuple[bool, str]:
             msg = (r.stderr + r.stdout).decode("utf-8", "replace").strip() or "no message"
             return False, f"it failed on a tiny valid SGML test document (exit code {r.returncode}): {msg[:300]}"
     return True, version.split(":", 2)[-1].strip() if version else "works (no version reported)"
+
+
+# ------------------------------------------------------------------ preview without the DTD
+PREVIEW_DECL = """<!SGML "ISO 8879:1986"
+CHARSET BASESET "ISO 646-1983//CHARSET International Reference Version (IRV)//ESC 2/5 4/0"
+ DESCSET 0 9 UNUSED 9 2 9 11 2 UNUSED 13 1 13 14 18 UNUSED 32 95 32 127 1 UNUSED
+ BASESET "ISO Registration Number 100//CHARSET ECMA-94 Right Part of Latin Alphabet Nr. 1//ESC 2/13 4/1"
+ DESCSET 128 32 UNUSED 160 96 32
+CAPACITY SGMLREF TOTALCAP 99000000 ENTCAP 99000000 ENTCHCAP 99000000 ELEMCAP 99000000 GRPCAP 99000000
+ EXGRPCAP 99000000 EXNMCAP 99000000 ATTCAP 99000000 ATTCHCAP 99000000 AVGRPCAP 99000000 NOTCAP 99000000
+ NOTCHCAP 99000000 IDCAP 99000000 IDREFCAP 99000000 MAPCAP 99000000 LKSETCAP 99000000 LKNMCAP 99000000
+SCOPE DOCUMENT
+SYNTAX SHUNCHAR CONTROLS 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 127
+ BASESET "ISO 646-1983//CHARSET International Reference Version (IRV)//ESC 2/5 4/0" DESCSET 0 128 0
+ FUNCTION RE 13 RS 10 SPACE 32 TAB SEPCHAR 9
+ NAMING LCNMSTRT "" UCNMSTRT "" LCNMCHAR "-._" UCNMCHAR "-._" NAMECASE GENERAL YES ENTITY NO
+ DELIM GENERAL SGMLREF SHORTREF NONE NAMES SGMLREF
+ QUANTITY SGMLREF ATTCNT 512 ATTSPLEN 65000 GRPCNT 253 GRPGTCNT 253 LITLEN 65000 NAMELEN 256 PILEN 65000
+  TAGLVL 200 TAGLEN 65000
+FEATURES MINIMIZE DATATAG NO OMITTAG YES RANK NO SHORTTAG YES LINK SIMPLE NO IMPLICIT NO EXPLICIT NO
+ OTHER CONCUR NO SUBDOC NO FORMAL NO APPINFO NONE>
+"""
+
+
+def infer_dtd(text: str) -> tuple[str, dict]:
+    """A permissive DTD from the document's own tags, for display only. Elements that are never
+    closed are EMPTY (e.g. revision markers, column specs); elements closed only sometimes get an
+    omissible end tag; everything else may contain anything. -> (dtd text, facts)"""
+    from collections import Counter, defaultdict
+    b = _subset_bounds(text)
+    subset = text[b[0]:b[1]] if b else ""
+    body = text[b[1]:] if b else text
+    body = re.sub(r"<!--.*?-->", " ", body, flags=re.S)
+    starts: Counter = Counter()
+    attrs: dict[str, set] = defaultdict(set)
+    for t in re.finditer(r"<([A-Za-z][\w.:-]*)((?:\s+[^\s=>]+(?:\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+))?)*)\s*/?>", body):
+        n = t.group(1).lower()
+        starts[n] += 1
+        for a in re.findall(r"([A-Za-z][\w.:-]*)\s*=", t.group(2)):
+            attrs[n].add(a.lower())
+    ends = Counter(e.lower() for e in re.findall(r"</([A-Za-z][\w.:-]*)\s*>", body))
+    declared = {n.lower() for n in re.findall(r"<!ENTITY\s+([^\s%]+)", subset)}
+    used = set(re.findall(r"&([A-Za-z][\w.-]*);?", body))
+    notations = set(re.findall(r"NDATA\s+([\w.-]+)", subset))
+    lines, empty, partial = [], [], []
+    for n in sorted(starts):
+        if ends[n] == 0:
+            lines.append(f"<!ELEMENT {n} - O EMPTY>"); empty.append(n)
+        elif ends[n] < starts[n]:
+            lines.append(f"<!ELEMENT {n} - O ANY>"); partial.append(n)
+        else:
+            lines.append(f"<!ELEMENT {n} - - ANY>")
+        if attrs[n]:
+            lines.append(f"<!ATTLIST {n} " + " ".join(f"{a} CDATA #IMPLIED" for a in sorted(attrs[n])) + ">")
+    for e in sorted(used - declared):
+        lines.append(f'<!ENTITY {e} SDATA "[{e}]">')
+    for nt in sorted(notations):
+        lines.append(f"<!NOTATION {nt} SYSTEM>")
+    return "\n".join(lines) + "\n", {"elements": len(starts), "empty": empty, "partial": partial}
+
+
+def preview(text: str, root: str, tools: tuple[str, str]) -> SgmlResult:
+    """Display an SGML document whose DTD is not installed: OpenSP converts it with a DTD
+    inferred from its tags. Not validation; the note says how reliable the structure is."""
+    dtd, facts = infer_dtd(text)
+    with tempfile.TemporaryDirectory() as tmp:
+        pkg = Path(tmp)
+        (pkg / "preview.dtd").write_text(dtd, encoding="utf-8")
+        (pkg / "preview.dcl").write_text(PREVIEW_DECL, encoding="ascii")
+        res = run(text, root or "doc", pkg, "preview.dtd", [], "preview.dcl", tools)
+    note = ("Preview without the DTD: the structure is read from the document's own tags and nothing is "
+            "validated.")
+    if facts["partial"]:
+        note += (f" {len(facts['partial'])} element type(s) leave out some end tags ("
+                 + ", ".join(facts["partial"][:5]) + "); without the DTD their nesting may be approximate.")
+    if facts["empty"]:
+        note += " Treated as empty: " + ", ".join(facts["empty"][:6]) + (" …" if len(facts["empty"]) > 6 else "") + "."
+    res.note = note
+    return res

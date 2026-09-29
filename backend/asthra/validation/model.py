@@ -33,9 +33,11 @@ class Status(str, Enum):
 class Fix(BaseModel):
     """A correction that is certain to satisfy the failed constraint. Applied only by the user."""
     label: str
-    kind: str                      # "attr" (set attribute value) | "text" (set element text)
+    kind: str                      # "attr" (set attribute value) | "text" (set element text) | "insert" (add an element)
     attribute: str | None = None
-    value: str
+    value: str = ""
+    element: str | None = None     # insert: the element to add (with its required content)
+    position: str | None = None    # insert: "before" the reported element, or at the "end" of it
 
 
 class Diagnostic(BaseModel):
@@ -53,6 +55,8 @@ class Diagnostic(BaseModel):
     value: str | None = None           # offending value, if any
     raw_message: str | None = None     # validator's original text
     fix: Fix | None = None
+    category: str | None = None         # stable kind of problem (see validation/diagnostics.py)
+    consequence_of: str | None = None   # set when this error follows from another one
 
 
 class StageResult(BaseModel):
@@ -69,6 +73,8 @@ class ValidationReport(BaseModel):
     diagnostics: list[Diagnostic] = Field(default_factory=list)
     entities: dict[str, str] = Field(default_factory=dict)     # DTD entity texts, for display
     rendered_xml: str | None = None                             # SGML only: OpenSP's XML normalization, for display
+    render_note: str | None = None                              # why the display may be approximate (e.g. no DTD)
+    rendered_preview: bool = False                              # rendered_xml was built WITHOUT the DTD (read-only preview)
 
     # Four statuses are deliberately separate (spec §11): an XSD pass is not approval.
     @property

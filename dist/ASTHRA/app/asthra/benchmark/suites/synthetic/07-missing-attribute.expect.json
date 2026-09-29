@@ -1,0 +1,11 @@
+{
+  "title": "Required attribute missing",
+  "clean": false,
+  "expect": [
+    {
+      "category": "missing-attribute",
+      "element": "dmCode",
+      "line": 6
+    }
+  ]
+}

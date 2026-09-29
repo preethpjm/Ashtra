@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="proced.xsd">
+
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="TESTAC"
+                systemDiffCode="A"
+                systemCode="29"
+                subSystemCode="1"
+                subSubSystemCode="0"
+                assyCode="00"
+                disassyCode="00"
+                disassyCodeVariant="A"
+                infoCode="520"
+                infoCodeVariant="A"
+                itemLocationCode="A"/>
+        <language languageIsoCode="en"
+                  countryIsoCode="US"/>
+        <issueInfo issueNumber="001"
+                   inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="09" day="28"/>
+        <dmTitle>
+          <techName>Hydraulic filter assembly</techName>
+          <infoName>Removal and installation of filter element</infoName>
+        </dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <responsiblePartnerCompany enterpriseCode="12345"/>
+      <originator enterpriseCode="12345"/>
+      <applic>
+        <displayText>
+          <simplePara>TESTAC aircraft, all configurations</simplePara>
+        </displayText>
+      </applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="E" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance>
+        <unverified/>
+      </qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+
+  <content>
+    <procedure>
+
+      <preliminaryRqmts>
+
+        <reqCondGroup>
+          <reqCondNoRef>
+            <reqCond>Aircraft parked and secured.</reqCond>
+          </reqCondNoRef>
+          <reqCondNoRef>
+            <reqCond>Hydraulic system depressurized.</reqCond>
+          </reqCondNoRef>
+        </reqCondGroup>
+
+        <reqPersons>
+          <personnel numRequired="2">
+            <personCategory personCategoryCode="Maintainer"/>
+            <estimatedTime unitOfMeasure="h">1.5</estimatedTime>
+          </personnel>
+        </reqPersons>
+
+        <reqSupportEquips>
+          <supportEquipDescrGroup>
+            <supportEquipDescr id="seq-001">
+              <name>Torque wrench</name>
+              <identNumber>
+                <manufacturerCode>12345</manufacturerCode>
+                <partAndSerialNumber>
+                  <partNumber>TW-100</partNumber>
+                </partAndSerialNumber>
+              </identNumber>
+              <reqQuantity>1</reqQuantity>
+            </supportEquipDescr>
+
+            <supportEquipDescr id="seq-002">
+              <name>Hydraulic pressure gauge</name>
+              <identNumber><manufacturerCode>12345</manufacturerCode><partAndSerialNumber><partNumber>PG-300</partNumber></partAndSerialNumber></identNumber>
+              <reqQuantity>1</reqQuantity>
+            </supportEquipDescr>
+          </supportEquipDescrGroup>
+        </reqSupportEquips>
+
+        <reqSupplies>
+          <supplyDescrGroup>
+            <supplyDescr id="sup-001">
+              <name>Hydraulic fluid</name>
+              <identNumber>
+                <manufacturerCode>12345</manufacturerCode>
+                <partAndSerialNumber>
+                  <partNumber>HYD-5606</partNumber>
+                </partAndSerialNumber>
+              </identNumber>
+              <reqQuantity unitOfMeasure="L">0.5</reqQuantity>
+            </supplyDescr>
+
+            <supplyDescr id="sup-002">
+              <name>Cleaning solvent</name>
+              <identNumber><manufacturerCode>12345</manufacturerCode><partAndSerialNumber><partNumber>SOL-01</partNumber></partAndSerialNumber></identNumber>
+              <reqQuantity unitOfMeasure="L">-2</reqQuantity>
+            </supplyDescr>
+          </supplyDescrGroup>
+        </reqSupplies>
+
+        <reqSpares>
+          <spareDescrGroup>
+            <spareDescr id="spa-001">
+              <name>Hydraulic filter element</name>
+              <identNumber>
+                <manufacturerCode>12345</manufacturerCode>
+                <partAndSerialNumber>
+                  <partNumber>HF-29001</partNumber>
+                </partAndSerialNumber>
+              </identNumber>
+              <reqQuantity>1</reqQuantity>
+            </spareDescr>
+
+            <spareDescr id="spa-002">
+              <name>O-ring seal</name>
+              <identNumber><manufacturerCode>12345</manufacturerCode><partAndSerialNumber><partNumber>OR-29002</partNumber></partAndSerialNumber></identNumber>
+              <reqQuantity>0</reqQuantity>
+            </spareDescr>
+          </spareDescrGroup>
+        </reqSpares>
+
+        <reqSafety>
+          <safetyRqmts>
+            <warning>
+              <warningAndCautionPara>
+                Hydraulic fluid under pressure can cause injury.
+                Depressurize the system before disconnecting
+                hydraulic components.
+              </warningAndCautionPara>
+            </warning>
+          </safetyRqmts>
+        </reqSafety>
+
+      </preliminaryRqmts>
+
+      <mainProcedure>
+
+        <proceduralStep id="step-001">
+          <para>Make sure the hydraulic system is depressurized.</para>
+          <note>
+            <notePara>
+              Use an approved pressure gauge to verify system pressure.
+            </notePara>
+          </note>
+        </proceduralStep>
+
+        <proceduralStep id="step-002">
+          <para>Remove the hydraulic access panel. Refer to <internalRef internalRefId="step-999"/>.</para>
+          <para>Keep all attachment hardware for installation.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-003">
+          <warning>
+            <warningAndCautionPara>
+              Wear approved eye protection and gloves.
+              Residual hydraulic pressure can cause injury.
+            </warningAndCautionPara>
+          </warning>
+          <para>Disconnect the hydraulic inlet line.</para>
+          <para>Collect residual hydraulic fluid in a container.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-004">
+          <para>Remove the filter housing cover.</para>
+          <para>Remove and discard the used filter element.</para>
+          <para>Remove the O-ring seal.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-005">
+          <caution>
+            <warningAndCautionPara>
+              Do not use abrasive tools on the sealing surfaces.
+              Damage can cause hydraulic leakage.
+            </warningAndCautionPara>
+          </caution>
+          <para>Clean the filter housing with approved solvent.</para>
+          <para>Examine the housing for damage and contamination.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-006">
+          <para>Install a new O-ring seal.</para>
+          <para>Install the replacement filter element.</para>
+          <para>Make sure the filter element is correctly seated.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-007">
+          <para>Install the filter housing cover.</para>
+          <para>
+            Tighten the cover bolts to 250 N.m using the torque wrench.
+          </para>
+          <note>
+            <notePara>
+              The specified tightening torque is 25 N.m.
+            </notePara>
+          </note>
+        </proceduralStep>
+
+        <proceduralStep id="step-008">
+          <para>Connect the hydraulic inlet line.</para>
+          <para>Fill the system with approved hydraulic fluid.</para>
+          <para>Remove the tools and equipment.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-009">
+          <para>Pressurize the hydraulic system.</para>
+          <para>Check the filter housing for leakage.</para>
+          <para>Make sure there is no hydraulic leakage.</para>
+        </proceduralStep>
+
+        <proceduralStep id="step-010">
+          <para>Install the hydraulic access panel.</para>
+          <para>Record completion of the maintenance task.</para>
+        </proceduralStep>
+
+      </mainProcedure>
+
+      <closeRqmts>
+        <reqCondGroup>
+          <reqCondNoRef>
+            <reqCond>
+              Make sure all tools are removed from the work area.
+            </reqCond>
+          </reqCondNoRef>
+          <reqCondNoRef>
+            <reqCond>
+              Make sure all access panels are correctly installed.
+            </reqCond>
+          </reqCondNoRef>
+        </reqCondGroup>
+      </closeRqmts>
+
+    </procedure>
+  </content>
+</dmodule>

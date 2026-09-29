@@ -59,6 +59,15 @@ def _stage1(data: bytes, sn: Sniff, file: str, max_bytes: int, rep: ValidationRe
 def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id: str | None,
                    doc_type_id: str | None, max_bytes: int = 200 * 1024 * 1024,
                    sniffed: Sniff | None = None) -> tuple[ValidationReport, etree._ElementTree | None]:
+    from .diagnostics import finalize
+    rep, tree = _validate_bytes(data, file, registry, package_id, doc_type_id, max_bytes, sniffed)
+    finalize(rep)
+    return rep, tree
+
+
+def _validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id: str | None,
+                    doc_type_id: str | None, max_bytes: int = 200 * 1024 * 1024,
+                    sniffed: Sniff | None = None) -> tuple[ValidationReport, etree._ElementTree | None]:
     rep = ValidationReport(package_id=package_id)
     sn = sniffed or sniff(data)
     if not _stage1(data, sn, file, max_bytes, rep):
@@ -74,6 +83,18 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
         if sdt is not None and sdt.schema_kind == "sgml":
             return _sgml_stages(data, sn, file, registry, spkg, sdt, rep), None
 
+    # ---- SGML whose DTD set is not installed or not chosen: never judged by the XML parser
+    if sn.syntax_hint != "xml" and sn.doctype_name:
+        probe_tree, _ = parse_xml(data)
+        if probe_tree is None and _looks_sgml(data, sn):
+            return _sgml_without_dtd(data, sn, file, rep), None
+
+    # ---- SGML whose DTD is not installed (or not chosen): never checked as XML
+    if sn.syntax_hint != "xml" and sn.doctype_name:
+        probe_tree, _ = parse_xml(data)
+        if probe_tree is None:
+            return _sgml_without_dtd(data, sn, file, rep), None
+
     # ---- Stage 2: well-formedness
     tree, errors = parse_xml(data)
     if tree is None:
@@ -81,13 +102,16 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
             errors_iter = [(None, None, errors)]
         else:
             errors_iter = [(e.line, e.column, e.message) for e in errors]
+        from .diagnostics import explain_well_formedness
         for line, col, msg in errors_iter:
             m = re.match(r"Entity '(\S+)' not defined", msg or "")
-            sugg = None
+            raw_msg = msg
+            msg, sugg = explain_well_formedness(msg or "")
             if m and not sn.doctype_name:
                 sugg = (f"&{m[1]}; is a named entity, which is only allowed when the document has a DOCTYPE "
                         "pointing at the DTD that declares it. Add the DOCTYPE, or replace the entity with the character.")
             rep.diagnostics.append(Diagnostic(stage=Stage.PARSE, severity=Severity.FATAL, rule_id="XML-WF",
+                                              category="not-well-formed", raw_message=raw_msg,
                                               message=msg, suggestion=sugg, source_file=file, line=line, column=col,
                                               reference="XML 1.0 well-formedness"))
         note = ""
@@ -126,13 +150,32 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
         roots, catalog = registry.dtd_context(pkg)
         expanded, errs, blocked = parse_with_entities(data, roots, catalog)
         ref = f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}"
+        # decided from the text itself: on some platforms the quick structural parse replaces
+        # undeclared entity references with placeholders, so the tree cannot be trusted for this
+        uses_entities = _uses_entities(data, sn)
+        if blocked and not errs and not uses_entities:
+            # typical S1000D boilerplate (%ISOEntities; pointing at ent/ISOEntities) in a document that
+            # uses no entity at all: nothing depends on the missing file, so validation continues
+            rep.diagnostics.append(Diagnostic(
+                stage=Stage.SCHEMA, severity=Severity.WARNING, rule_id="ASTHRA-ENT-001", source_file=file,
+                category="entity-set-missing",
+                message="The DOCTYPE refers to an entity set that is not installed; the document uses none of its "
+                        "entities, so it was validated without it.",
+                suggestion=f"{blocked}. To install the entity files, add the schemas again from the issue folder "
+                           "(Schemas → Manage → Choose folder…): the entity folder is found automatically.",
+                reference=ref))
+            blocked = None
+            expanded = tree
         if blocked or errs:
             if blocked:
                 rep.diagnostics.append(Diagnostic(
                     stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id="ASTHRA-SEC-003", source_file=file,
-                    message="The document's DOCTYPE refers to a file that is not part of the installed schema package; it was not loaded.",
-                    suggestion=f"{blocked}. If this is an entity set (e.g. the S1000D ISO entities), rebuild the package "
-                               "with --entities <folder> so a local copy is used.", reference=ref))
+                    category="entity-set-missing",
+                    message="The document uses entities from a file that is not part of the installed schema package "
+                            "(for S1000D usually the ISO entity set); it was not loaded, so the document cannot be validated.",
+                    suggestion=f"{blocked}. Add the schemas again from the whole issue folder (Schemas → Manage → Choose "
+                               "folder…): the ISO entity folder is found and bundled automatically. On the command line: "
+                               "add-schemas \"<issue folder>\" --replace.", reference=ref))
             for e in errs:
                 msg, sugg, attr, val, fix, _ = explain_dtd(e.message.strip(), None)
                 rep.diagnostics.append(Diagnostic(
@@ -142,7 +185,8 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
             rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.FAILED, note="entities could not be resolved"))
             _skip_rest(rep, from_stage=Stage.BUSINESS_RULES, reason="schema stage failed")
             return rep, tree
-        rep.entities = entity_texts(expanded.docinfo.internalDTD)
+        if expanded is not tree:
+            rep.entities = entity_texts(expanded.docinfo.internalDTD)
         tree = expanded
     try:
         ok = schema.validate(tree)
@@ -153,6 +197,9 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
         rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.FAILED))
         _skip_rest(rep, from_stage=Stage.BUSINESS_RULES, reason="schema stage failed")
         return rep, tree
+    from .diagnostics import ModelHelper, duplicate_of, refine_missing_child, refine_not_expected
+    from .explain import _MISSING_CHILD, _NOT_EXPECTED, _names
+    helper = ModelHelper(registry, package_id, doc_type_id)
     seen = set()
     for e in schema.error_log:
         path = _nice_path(tree, getattr(e, "path", None))
@@ -161,11 +208,41 @@ def validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id:
             continue
         seen.add(key)
         msg, sugg, attr, val, fix = explain(e.message)
+        rule, category = f"XSD-{e.type_name}", None
+        node = None
+        try:
+            hit = tree.xpath(e.path) if getattr(e, "path", None) else []
+            node = hit[0] if hit and isinstance(hit[0], etree._Element) else None
+        except etree.XPathError:
+            node = None
+        if node is not None:
+            if attr and val is not None and "'xs:ID'" in e.message:
+                first = duplicate_of(node, attr, val)
+                if first is not None:
+                    ln = etree.QName(node).localname
+                    fl = etree.QName(first).localname
+                    msg = (f"Duplicate ID '{val}': already used at line {first.sourceline} on <{fl}>; "
+                           f"used again here on <{ln}>.")
+                    sugg = "IDs must be unique within the document. Give one of them a new ID and update any references to it."
+                    rule, category, fix = "ASTHRA-DUPLICATE-ID", "duplicate-id", None
+            elif (m := _NOT_EXPECTED.search(e.message)):
+                r = refine_not_expected(node, _names(m.group("exp") or ""), helper)
+                if r:
+                    msg, sugg, fix, category = r
+            elif (m := _MISSING_CHILD.search(e.message)):
+                r = refine_missing_child(node, _names(m.group("exp")), helper)
+                if r:
+                    msg, sugg, fix, category = r
         rep.diagnostics.append(Diagnostic(
-            stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id=f"XSD-{e.type_name}",
+            stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id=rule, category=category,
             message=msg, suggestion=sugg, attribute=attr, value=val, fix=fix, raw_message=e.message,
             source_file=file, element_path=path, line=e.line or None, column=e.column or None,
             reference=f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}"))
+    from .diagnostics import document_duplicate_ids
+    reported = {(d.value, d.line) for d in rep.diagnostics if d.category == "duplicate-id"}
+    extra = document_duplicate_ids(tree, helper, reported, file, f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}")
+    rep.diagnostics.extend(extra)
+    ok = not extra and ok
     ok = _idref_check(tree, registry, package_id, doc_type_id, file, pkg, dt, rep) and ok
     _finish_schema_stage(ok, pkg, rep)
     return rep, tree
@@ -224,8 +301,8 @@ def _dtd_stage(data: bytes, sn, tree, registry, pkg, dt, file: str, rep: Validat
         if key in seen:
             continue
         seen.add(key)
-        if re.match(r"IDREFS? attribute", e.message.strip()):
-            continue                 # references are checked by ASTHRA itself below (same on every platform)
+        if re.match(r"IDREFS? attribute", e.message.strip()) or re.match(r"ID \S+ already defined", e.message.strip()):
+            continue                 # references and duplicate IDs are checked by ASTHRA itself below
         msg, sugg, attr, val, fix, elname = explain_dtd(e.message.strip(), dtd)
         rep.diagnostics.append(Diagnostic(
             stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id=f"DTD-{e.type_name}", message=msg,
@@ -247,14 +324,23 @@ def _dtd_idrefs(tree, dtd, file: str, ref: str, rep: ValidationReport) -> None:
                 id_attrs.setdefault(el.name, []).append(a.name)
             elif a.type in ("idref", "idrefs"):
                 ref_attrs.setdefault(el.name, []).append(a.name)
-    if not ref_attrs:
-        return
-    ids = set()
+    ids: dict[str, object] = {}
     for e in tree.iter():
         if isinstance(e.tag, str):
             for a in id_attrs.get(e.tag, ()):
-                if e.get(a) is not None:
-                    ids.add(e.get(a))
+                v = e.get(a)
+                if v is None:
+                    continue
+                if v in ids:
+                    first = ids[v]
+                    rep.diagnostics.append(Diagnostic(
+                        stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id="ASTHRA-DUPLICATE-ID", category="duplicate-id",
+                        message=(f"Duplicate ID '{v}': already used at line {first.sourceline} on <{first.tag}>; "
+                                 f"used again here on <{e.tag}>."),
+                        suggestion="IDs must be unique within the document. Give one of them a new ID and update any references to it.",
+                        attribute=a, value=v, source_file=file, element_path=readable_path(e), line=e.sourceline, reference=ref))
+                else:
+                    ids[v] = e
     for e in tree.iter():
         if not isinstance(e.tag, str):
             continue
@@ -384,6 +470,25 @@ def _sgml_stages(data: bytes, sn, file: str, registry, pkg, dt, rep: ValidationR
         return rep
     rep.rendered_xml = res.xml
     rep.entities = res.entities
+    from .sgml import doctype_ids
+    _, doc_pub, _ = doctype_ids(text)
+    sg = pkg.manifest.sgml or {}
+    if doc_pub and doc_pub in (sg.get("aliases") or []):
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.SCHEMA, severity=Severity.WARNING, rule_id="ASTHRA-SGML-ALIAS", category="version-alias",
+            source_file=file, reference=ref,
+            message=f"The document declares '{doc_pub}' but was validated with {pkg.manifest.standard} "
+                    f"{pkg.manifest.issue} ({dt.schema_file}), which was set to accept it when installed.",
+            suggestion="Errors can come from differences between the two DTD versions. Install the DTD version the "
+                       "document declares to validate it exactly."))
+    if sg.get("placeholders"):
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.SCHEMA, severity=Severity.WARNING, rule_id="ASTHRA-SGML-004", category="dtd-incomplete",
+            source_file=file, reference=ref,
+            message="The installed DTD set is incomplete: " + ", ".join(sg["placeholders"])
+                    + " was not supplied (an empty placeholder is used).",
+            suggestion="Entities defined in it are reported as undefined where used. Add the real file and install "
+                       "the DTD set again."))
     if res.removed_urls:
         rep.diagnostics.append(Diagnostic(stage=Stage.INTEGRITY, severity=Severity.WARNING, rule_id="ASTHRA-SEC-004",
                                           source_file=file, message=f"{res.removed_urls} remote address(es) in the DOCTYPE "
@@ -410,3 +515,111 @@ def _sgml_stages(data: bytes, sn, file: str, registry, pkg, dt, rep: ValidationR
                                           line=line, column=col, reference=ref))
     _finish_schema_stage(errors == 0, pkg, rep)
     return rep
+
+
+def _looks_sgml(data: bytes, sn) -> bool:
+    """An SGML document (not broken XML): no XML declaration, and SGML-only syntax such as an
+    external identifier without a system literal, SDATA/NDATA-without-quotes entity declarations,
+    omitted end tags or upper-case markup."""
+    head = data[:200000].decode(sn.encoding or "utf-8", errors="replace")
+    if head.lstrip("\ufeff").startswith("<?xml"):
+        return False
+    return bool(re.search(r"<!DOCTYPE\s+\S+\s+PUBLIC\s+(\"[^\"]*\"|'[^']*')\s*[\[>]", head, re.I)
+                or re.search(r"<!ENTITY\s+\S+\s+(SDATA|CDATA|STARTTAG|ENDTAG)\b", head)
+                or re.search(r"<[A-Z][A-Z0-9]+[\s>]", head))
+
+
+def _sgml_without_dtd(data: bytes, sn, file: str, rep: ValidationReport) -> ValidationReport:
+    from .sgml_preview import preview
+    text = data.decode(sn.encoding or "utf-8", errors="replace")
+    m = re.search(r"<!DOCTYPE\s+([^\s\[>]+)(?:\s+PUBLIC\s+(\"[^\"]*\"|'[^']*'))?", text, re.I)
+    name = m.group(1) if m else "?"
+    pub = m.group(2)[1:-1] if m and m.group(2) else None
+    rep.stages.append(StageResult(stage=Stage.PARSE, status=Status.UNSUPPORTED,
+                                  note="SGML: its DTD set is not installed or not selected"))
+    rep.diagnostics.append(Diagnostic(
+        stage=Stage.PARSE, severity=Severity.WARNING, rule_id="ASTHRA-SGML-003", category="other", source_file=file,
+        message=(f"This SGML document was NOT validated: its DTD set is not installed or not selected "
+                 f"(DOCTYPE <{name}>" + (f", public identifier \"{pub}\"" if pub else "") + ")."),
+        suggestion=("Install that DTD set (Schemas \u2192 Manage \u2192 Choose folder\u2026), or choose an installed one in the "
+                    "panel on the right. SGML is validated and edited with its DTD, through OpenSP.")))
+    try:
+        pv = preview(text)
+    except Exception as e:                                  # noqa: BLE001 - a preview is optional
+        pv = None
+        rep.diagnostics.append(Diagnostic(stage=Stage.PARSE, severity=Severity.INFO, rule_id="ASTHRA-SGML-004",
+                                          source_file=file, message=f"No preview could be built: {e}"))
+    if pv is not None and pv.xml:
+        rep.rendered_xml, rep.rendered_preview, rep.entities = pv.xml, True, pv.entities
+        how = ("every element is closed in the file, so the structure is exact"
+               if pv.mode == "normalized" and pv.implied_ends == 0 else
+               f"{pv.implied_ends} end tags were left out in the file and were placed by rule, so the structure may be approximate")
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.PARSE, severity=Severity.INFO, rule_id="ASTHRA-SGML-004", category="other", source_file=file,
+            message=f"Showing a read-only preview built without the DTD: {how}.",
+            suggestion=("Treated as empty elements because they are never closed: " + ", ".join(f"<{x}>" for x in pv.empty_types[:12])
+                        + ("…" if len(pv.empty_types) > 12 else "") + ".") if pv.empty_types else None))
+    _skip_rest(rep, from_stage=Stage.SCHEMA, reason="SGML DTD set not installed or not selected")
+    return rep
+
+
+def _sgml_without_dtd(data: bytes, sn, file: str, rep: ValidationReport) -> ValidationReport:
+    """An SGML document with no installed DTD set chosen: say clearly that it was not validated,
+    and offer a preview built from a DTD inferred from its own tags (display only)."""
+    from .sgml import OPEN_SP_HELP, SgmlToolError, doctype_ids, find_tools, preview
+    text = data.decode(sn.encoding or "utf-8", errors="replace")
+    name, pub, sysid = doctype_ids(text)
+    what = f"'{pub}'" if pub else (f"'{sysid}'" if sysid else f"for DOCTYPE <{name}>")
+    rep.stages.append(StageResult(stage=Stage.PARSE, status=Status.NOT_RUN, note="SGML: DTD not installed"))
+    rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.UNSUPPORTED, note="no installed SGML DTD set"))
+    _skip_rest(rep, from_stage=Stage.BUSINESS_RULES, reason="not validated")
+    rep.diagnostics.append(Diagnostic(
+        stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id="ASTHRA-SGML-003", category="schema-not-installed",
+        source_file=file,
+        message=f"This SGML document was NOT validated: its DTD {what} is not installed.",
+        suggestion=("Install the DTD set that provides it (Schemas → Manage → Choose folder…, pick the folder with the "
+                    ".dtd, entity files and catalog), then reopen the document. If an installed DTD set is listed on "
+                    "the right as compatible, you can choose it instead; results then only mean something if it is "
+                    "the same DTD.")))
+    tools = find_tools()
+    if not tools:
+        rep.diagnostics.append(Diagnostic(stage=Stage.PARSE, severity=Severity.WARNING, rule_id="ASTHRA-SGML-001",
+                                          source_file=file, message="A preview needs OpenSP, which was not found.",
+                                          suggestion=OPEN_SP_HELP))
+        return rep
+    try:
+        res = preview(text, name, tools)
+    except SgmlToolError as e:
+        rep.diagnostics.append(Diagnostic(stage=Stage.PARSE, severity=Severity.WARNING, rule_id="ASTHRA-SGML-002",
+                                          source_file=file, message=f"No preview: OpenSP could not run ({e})."))
+        return rep
+    rep.rendered_xml, rep.entities, rep.render_note = res.xml, res.entities, res.note
+    return rep
+
+
+_PREDEFINED = {"amp", "lt", "gt", "quot", "apos"}
+
+
+def _uses_entities(data: bytes, sn) -> bool:
+    """Does the document body (after the DOCTYPE) reference any named entity other than XML's own?"""
+    text = data.decode(sn.encoding or "utf-8", errors="replace")
+    m = re.search(r"<!DOCTYPE", text, re.I)
+    if m:
+        depth, q, i = 0, "", m.end()
+        while i < len(text):
+            c = text[i]
+            if q:
+                if c == q:
+                    q = ""
+            elif c in "\"'":
+                q = c
+            elif c == "[":
+                depth += 1
+            elif c == "]":
+                depth -= 1
+            elif c == ">" and depth <= 0:
+                break
+            i += 1
+        text = text[i + 1:]
+    text = re.sub(r"<!--.*?-->|<!\[CDATA\[.*?\]\]>", " ", text, flags=re.S)
+    return any(n not in _PREDEFINED for n in re.findall(r"&([A-Za-z_:][\w.:-]*);", text))

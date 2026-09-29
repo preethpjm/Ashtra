@@ -1,0 +1,11 @@
+{
+  "title": "Item location code not in the allowed list",
+  "clean": false,
+  "expect": [
+    {
+      "category": "value-invalid",
+      "value": "Z",
+      "line": 18
+    }
+  ]
+}

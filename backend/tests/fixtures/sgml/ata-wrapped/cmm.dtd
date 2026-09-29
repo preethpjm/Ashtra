@@ -1,0 +1,31 @@
+<!-- ========================================================= -->
+<!-- SYNTHETIC test DTD in the format ATA DTDs are distributed in: -->
+<!-- a complete DOCTYPE declaration, ISO sets by public id only,   -->
+<!-- and a company entity file that is not supplied. NOT ATA's DTD. -->
+<!-- DTD Reference : ASTHRA-TEST//DTD CMM-VER5-REV1-LEVEL2 -->
+<!-- DTD Version : 5.1 -->
+<!-- Rev Date : 18 Feb 2002 -->
+<!-- ========================================================= -->
+<!DOCTYPE cmm [
+<!-- The following set of declarations may be referred to
+using the public entity as follows:
+<!DOCTYPE cmm PUBLIC
+"-//ASTHRA-TEST//DTD CMM-VER5-REV1-LEVEL2//EN"[ ]>	-->
+<!NOTATION cgm PUBLIC "-//USA-DOD//NOTATION Computer Graphics Metafile//EN" >
+<!ENTITY % revatt "chg (N|R|U|D) #REQUIRED key ID #REQUIRED" >
+<!ENTITY % ISOnum PUBLIC "ISO 8879-1986//ENTITIES Numeric and Special Graphic//EN" >
+<!ENTITY % ISOpub PUBLIC "ISO 8879-1986//ENTITIES Publishing//EN" >
+%ISOnum; %ISOpub;
+<!ENTITY % COMPANY SYSTEM "entities/company-cautwarn.ent">
+%COMPANY;
+<!ELEMENT cmm - - (title, pgblk+) +(revst, revend) >
+<!ATTLIST cmm chapnbr CDATA #REQUIRED >
+<!ELEMENT pgblk - - (title, task+) >
+<!ATTLIST pgblk %revatt; >
+<!ELEMENT task - - (title, para+) >
+<!ATTLIST task key ID #REQUIRED >
+<!ELEMENT (warning | note) - - (para+) >
+<!ELEMENT para - O (#PCDATA | warning | note)* >
+<!ELEMENT title - O (#PCDATA) >
+<!ELEMENT (revst | revend) - O EMPTY >
+]>

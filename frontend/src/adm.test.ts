@@ -268,3 +268,58 @@ describe("SGML write-back", () => {
     expect(out).toMatch(/\n  <title>/);                          // element-only content, one per line
   });
 });
+
+import { calsTable, localName, nextCell, tableAddColumn, tableAddRow, tableContext, tableDeleteColumn, tableDeleteRow, tidy } from "./adm";
+
+describe("tables", () => {
+  const src = `<doc><table><tgroup cols="2"><colspec colname="col1"/><colspec colname="col2"/>` +
+    `<thead><row><entry>A</entry><entry>B</entry></row></thead>` +
+    `<tbody><row><entry>1</entry><entry>2</entry></row></tbody></tgroup></table></doc>`;
+  const a = parseAdm(src);
+  const cell = (txt: string) => a.elements.findIndex((e) => localName(e) === "entry" && e.textContent === txt);
+  it("finds the table position of a cell", () => {
+    const c = tableContext(a, cell("2"))!;
+    expect(c.col).toBe(1);
+    expect(c.rows.length).toBe(2);
+    expect(nextCell(a, c, -1)).toBe(cell("1"));
+    expect(nextCell(a, c, 1)).toBeNull();
+  });
+  it("adds a row with the same cells", () => {
+    const [t] = tableAddRow(a, tableContext(a, cell("1"))!, "<entry></entry>");
+    expect(t).toContain("<row><entry>1</entry><entry>2</entry></row><row><entry></entry><entry></entry></row></tbody>");
+  });
+  it("adds a column in every row and updates cols and colspec", () => {
+    const t = tableAddColumn(a, tableContext(a, cell("1"))!, "<entry></entry>");
+    expect(t).toContain('<tgroup cols="3">');
+    expect(t).toContain('<colspec colname="col1"/><colspec colname="col3"/><colspec colname="col2"/>');
+    expect(t).toContain("<entry>A</entry><entry></entry><entry>B</entry>");
+    expect(t).toContain("<entry>1</entry><entry></entry><entry>2</entry>");
+    expect(parseAdm(t).ok).toBe(true);
+  });
+  it("deletes a column and a row", () => {
+    const t = tableDeleteColumn(a, tableContext(a, cell("B"))!);
+    expect(t).toContain('<tgroup cols="1"><colspec colname="col1"/><thead><row><entry>A</entry></row>');
+    expect(() => tableDeleteRow(a, tableContext(a, cell("1"))!)).toThrow(/only row/);
+  });
+  it("refuses column edits on merged cells", () => {
+    const m = parseAdm(src.replace("<entry>A</entry><entry>B</entry>", '<entry namest="col1" nameend="col2">AB</entry>'));
+    const k = m.elements.findIndex((e) => localName(e) === "entry" && e.textContent === "1");
+    expect(() => tableAddColumn(m, tableContext(m, k)!, "<entry/>")).toThrow(/merged/);
+  });
+  it("builds a CALS table", () => {
+    const x = calsTable('<table id="t1">', "</table>", { title: true, colspec: true, head: true, rows: 2, cols: 3 }, "<entry></entry>");
+    const t = parseAdm(`<doc>${x}</doc>`);
+    expect(t.ok).toBe(true);
+    expect(t.elements.filter((e) => localName(e) === "entry").length).toBe(9);
+    expect(x).toContain('<tgroup cols="3"><colspec colname="col1"/>');
+  });
+});
+
+describe("tidy source", () => {
+  it("indents structure and never touches text", () => {
+    const src = `<doc><step><para>Keep  this   text <b>as</b> is</para><para>Two</para></step></doc>`;
+    const out = tidy(parseAdm(src));
+    expect(out).toBe(`<doc>\n  <step>\n    <para>Keep  this   text <b>as</b> is</para>\n    <para>Two</para>\n  </step>\n</doc>`);
+    expect(tidy(parseAdm(out))).toBe(out);                 // idempotent
+  });
+});

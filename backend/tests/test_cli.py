@@ -119,3 +119,25 @@ def test_add_schemas_sgml_dtd_set(tmp_path, capsys):
                  "--standard", "ATA2200", "--yes"]) == 0
     out = capsys.readouterr().out
     assert "Found: an SGML DTD set" in out and "Installed ata2200/example-1/sgml: cmm" in out
+
+
+
+def test_export_then_install_opensp_on_another_pc(tmp_path, monkeypatch, capsys):
+    """PC without internet: export OpenSP from a working PC, install the zip on the other."""
+    import os, shutil
+    from asthra.validation.sgml import find_tools, probe
+    tools = find_tools()
+    if not tools or os.name == "nt" or not probe(tools)[0]:
+        pytest.skip("needs a working OpenSP on Linux")
+    z = tmp_path / "opensp-bundle.zip"
+    assert main(["--data", str(tmp_path / "pc1"), "export-opensp", str(z)]) == 0
+    import zipfile
+    names = zipfile.ZipFile(z).namelist()
+    assert "OpenSP/usr/bin/onsgmls" in names and "OpenSP/usr/bin/osx" in names and "OpenSP/README.txt" in names
+    monkeypatch.setenv("ASTHRA_DATA", str(tmp_path / "pc2"))
+    monkeypatch.delenv("ASTHRA_OPENSP", raising=False)
+    monkeypatch.setenv("PATH", str(tmp_path / "empty"))          # the other PC has no OpenSP of its own
+    assert main(["install-opensp", str(z)]) == 0
+    assert "OpenSP installed" in capsys.readouterr().out
+    t = find_tools()
+    assert t and str(tmp_path / "pc2") in t[0] and probe(t)[0]

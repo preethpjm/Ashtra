@@ -62,6 +62,12 @@ class ConfinedResolver(etree.Resolver):
             # a remote URL is never fetched; if the package ships a file of the same name
             # (registered in its catalog by bare name), that local copy is used instead
             mapped = self.catalog.get(system_url.rstrip("/").rsplit("/", 1)[-1])
+        if not mapped and system_url:
+            # a relative or file reference that is not an approved local file (e.g. "ent/ISOEntities"
+            # next to the document): the package's file of the same name, never anything else
+            path = to_local_path(system_url)
+            if path is None or not (self._allowed(path) and path.is_file()):
+                mapped = self.catalog.get(re.split(r"[\\/]", system_url.rstrip("/\\"))[-1])
         if mapped:
             for r in self.roots:
                 cand = (r / mapped).resolve()

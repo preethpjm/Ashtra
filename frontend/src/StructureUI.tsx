@@ -3,48 +3,201 @@ import { Adm, localName } from "./adm";
 import type { AttrDef, SchemaModel, Template } from "./schemaModel";
 import { humanize } from "./VisualEditor";
 
-export interface InsertGroup { key: string; label: string; names: string[] }
+export interface InsertGroup { key: string; label: string; names: string[]; labels?: Record<string, string> }
 
-/** The + handle and insert menu next to the selected element. Only allowed elements are listed. */
+/** Where to open a popover: at the text caret if it is in the editor, else next to the element. */
+function anchorRect(nid: number): DOMRect | null {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount) {
+    const r = sel.getRangeAt(0);
+    const host = (r.startContainer instanceof Element ? r.startContainer : r.startContainer.parentElement)?.closest(`.visual [data-nid="${nid}"]`);
+    if (host) {
+      const rect = r.getBoundingClientRect();
+      if (rect.width || rect.height || rect.top) return rect;
+    }
+  }
+  const el = document.querySelector(`.visual [data-nid="${nid}"]`) as HTMLElement | null;
+  return el?.getBoundingClientRect() ?? null;
+}
+
+function usePopoverPos(nid: number, w = 340, h = 380) {
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 120, left: 400 });
+  useEffect(() => {
+    const r = anchorRect(nid);
+    if (r) {
+      const below = r.bottom + 6;
+      const top = below + h > window.innerHeight ? Math.max(8, r.top - h - 6) : below;
+      setPos({ top, left: Math.max(12, Math.min(r.left, window.innerWidth - w - 12)) });
+    }
+  }, [nid, w, h]);
+  return pos;
+}
+
+/** The insert menu: only what the schema allows, fully keyboard driven. */
 export function InsertMenu({ anchorNid, groups, onPick, onClose }: {
   anchorNid: number; groups: InsertGroup[]; onPick: (group: string, name: string) => void; onClose: () => void;
 }) {
   const [q, setQ] = useState("");
-  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 120, left: 400 });
+  const [active, setActive] = useState(0);
+  const pos = usePopoverPos(anchorNid);
   const box = useRef<HTMLDivElement>(null);
+  useEffect(() => { box.current?.querySelector("input")?.focus(); }, []);
+  const label = (g: InsertGroup, n: string) => g.labels?.[n] ?? humanize(n);
+  const shown = groups.map((g) => ({ ...g, names: g.names.filter((n) => !q || n.toLowerCase().includes(q.toLowerCase())
+    || label(g, n).toLowerCase().includes(q.toLowerCase())) }));
+  const flat = shown.flatMap((g) => g.names.map((n) => ({ g: g.key, n })));
+  useEffect(() => { setActive(0); }, [q]);
+  useEffect(() => { box.current?.querySelector(".im-item.active")?.scrollIntoView({ block: "nearest" }); }, [active]);
+  const key = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(flat.length - 1, a + 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
+    else if (e.key === "Home") { e.preventDefault(); setActive(0); }
+    else if (e.key === "End") { e.preventDefault(); setActive(flat.length - 1); }
+    else if (e.key === "Enter") { e.preventDefault(); const it = flat[active]; if (it) onPick(it.g, it.n); }
+    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
+  };
+  let i = -1;
+  return (
+    <>
+      <div className="menu-veil" onClick={onClose} />
+      <div ref={box} className="insert-menu" style={{ top: pos.top, left: pos.left }} role="dialog" aria-label="Insert element">
+        <input placeholder="Type to filter…" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={key}
+          aria-activedescendant={flat[active] ? `im-${active}` : undefined} />
+        <div className="im-body" role="listbox">
+          {shown.map((g) => g.names.length > 0 && (
+            <div key={g.key} className="im-group">
+              <div className="im-label">{g.label}</div>
+              {g.names.map((n) => { i += 1; const idx = i; return (
+                <button key={n} id={`im-${idx}`} role="option" aria-selected={idx === active}
+                  className={`im-item${idx === active ? " active" : ""}`} onMouseEnter={() => setActive(idx)} onClick={() => onPick(g.key, n)}>
+                  <span>{label(g, n)}</span>{!g.labels && <code>{n}</code>}
+                </button>); })}
+            </div>
+          ))}
+          {flat.length === 0 && <p className="muted small pad">{q ? "No allowed element matches." : "The schema allows nothing to be inserted here."}</p>}
+        </div>
+        <div className="im-foot muted small">↑ ↓ choose · Enter insert · Esc back to typing · only what the schema allows</div>
+      </div>
+    </>
+  );
+}
+
+export interface AttrRow { id: string; element: string; attr: AttrDef; value: string; present: boolean }
+
+/** Attributes inline, next to the element: required ones first, allowed values and ID
+ *  references as lists. Tab moves between fields, Enter applies, Esc cancels. */
+export function AttrPopover({ anchorNid, title, rows, ids, okLabel, onCancel, onOk }: {
+  anchorNid: number; title: string; rows: AttrRow[]; ids: [string, string][]; okLabel: string;
+  onCancel: () => void; onOk: (values: Record<string, string>) => void;
+}) {
+  const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(rows.map((r) => [r.id, r.value])));
+  const pos = usePopoverPos(anchorNid, 380, 60 + rows.length * 44);
+  const first = useRef<HTMLElement | null>(null);
+  const okBtn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const el = document.querySelector(`.visual [data-nid="${anchorNid}"]`) as HTMLElement | null;
-    const r = el?.getBoundingClientRect();
-    if (r) setPos({ top: Math.min(r.top + 4, window.innerHeight - 380), left: Math.max(12, Math.min(r.left + 24, window.innerWidth - 340)) });
-    box.current?.querySelector("input")?.focus();
-  }, [anchorNid]);
+    if (first.current) { first.current.focus(); (first.current as HTMLInputElement).select?.(); }
+    else okBtn.current?.focus();                 // no fields: Enter/Esc must still reach the panel
+  }, []);
+  const missing = rows.filter((r) => r.attr.required && !vals[r.id]);
+  const set = (id: string, v: string) => setVals((x) => ({ ...x, [id]: v }));
+  const ordered = [...rows].sort((a, b) => Number(b.attr.required) - Number(a.attr.required));
+  return (
+    <>
+      <div className="menu-veil" onClick={onCancel} />
+      <form className="attr-popover" style={{ top: pos.top, left: pos.left }} role="dialog" aria-label={title}
+        onSubmit={(e) => { e.preventDefault(); if (!missing.length) onOk(vals); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") { e.preventDefault(); onCancel(); }
+          // Enter applies from any field, including lists (browsers do not submit a form from a <select>)
+          else if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!missing.length) onOk(vals); }
+        }}>
+        <div className="ap-head">{title}</div>
+        {ordered.map((r, n) => (
+          <label key={r.id} className="ap-row">
+            <span className="ap-name">{r.attr.name}{r.attr.required && <span className="req">*</span>}</span>
+            {r.attr.kind === "enum" ? (
+              <select ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} onChange={(e) => set(r.id, e.target.value)}>
+                {!r.attr.required && <option value="">—</option>}
+                {r.attr.values.map((v) => <option key={v}>{v}</option>)}
+              </select>
+            ) : r.attr.kind === "idref" || r.attr.kind === "idrefs" ? (
+              <select ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} onChange={(e) => set(r.id, e.target.value)}>
+                <option value="">{r.attr.required ? "choose the target…" : "—"}</option>
+                {ids.map(([id, lab]) => <option key={id} value={id}>{lab}</option>)}
+              </select>
+            ) : (
+              <input ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} disabled={!!r.attr.fixed}
+                onChange={(e) => set(r.id, e.target.value)} placeholder={r.attr.required ? "required" : "optional"} />
+            )}
+          </label>
+        ))}
+        {rows.length === 0 && <p className="muted small">This element has no attributes.</p>}
+        <div className="ap-foot">
+          <span className="muted small">Tab next field · Enter {okLabel.toLowerCase()} · Esc cancel</span>
+          <button ref={okBtn} type="submit" className="primary" disabled={missing.length > 0}>{okLabel}</button>
+        </div>
+      </form>
+    </>
+  );
+}
+
+export interface TableSpec { rows: number; cols: number; head: boolean; title: boolean }
+
+/** Rows x columns for a new table. */
+export function TablePopover({ anchorNid, canHead, canTitle, onCancel, onOk }: {
+  anchorNid: number; canHead: boolean; canTitle: boolean; onCancel: () => void; onOk: (s: TableSpec) => void;
+}) {
+  const [s, setS] = useState<TableSpec>({ rows: 3, cols: 3, head: canHead, title: canTitle });
+  const pos = usePopoverPos(anchorNid, 300, 220);
+  const first = useRef<HTMLInputElement>(null);
+  useEffect(() => { first.current?.focus(); first.current?.select(); }, []);
+  const num = (v: string) => Math.max(1, Math.min(50, parseInt(v, 10) || 1));
+  return (
+    <>
+      <div className="menu-veil" onClick={onCancel} />
+      <form className="attr-popover" style={{ top: pos.top, left: pos.left, width: 300 }} role="dialog" aria-label="New table"
+        onSubmit={(e) => { e.preventDefault(); onOk(s); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") { e.preventDefault(); onCancel(); }
+          else if (e.key === "Enter") { e.preventDefault(); onOk(s); }
+        }}>
+        <div className="ap-head">New table</div>
+        <label className="ap-row"><span className="ap-name">Columns</span>
+          <input ref={first} type="number" min={1} max={50} value={s.cols} onChange={(e) => setS({ ...s, cols: num(e.target.value) })} /></label>
+        <label className="ap-row"><span className="ap-name">Rows</span>
+          <input type="number" min={1} max={200} value={s.rows} onChange={(e) => setS({ ...s, rows: num(e.target.value) })} /></label>
+        {canHead && <label className="ap-check"><input type="checkbox" checked={s.head} onChange={(e) => setS({ ...s, head: e.target.checked })} /> Header row</label>}
+        {canTitle && <label className="ap-check"><input type="checkbox" checked={s.title} onChange={(e) => setS({ ...s, title: e.target.checked })} /> Title</label>}
+        <div className="ap-foot"><span className="muted small">Enter create · Esc cancel</span><button type="submit" className="primary">Create</button></div>
+      </form>
+    </>
+  );
+}
+
+export const SHORTCUTS: [string, string][] = [
+  ["Shift+Enter", "Insert: what the schema allows here (also Ctrl+Enter)"],
+  ["Enter", "At the end of a paragraph: another one, where allowed"],
+  ["Alt+Enter", "Edit the attributes of this element"],
+  ["Tab / Shift+Tab", "Next / previous table cell (Tab in the last cell adds a row)"],
+  ["Alt+↑ / Alt+↓", "Move this element up / down"],
+  ["Alt+Backspace", "Delete this element (asks if the schema requires it)"],
+  ["Esc", "Select the parent element (then Alt+↑↓ or Alt+Backspace act on it)"],
+  ["Ctrl+Z / Ctrl+Y", "Undo / redo"],
+  ["Ctrl+S", "Save draft"],
+];
+
+export function ShortcutHelp({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
   }, [onClose]);
-  const shown = groups.map((g) => ({ ...g, names: g.names.filter((n) => !q || n.toLowerCase().includes(q.toLowerCase()) || humanize(n).toLowerCase().includes(q.toLowerCase())) }));
-  const total = shown.reduce((a, g) => a + g.names.length, 0);
   return (
     <>
       <div className="menu-veil" onClick={onClose} />
-      <div ref={box} className="insert-menu" style={{ top: pos.top, left: pos.left }} role="dialog" aria-label="Insert element">
-        <input placeholder="Filter elements…" value={q} onChange={(e) => setQ(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") { const g = shown.find((x) => x.names.length); if (g) onPick(g.key, g.names[0]); } }} />
-        <div className="im-body">
-          {shown.map((g) => g.names.length > 0 && (
-            <div key={g.key} className="im-group">
-              <div className="im-label">{g.label}</div>
-              {g.names.map((n) => (
-                <button key={n} className="im-item" onClick={() => onPick(g.key, n)}>
-                  <span>{humanize(n)}</span><code>{n}</code>
-                </button>
-              ))}
-            </div>
-          ))}
-          {total === 0 && <p className="muted small pad">{q ? "No allowed element matches." : "The schema allows nothing to be inserted here."}</p>}
-        </div>
-        <div className="im-foot muted small">Only elements the schema allows at this position are listed.</div>
+      <div className="shortcut-help" role="dialog" aria-label="Keyboard shortcuts">
+        <div className="ap-head">Keyboard</div>
+        <table><tbody>{SHORTCUTS.map(([k, v]) => <tr key={k}><th><kbd>{k}</kbd></th><td>{v}</td></tr>)}</tbody></table>
       </div>
     </>
   );

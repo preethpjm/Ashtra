@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="proced.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTHRA" systemDiffCode="A" systemCode="32" subSystemCode="1" subSubSystemCode="0" assyCode="00" disassyCode="00" disassyCodeVariant="A" infoCode="520" infoCodeVariant="A" itemLocationCode="A"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmTitle><techName>Main landing gear</techName><infoName>Removal procedure</infoName></dmTitle>
+    </dmAddress>
+    <dmStatus><applic><displayText>All synthetic test aircraft</displayText></applic></dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <preliminaryRqmts>
+        <reqSupportEquips><supportEquip><name>Torque wrench</name><toolRef>T-0042</toolRef></supportEquip></reqSupportEquips>
+        <reqSupplies><supply><name>Hydraulic fluid</name></supply></reqSupplies>
+        <warning><para>Make sure the aircraft is safe for maintenance.</para></warning>
+      </preliminaryRqmts>
+      <mainProcedure>
+        <proceduralStep id="stp-0001"><para>Remove the access panel.</para></proceduralStep>
+        <proceduralStep id="stp-0001">
+          <caution><para>Do not damage the seal.</para></caution>
+          <para>Disconnect the hydraulic line.</para>
+          <proceduralStep><para>Cap the open line.</para></proceduralStep>
+        </proceduralStep>
+      </mainProcedure>
+      <closeRqmts><para>Install the access panel.</para></closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

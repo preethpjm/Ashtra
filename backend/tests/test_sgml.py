@@ -158,3 +158,102 @@ def test_unopenable_package_files_are_a_setup_problem(monkeypatch):
     monkeypatch.setattr(subprocess, "run", lambda *a, **k: R())
     with pytest.raises(sg.SgmlToolError, match="DTD set"):
         sg.run("<CMM>", "cmm", SG, "cmm.dtd", ["CATALOG"], None, ("onsgmls", "osx"))
+
+
+ATA_REAL_STYLE = """<!--Arbortext, Inc., 1988-2014, v.4002-->
+<!DOCTYPE CMM PUBLIC "-//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN" [
+<!ENTITY fig1.cgm SYSTEM "FIG1.CGM" NDATA cgm>
+<!ENTITY lt SDATA "[lt]">
+<!ENTITY amp SDATA "[amp]">
+<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">
+%ISOEntities;
+]>
+<?Pub Inc>
+<cmm chapnbr="25" sectnbr="26" subjnbr="62" revdate="20261016">
+<title>COMPONENT MAINTENANCE MANUAL</title>
+<pgblk pgblknbr="3000"><revst><title>DISASSEMBLY</title>
+<task key="T1"><title>Remove the cover</title>
+<para>Heat to 20&deg;C &plusmn;5. Torque &lt; 5 N&amp;m.<revend></para>
+<table><tgroup cols="2"><colspec colname="c1"><colspec colname="c2"><tbody><row><entry>A</entry><entry>B</entry></row></tbody></tgroup></table>
+</task></pgblk></cmm>
+"""
+
+
+def test_sgml_without_its_dtd_is_not_checked_as_xml_and_gets_a_preview(ctx):
+    """Regression (real Arbortext CMM): with the ATA DTD not installed, the file was checked as XML
+    ("SystemLiteral expected", "NDATA" ...). It must say it was not validated and offer a preview."""
+    p = ctx.projects.create("s")
+    d = ctx.documents.import_bytes(p["id"], "cmm.sgm", ATA_REAL_STYLE.encode())
+    assert d["syntax"] == "sgml"
+    chk = ctx.documents.check_text(d["id"], ATA_REAL_STYLE)
+    rep = chk["report"]
+    rules = [x["rule_id"] for x in rep["diagnostics"]]
+    assert "ASTHRA-SGML-003" in rules and not any(r.startswith("XML-") for r in rules)
+    msg = next(x for x in rep["diagnostics"] if x["rule_id"] == "ASTHRA-SGML-003")["message"]
+    assert "NOT validated" in msg and "-//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN" in msg
+    assert rep["statuses"]["structural"] != "passed"
+    if find_tools() and probe(find_tools())[0]:
+        from lxml import etree
+        xml = rep["rendered_xml"]
+        root = etree.fromstring(xml.encode(), etree.XMLParser(resolve_entities=False, no_network=True))
+        assert root.tag == "cmm" and root.find("pgblk/task/title").text == "Remove the cover"
+        assert "&deg;" in xml and "&lt;" in xml and "&amp;" in xml
+        assert rep["entities"]["deg"] == "\u00b0" and "lt" not in rep["entities"]
+        assert "Preview without the DTD" in rep["render_note"] and "revst" in rep["render_note"]
+        assert chk["outline"]["root"]["name"] == "cmm"
+
+
+def test_missing_xml_iso_entity_set_is_skipped_in_sgml_validation(sg):
+    """The Arbortext boilerplate %ISOEntities; must not break validation with the right DTD."""
+    if not (find_tools() and probe(find_tools())[0]):
+        pytest.skip("needs OpenSP")
+    src = (DOCS / "ata_cmm_sgml.sgm").read_text().replace(
+        '<!DOCTYPE CMM PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM SGML//EN">',
+        '<!DOCTYPE CMM PUBLIC "-//ASTHRA//DTD Synthetic ATA-style CMM SGML//EN" [\n'
+        '<!ENTITY % ISOEntities PUBLIC "ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">\n'
+        '%ISOEntities;\n]>')
+    p = sg.projects.create("s")
+    d = sg.documents.import_bytes(p["id"], "x.sgm", src.encode())
+    rep = sg.documents.check_text(d["id"], src)["report"]
+    assert rep["statuses"]["structural"] == "passed", [x["message"] for x in rep["diagnostics"]]
+
+
+WRAPPED = FIX / "sgml" / "ata-wrapped"
+V3_DOC = """<!DOCTYPE CMM PUBLIC "-//ASTHRA-TEST//DTD CMM-VER3-LEVEL2//EN">
+<cmm chapnbr="25"><title>Seat unit &mdash; CMM</title>
+<pgblk chg="N" key="PB1"><title>Disassembly<revst>
+<task key="T1"><title>Remove the cover</title><para>Heat to 20&deg;C.<revend></para></task>
+</pgblk></cmm>
+"""
+
+
+def test_wrapped_ata_style_dtd_is_understood():
+    """Real ATA DTDs arrive as <!DOCTYPE cmm [ ... ]> with ISO sets by public id only and company
+    entity files missing: the installer must read identity/version, and say what it will do."""
+    prop = installer.inspect(WRAPPED)
+    assert prop["kind"] == "sgml" and prop["issue"] == "5.1"
+    assert prop["doc_types"][0]["public_id"] == "-//ASTHRA-TEST//DTD CMM-VER5-REV1-LEVEL2//EN"
+    notes = " ".join(prop["notes"])
+    assert "version 5.1" in notes and "complete <!DOCTYPE" in notes and "ISO 8879" in notes
+    assert prop["missing_files"] == ["entities/company-cautwarn.ent"]
+
+
+def test_wrapped_dtd_installs_and_validates_an_older_version_as_alias(ctx, tmp_path):
+    prop = installer.inspect(WRAPPED)
+    prop["aliases"] = ["-//ASTHRA-TEST//DTD CMM-VER3-LEVEL2//EN"]
+    ctx.registry.install(installer.build(WRAPPED, prop, tmp_path / "w.zip"))
+    pkg = ctx.registry.get("ata2200/5.1/sgml")
+    assert pkg.manifest.sgml["placeholders"] == ["entities/company-cautwarn.ent"]
+    assert (WRAPPED / "cmm.dtd").read_text().count("<!DOCTYPE cmm [") == 1          # the user's file is untouched
+    p = ctx.projects.create("w")
+    d = ctx.documents.import_bytes(p["id"], "v3.sgm", V3_DOC.encode())
+    assert d["identification"]["status"] == "identified" and d["package_id"] == "ata2200/5.1/sgml"
+    if not (find_tools() and probe(find_tools())[0]):
+        return
+    rep = ctx.documents.validate(d["id"])
+    rules = {x.rule_id for x in rep.diagnostics}
+    assert rep.structural_status.value == "passed", [x.message for x in rep.diagnostics]
+    assert {"ASTHRA-SGML-ALIAS", "ASTHRA-SGML-004"} <= rules                             # both disclosed
+    m = ctx.registry.schema_model("ata2200/5.1/sgml", "cmm")
+    assert m["elements"]["cmm"]["inclusions"] == ["revst", "revend"]
+    assert [a["name"] for a in m["elements"]["pgblk"]["attrs"] if a["required"]] == ["chg", "key"]

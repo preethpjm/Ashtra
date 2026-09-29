@@ -1,0 +1,11 @@
+{
+  "title": "Element that does not exist in the schema",
+  "clean": false,
+  "expect": [
+    {
+      "category": "not-allowed",
+      "element": "bogusThing",
+      "line": 20
+    }
+  ]
+}

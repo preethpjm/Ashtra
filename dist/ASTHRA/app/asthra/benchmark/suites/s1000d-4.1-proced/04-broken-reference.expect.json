@@ -1,0 +1,11 @@
+{
+  "title": "Internal reference to a missing step",
+  "clean": false,
+  "expect": [
+    {
+      "category": "broken-reference",
+      "value": "step-999",
+      "line": 159
+    }
+  ]
+}

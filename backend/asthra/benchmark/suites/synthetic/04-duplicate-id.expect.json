@@ -1,0 +1,11 @@
+{
+  "title": "Duplicate ID",
+  "clean": false,
+  "expect": [
+    {
+      "category": "duplicate-id",
+      "value": "stp-0001",
+      "line": 22
+    }
+  ]
+}

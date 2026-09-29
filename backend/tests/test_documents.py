@@ -82,3 +82,19 @@ def test_revisions_are_immutable_and_checked(loaded, project):
     stored.write_bytes(stored.read_bytes() + b" ")
     with pytest.raises(IOError, match="integrity"):
         loaded.documents.revision_bytes(d["id"], r["id"])
+
+
+
+def test_windows_line_endings(loaded, project):
+    """Documents saved on Windows (CRLF) validate, report the right lines, and keep CRLF when edited."""
+    src = (DOCS / "s1000d_proced_valid.xml").read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    d = loaded.documents.import_bytes(project["id"], "crlf.xml", src)
+    assert loaded.documents.validate(d["id"]).structural_status.value == "passed"
+    bad = src.replace(b'itemLocationCode="A"', b'itemLocationCode="Z"', 1)
+    d2 = loaded.documents.import_bytes(project["id"], "crlf-bad.xml", bad)
+    [e] = [x for x in loaded.documents.validate(d2["id"]).diagnostics if x.severity.value == "error"]
+    assert e.line == bad[: bad.index(b'itemLocationCode="Z"')].count(b"\n") + 1
+    text = loaded.documents.source_text(d["id"]).replace("stp-0001", "stp-0100")
+    loaded.documents.save_working(d["id"], text)
+    data, _ = loaded.documents.current_bytes(d["id"])
+    assert b"\r\n" in data and data.count(b"\r\n") == src.count(b"\r\n")

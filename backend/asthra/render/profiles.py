@@ -100,6 +100,11 @@ BY_STANDARD = {"S1000D": ("S1000D", S1000D), "ATA2200": ("ATA iSpec 2200", ATA22
 S1000D_ROOTS = {"dmodule", "pm", "dml", "comment", "ddn"}
 
 
+# top-level elements of ATA iSpec 2200 / Spec 2300 manuals (CMM, AMM, IPC, SRM, EM, FIM, TSM, WDM ...)
+ATA_ROOTS = {"cmm", "amm", "ipc", "cmmipl", "srm", "em", "emm", "fim", "tsm", "wdm", "wm", "sdm", "ssm", "nsm",
+             "mm", "om", "fcom", "mel", "cmp", "epc", "ipl", "eipc"}
+
+
 def resolve(standard: str | None, root_name: str | None, overrides: dict[str, str] | None = None) -> dict:
     """Profile for a document: its standard's profile (or a guess from the root element
     when no schema is selected), plus the package's own overrides."""
@@ -107,6 +112,8 @@ def resolve(standard: str | None, root_name: str | None, overrides: dict[str, st
     if base is None:
         if root_name in S1000D_ROOTS:
             name, base = "S1000D (from root element)", S1000D
+        elif (root_name or "").lower() in ATA_ROOTS:
+            name, base = "ATA iSpec 2200 (from root element)", ATA2200
         else:
             name, base = "generic", GENERIC
     roles = dict(base["roles"])

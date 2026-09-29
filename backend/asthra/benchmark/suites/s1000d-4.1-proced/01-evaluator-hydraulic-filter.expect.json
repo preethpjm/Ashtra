@@ -1,0 +1,42 @@
+{
+  "title": "Evaluator's test file: six structural defects (confirmed by a real run)",
+  "clean": false,
+  "expect": [
+    {
+      "category": "missing-element",
+      "element": "brexDmRef",
+      "line": 42,
+      "note": "dmStatus requires brexDmRef before qualityAssurance"
+    },
+    {
+      "category": "missing-element",
+      "element": "identNumber",
+      "line": 84,
+      "note": "support equipment seq-002 has no identification"
+    },
+    {
+      "category": "missing-element",
+      "element": "manufacturerCode",
+      "line": 94,
+      "note": "identNumber of sup-001 lacks manufacturerCode"
+    },
+    {
+      "category": "missing-element",
+      "element": "identNumber",
+      "line": 103,
+      "note": "supply sup-002 has no identification"
+    },
+    {
+      "category": "missing-element",
+      "element": "manufacturerCode",
+      "line": 113,
+      "note": "identNumber of spa-001 lacks manufacturerCode"
+    },
+    {
+      "category": "missing-element",
+      "element": "identNumber",
+      "line": 122,
+      "note": "spare spa-002 has no identification"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "synthetic",
+  "description": "Every kind of structural problem, against ASTHRA's synthetic S1000D test schema. Runs anywhere.",
+  "schema": {
+    "standard": "S1000D",
+    "issue": "synthetic-5.0-subset",
+    "doc_type": "proced"
+  },
+  "uses": "fixture:s1000d-synth"
+}

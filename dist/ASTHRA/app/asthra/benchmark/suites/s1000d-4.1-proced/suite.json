@@ -1,0 +1,10 @@
+{
+  "name": "s1000d-4.1-proced",
+  "description": "S1000D Issue 4.1 procedures, validated against the installed official 4.1 schemas. Case 01 is the evaluator's test file; its six defects were confirmed by a real run. The other cases are derived from its corrected version (02) using knowledge of the 4.1 schema; if the official schema disagrees, the scorecard shows it and the case is corrected.",
+  "schema": {
+    "standard": "S1000D",
+    "issue": "4.1",
+    "doc_type": "proced"
+  },
+  "uses": "installed"
+}

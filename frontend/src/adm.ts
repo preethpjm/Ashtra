@@ -472,7 +472,8 @@ export function toProseMirror(adm: Adm): Json {
   };
   const block = (el: Element): Json => {
     const kind = kindOf(el);
-    const attrs = { nid: nid(el), name: localName(el), summary: attrSummary(el), depth: depthOf(el) };
+    const attrs = { nid: nid(el), name: localName(el), summary: attrSummary(el), depth: depthOf(el),
+      align: (el.getAttribute("align") ?? "").toLowerCase(), valign: (el.getAttribute("valign") ?? "").toLowerCase() };
     if (kind === "atom") return { type: "xatom", attrs };
     if (kind === "text") {
       const content: Json[] = [];
@@ -770,4 +771,136 @@ export function xmlToSgml(adm: Adm, sgmlSource: string, emptyElements: Set<strin
   body = body.replace(/&apos;/g, "'");
   const prolog = sgmlSource.slice(0, rootStart(sgmlSource));
   return prolog + body + "\n";
+}
+
+// ------------------------------------------------------------------ tables (CALS: table/tgroup/row/entry)
+export interface TableCtx { entry: number; row: number; tgroup: number; col: number; rows: number[] }
+
+/** Where the element k sits in a table, if it does. */
+export function tableContext(adm: Adm, k: number): TableCtx | null {
+  let entry = -1, row = -1, tgroup = -1;
+  for (let el: Element | null = adm.elements[k]; el; el = el.parentElement) {
+    const n = localName(el), i = adm.indexOf.get(el)!;
+    if (n === "entry" && entry < 0) entry = i;
+    else if (n === "row" && row < 0) row = i;
+    else if (n === "tgroup") { tgroup = i; break; }
+  }
+  if (entry < 0 || row < 0 || tgroup < 0) return null;
+  const rows = adm.elements.map((_, i) => i).filter((i) => localName(adm.elements[i]) === "row" &&
+    adm.elements[i].closest("tgroup") === adm.elements[tgroup]);
+  const col = childElements(adm, row).filter((i) => localName(adm.elements[i]) === "entry").indexOf(entry);
+  return { entry, row, tgroup, col, rows };
+}
+
+const SPANS = ["namest", "nameend", "morerows", "spanname"];
+export function hasMergedCells(adm: Adm, tgroup: number): boolean {
+  return Array.from(adm.elements[tgroup].getElementsByTagName("*")).some((e) => localName(e) === "entry" && SPANS.some((a) => e.hasAttribute(a)));
+}
+
+function applyEdits(text: string, edits: [number, number, string][]): string {
+  edits.sort((a, b) => b[0] - a[0] || b[1] - a[1]);
+  for (const [a, b, r] of edits) text = text.slice(0, a) + r + text.slice(b);
+  return text;
+}
+
+function setColsAttr(adm: Adm, tgroup: number, delta: number, edits: [number, number, string][]) {
+  const s = adm.spans[tgroup], tag = adm.text.slice(s.start, s.tagEnd);
+  const m = /\scols\s*=\s*(["'])(\d+)\1/.exec(tag);
+  if (m) {
+    const at = s.start + m.index;
+    edits.push([at, at + m[0].length, ` cols="${Math.max(1, parseInt(m[2], 10) + delta)}"`]);
+  }
+}
+
+/** A new row with the same number of cells as the current one, below (or above) it. */
+export function tableAddRow(adm: Adm, ctx: TableCtx, entryXml: string, above = false): [string, number] {
+  const n = childElements(adm, ctx.row).filter((i) => localName(adm.elements[i]) === "entry").length;
+  const p = parentOf(adm, ctx.row)!;
+  const sibs = childElements(adm, p);
+  const rowQ = adm.spans[ctx.row].qname;
+  return insertChild(adm, p, sibs.indexOf(ctx.row) + (above ? 0 : 1), `<${rowQ}>${entryXml.repeat(Math.max(1, n))}</${rowQ}>`);
+}
+
+/** A new column to the right of the current cell, in every row; cols and colspec updated. */
+export function tableAddColumn(adm: Adm, ctx: TableCtx, entryXml: string): string {
+  if (hasMergedCells(adm, ctx.tgroup)) throw new Error("This table has merged cells; add columns in Source mode.");
+  const edits: [number, number, string][] = [];
+  for (const r of ctx.rows) {
+    const cells = childElements(adm, r).filter((i) => localName(adm.elements[i]) === "entry");
+    const after = cells[Math.min(ctx.col, cells.length - 1)];
+    const at = after !== undefined ? adm.spans[after].end : adm.spans[r].tagEnd;
+    edits.push([at, at, entryXml]);
+  }
+  setColsAttr(adm, ctx.tgroup, 1, edits);
+  const specs = childElements(adm, ctx.tgroup).filter((i) => localName(adm.elements[i]) === "colspec");
+  if (specs.length) {
+    const used = new Set(specs.map((i) => adm.elements[i].getAttribute("colname")).filter(Boolean) as string[]);
+    let n = specs.length + 1, name = `col${n}`;
+    while (used.has(name)) name = `col${++n}`;
+    const after = specs[Math.min(ctx.col, specs.length - 1)];
+    edits.push([adm.spans[after].end, adm.spans[after].end, `<${adm.spans[after].qname} colname="${name}"/>`]);
+  }
+  return applyEdits(adm.text, edits);
+}
+
+export function tableDeleteRow(adm: Adm, ctx: TableCtx): string {
+  const p = parentOf(adm, ctx.row)!;
+  if (childElements(adm, p).filter((i) => localName(adm.elements[i]) === "row").length <= 1)
+    throw new Error("This is the only row here; a table part needs at least one row.");
+  return deleteElement(adm, ctx.row);
+}
+
+export function tableDeleteColumn(adm: Adm, ctx: TableCtx): string {
+  if (hasMergedCells(adm, ctx.tgroup)) throw new Error("This table has merged cells; delete columns in Source mode.");
+  const cellsOf = (r: number) => childElements(adm, r).filter((i) => localName(adm.elements[i]) === "entry");
+  if (cellsOf(ctx.row).length <= 1) throw new Error("This is the only column.");
+  const edits: [number, number, string][] = [];
+  for (const r of ctx.rows) {
+    const c = cellsOf(r)[ctx.col];
+    if (c !== undefined) edits.push([adm.spans[c].start, adm.spans[c].end, ""]);
+  }
+  setColsAttr(adm, ctx.tgroup, -1, edits);
+  const specs = childElements(adm, ctx.tgroup).filter((i) => localName(adm.elements[i]) === "colspec");
+  if (specs[ctx.col] !== undefined) edits.push([adm.spans[specs[ctx.col]].start, adm.spans[specs[ctx.col]].end, ""]);
+  return applyEdits(adm.text, edits);
+}
+
+/** The next (or previous) cell of the table, or null at the end. */
+export function nextCell(adm: Adm, ctx: TableCtx, dir: 1 | -1): number | null {
+  const cells = ctx.rows.flatMap((r) => childElements(adm, r).filter((i) => localName(adm.elements[i]) === "entry"));
+  const i = cells.indexOf(ctx.entry) + dir;
+  return i >= 0 && i < cells.length ? cells[i] : null;
+}
+
+/** CALS table XML: rows x cols, optional header row. entryXml is one empty cell. */
+export function calsTable(open: string, close: string, q: { title: boolean; colspec: boolean; head: boolean; rows: number; cols: number },
+                          entryXml: string, tgroupAttrs = ""): string {
+  const row = (n: number) => `<row>${entryXml.repeat(n)}</row>`;
+  const specs = q.colspec ? Array.from({ length: q.cols }, (_, i) => `<colspec colname="col${i + 1}"/>`).join("") : "";
+  return `${open}${q.title ? "<title></title>" : ""}<tgroup cols="${q.cols}"${tgroupAttrs}>${specs}` +
+    (q.head ? `<thead>${row(q.cols)}</thead>` : "") + `<tbody>${Array.from({ length: q.rows }, () => row(q.cols)).join("")}</tbody></tgroup>${close}`;
+}
+
+// ------------------------------------------------------------------ tidy source
+/** Re-indent the structure: every element that contains only elements gets one child per line,
+ *  indented by depth. Text content (mixed or text-only elements) is never touched. */
+export function tidy(adm: Adm, indent = "  "): string {
+  if (!adm.ok) return adm.text;
+  const t = adm.text, edits: [number, number, string][] = [];
+  adm.spans.forEach((s, k) => {
+    const el = adm.elements[k];
+    if (s.selfClosing || kindOf(el) !== "block" || !el.children.length) return;
+    const depth = ancestorsOf(adm, k).length;
+    const kids = childElements(adm, k);
+    let prev = s.tagEnd;
+    for (const c of kids) {
+      const cs = adm.spans[c];
+      const gap = t.slice(prev, cs.start);
+      if (/^\s*$/.test(gap)) edits.push([prev, cs.start, "\n" + indent.repeat(depth + 1)]);
+      prev = cs.end;
+    }
+    const tail = t.slice(prev, s.contentEnd);
+    if (/^\s*$/.test(tail)) edits.push([prev, s.contentEnd, "\n" + indent.repeat(depth)]);
+  });
+  return applyEdits(t, edits).replace(/[ \t]+$/gm, "");
 }

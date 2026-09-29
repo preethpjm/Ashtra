@@ -178,6 +178,23 @@ You do not need it for XML (S1000D XSD, XML with DTDs).
 shared folder such as MSYS2's `usr\bin` is used **in place**; a small OpenSP folder or zip is
 **copied** into the data folder. Nothing is installed if the test fails.
 
+### PC without internet access (corporate network, "Could not resolve host")
+
+Copy OpenSP from a PC where it already works — no download needed on the new one:
+```powershell
+# on the PC where OpenSP works (doctor shows it):
+python -m asthra.cli export-opensp opensp-bundle.zip
+# copy opensp-bundle.zip to the other PC, then there:
+python -m asthra.cli install-opensp opensp-bundle.zip
+python -m asthra.cli doctor
+```
+The zip holds `onsgmls`, `osx`, exactly the DLLs they import (found by reading the programs),
+and their licence files — a few MB, not a whole MSYS2 installation. It is test-run on
+installation. (The portable edition bundles OpenSP the same way.)
+
+If you would rather make pacman work through the company proxy, set it in the MSYS2 window first
+(ask IT for the address): `export https_proxy=http://proxy.company:8080 http_proxy=$https_proxy`.
+
 **Not recommended:** the old Win32 zip on SourceForge (openjade project). On current Windows
 it usually fails with "a required DLL is missing" (it needs the Visual C++ 2003 runtime).
 
@@ -369,6 +386,47 @@ python -m asthra.cli add-schemas "C:\...\ATA_SGML_DTDs" --standard ATA2200 --iss
 Package name: `ata2200/<revision>/sgml` — so an SGML and an XML DTD set of the same
 revision can both be installed.
 
+**If the document's DTD is not installed** (e.g. a real Arbortext CMM declaring
+`-//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN`), ASTHRA says so — *"This SGML document was NOT validated:
+its DTD … is not installed"* — and shows a **preview without the DTD**: a permissive DTD is inferred
+from the document's own tags (elements that are never closed are treated as EMPTY, e.g. revision
+markers and column specs) and OpenSP converts the file for reading. Nothing is validated and the
+note above the page says how reliable the structure is. Install the real DTD set for validation,
+exact structure and editing. To find it on a PC with Arbortext:
+```powershell
+Get-ChildItem -Recurse -Include *.dtd,*.cat,catalog,*.soc -Path "C:\Program Files\PTC","$env:APPDATA" -ErrorAction SilentlyContinue |
+  Select-String -List "CMM-VER3-LEVEL2" | Select-Object Path
+```
+
+**DTDs delivered as a single file** (as ATA DTDs usually are) are handled automatically:
+
+| What the file is like | What ASTHRA does |
+|---|---|
+| Written as a whole `<!DOCTYPE cmm [ … ]>` declaration | uses the declarations inside it (your file is not changed) |
+| Header comment `DTD Reference : ATA-TEXT//DTD CMM-VER5-REV1-LEVEL2`, `DTD Version : 5.1`, or a note "may be referred to as `<!DOCTYPE cmm PUBLIC "…">`" | fills in the revision (5.1) and the public identifier documents must declare |
+| ISO 8879 character-entity sets referenced by public identifier only, not supplied | supplies them (standard characters such as &deg; &plusmn; &trade;) and says so |
+| A company file the DTD loads is missing (e.g. `entities/ARZ-cautwarn.ent`) | warns at install; installs an empty placeholder so validation can run; every result then warns that the DTD set is incomplete, and entities from that file are reported as undefined where used |
+| No SGML declaration (`.dcl`) | uses ASTHRA's default declaration (long names and processing instructions allowed, tag omission on) |
+
+**DTD versions.** Documents are matched to a DTD by the public identifier they declare, and each
+version of a DTD has its own (…CMM-VER3-LEVEL2…, …CMM-VER5-REV1-LEVEL2…). Install each version
+you have, with its version number as the revision. If you only have a newer DTD, you can let it
+*also accept* documents that declare an older one: in the install form, "Also accept documents
+that declare", or on the command line:
+```powershell
+python -m asthra.cli add-schemas "C:\...\CMM DTD 5.1" --standard ATA2200 --issue 5.1 --accept-public-id "-//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN" --yes
+```
+Every result for such a document then warns that it was checked against the other version, since
+errors can come from differences between the versions.
+
+**Omitted end tags** are normal SGML. With the real DTD, OpenSP knows from the content models
+where each element ends, so validation and display are exact. Without the DTD only the preview
+is possible, and elements that leave out *some* of their end tags are flagged as approximate.
+
+**The `%ISOEntities;` line** Arbortext and S1000D tools add to DOCTYPEs points at an XML entity set
+(`ent/ISOEntities`). If that file is not installed it is skipped with a note; only entities the
+document actually uses must be defined, and any that are not are reported where they are used.
+
 **How SGML documents behave in ASTHRA:**
 - Validation with line numbers and plain-language messages (OpenSP's messages, explained).
 - The **Document** view shows OpenSP's XML conversion of the file, **read-only**; edit the
@@ -473,6 +531,30 @@ where the correct value is certain.
 running header (code and title) and footer (issue, date, "Page n of m"). Choose "Save as PDF"
 as the printer to get a PDF.
 
+**Keyboard** (the ⌨ button next to Tags lists these):
+
+| Keys | What happens |
+|---|---|
+| **Shift+Enter** (or Ctrl+Enter) | suggestions: what the schema allows here — at the cursor, after, before, inside; in a table also the table commands. ↑↓ choose, Enter insert, typing filters, Esc back to typing |
+| **Enter** | at the end of a paragraph: another one where the schema allows it |
+| **Alt+Enter** | this element's attributes, inline next to it (Tab between fields, Enter apply, Esc cancel) |
+| **Tab / Shift+Tab** | next / previous table cell; Tab in the last cell adds a row |
+| **Alt+↑ / Alt+↓** | move this element (refused if the schema does not allow the new order) |
+| **Alt+Backspace** | delete this element (asks first if the schema requires it) |
+| **Esc** | select the parent element; Alt+Enter, Alt+↑↓ and Alt+Backspace then act on it |
+
+Required values of a new element are asked for inline, next to it; after inserting, the cursor
+is inside the new element (or just after an inline one), so you keep typing.
+
+**Tables**: choose *table* in the suggestions (Shift+Enter) → rows × columns, header row, title →
+Enter. The table is built with the schema's own elements (CALS `tgroup`/`colspec`/`thead`/`tbody`/
+`row`/`entry`). In a cell, Shift+Enter offers *Add row below/above*, *Add column to the right*,
+*Delete this row/column*; `cols` and the column specs are kept in step. Tables with merged cells
+(`namest`/`nameend`/`morerows`) are edited in Source for column changes.
+
+**Tidy source layout** (Export menu): one element per line, indented by depth, for the structure
+only — text content is never changed.
+
 **Editing with the schema** (any installed XSD, XML DTD or SGML DTD):
 - Select an element and press **Ctrl+Enter** (or **+ Insert…** in the Element panel). The menu lists
   only what the schema allows *after*, *before* or *inside* the element, and inline elements *at the
@@ -493,6 +575,33 @@ A passed structure is **not** engineering approval; business rules (BREX), refer
 engineering checks are shown separately as "not available yet".
 
 ---
+
+### Measuring validation quality (benchmark)
+
+```powershell
+python -m asthra.cli benchmark                                   # all built-in suites
+python -m asthra.cli benchmark s1000d-4.1-proced --json 41.json  # one suite, full results as JSON
+python -m asthra.cli benchmark --corpus "C:\...\Issue 4.1\Bike data set"   # known-good files
+```
+
+A suite is a set of XML files with deliberately planted problems, each described in a
+`.expect.json` file (category, element, line). ASTHRA validates every file and reports:
+problems **detected**, problems **missed**, **false positives** (errors where there is no
+problem), whether each was reported on the **exact line**, and whether it came with a
+**suggestion or fix**, plus an overall F1 score out of 10.
+
+| Suite | Needs | Content |
+|---|---|---|
+| `synthetic` | nothing | every kind of structural problem, against the built-in test schema |
+| `s1000d-4.1-proced` | S1000D 4.1 `proced` installed | the evaluator's hydraulic-filter file (6 defects confirmed by a real run), its corrected clean version, and single-defect variants |
+| `--corpus <folder>` | the schemas for those files | real files that should be valid (e.g. the Bike data set): every error counts as a false positive; files no installed schema identifies are skipped |
+
+Suites live in `backend/asthra/benchmark/suites/`; add your own folder with a `suite.json`
+and pass its path. The command exits with code 1 if anything was missed or falsely reported.
+
+**Diagnostic categories** used in reports and the benchmark: `not-well-formed`,
+`missing-element`, `wrong-position`, `not-allowed`, `missing-attribute`,
+`attribute-not-allowed`, `value-invalid`, `duplicate-id`, `broken-reference`, `other`.
 
 ## 8. When a document is not identified
 
@@ -622,7 +731,11 @@ permissive (MIT-style) and requires keeping the copyright notice.
 | `top element could not be determined` | a DTD with several possible roots | `--root <dtd>=<element>` or choose it in the form |
 | `already installed` | that issue is installed | `--replace` (or **Replace** in the form) |
 | document **needs-choice** though its issue is installed | it declares no or a relative schema location | pick the schema in the right panel; `why <file>` shows details |
-| `ASTHRA-SEC-003 … not part of the installed schema package` | the document refers to a file that is not installed (often the ISO entity sets) | rebuild the S1000D package with its entity folder (it is found automatically in a full issue download) |
+| `ASTHRA-ENT-001` (warning) entity set not installed | S1000D boilerplate `%ISOEntities;` → `ent/ISOEntities`, document uses no entities | nothing needed; to install the entity files add the schemas again from the whole issue folder |
+| `ASTHRA-SEC-003 … uses entities from a file that is not part of the installed schema package` | the document uses ISO entities (`&deg;` …) but the package has no entity files | add the schemas again from the whole issue folder (Schemas → Manage → Choose folder…, or `add-schemas "<issue folder>" --replace`) |
+| `ASTHRA-SGML-003 … NOT validated: its DTD … is not installed` | SGML whose DTD set is not installed | install that DTD set; meanwhile a preview without the DTD is shown |
+| `ASTHRA-SGML-ALIAS` (warning) declares … but was validated with … | the DTD set was installed to also accept an older/other version | install the DTD version the document declares for exact results |
+| `ASTHRA-SGML-004` (warning) DTD set is incomplete | a file the DTD loads was not supplied; a placeholder is used | add the real file and install the DTD set again |
 | `&xyz; is a named entity … needs a DOCTYPE` | named entities in a file without DOCTYPE | add the DOCTYPE, or replace the entity with the character |
 | `ASTHRA-SGML-001 … OpenSP was not found` | SGML without OpenSP | [section 3](#3-installing-opensp-only-for-sgml) |
 | `ASTHRA-SGML-002 … NOT checked: OpenSP could not run` | OpenSP is installed but fails | `doctor` shows OpenSP's own error; reinstall via MSYS2 |
@@ -639,7 +752,8 @@ When asking for help, the output of `python -m asthra.cli doctor` and, for a spe
 
 | Area | Status |
 |---|---|
-| Business-rule validation (S1000D BREX, project rules) | planned; shown as "not available yet" |
+| Business-rule validation (S1000D BREX, project rules) | next phase; shown as "not available yet" |
+| "Missing / wrong position / not allowed" precision and Insert fixes for DTD and SGML documents | XSD documents have it; DTD/SGML show the validator's own wording |
 | Splitting a paragraph at the cursor, wrapping/unwrapping selected text in an element | planned (inserting, deleting, moving and attribute editing are done) |
 | On-screen page breaks and a table of contents | next (print/PDF already paginates; figure/table numbering done) |
 | Graphics: showing ICN images (PNG/JPG/SVG); CGM files | next milestone (CGM will show as a card) |
@@ -665,7 +779,9 @@ All commands: `python -m asthra.cli [--data <folder>] <command> …`
 | `schemas export-all [file]` | export every package as a schema set |
 | `schemas import-set <file>` | install a schema set |
 | `install-opensp <folder\|zip>` | make OpenSP available for SGML |
+| `export-opensp [zip]` | pack the working OpenSP for a PC without internet |
 | `why <xml file>` | explain schema matching for a file |
+| `benchmark [suite…] [--corpus folder] [--json file]` | score validation quality |
 | `schema-issue <folder>` | show which S1000D issue a schema folder contains |
 | `make-package <xsd folder> --issue I [--only types] [--entities folder] [--install] [--replace]` | S1000D packages (older, direct command) |
 | `make-dtd-package <folder> --standard S --issue I [--root D=E] [--install] [--replace]` | XML DTD packages (older, direct command) |

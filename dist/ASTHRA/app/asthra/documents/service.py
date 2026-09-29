@@ -213,10 +213,22 @@ class DocumentService:
     # ------------------------------------------------------------------ schema choice
     def schema_options(self, doc_id: str) -> list[dict]:
         """Installed doc types whose root element fits this document (exact or not)."""
-        from ..identify.service import declares, root_fits
-        tree, _ = parse_xml(self.current_bytes(doc_id)[0])
+        from ..identify.service import declares, identify_sgml, root_fits
+        data = self.current_bytes(doc_id)[0]
+        tree, _ = parse_xml(data)
         if tree is None:
-            return []
+            sn = sniff(data)
+            if not sn.doctype_name:
+                return []
+            ident = identify_sgml(data.decode(sn.encoding or "utf-8", errors="replace"), self.registry.list(False))
+            out = []
+            for c, declared in [(c, True) for c in ident.candidates] + [(c, False) for c in ident.compatible]:
+                pkg = self.registry.get(c.package_id)
+                dt = next(d for d in pkg.manifest.doc_types if d.id == c.doc_type)
+                out.append({"package_id": c.package_id, "doc_type": c.doc_type, "label": dt.label,
+                            "standard": pkg.manifest.standard, "issue": pkg.manifest.issue,
+                            "provenance": pkg.manifest.provenance, "declared": declared})
+            return out
         out = []
         for pkg in self.registry.list(include_disabled=False):
             for dt in pkg.manifest.doc_types:
@@ -232,7 +244,23 @@ class DocumentService:
         from ..identify.service import declares, root_fits
         d = self.get(doc_id)
         _, pkg, dt = self.registry.schema_for(package_id, doc_type_id)
-        tree, _ = parse_xml(self.current_bytes(doc_id)[0])
+        data = self.current_bytes(doc_id)[0]
+        tree, _ = parse_xml(data)
+        if tree is None and dt.schema_kind == "sgml":
+            sn = sniff(data)
+            if not sn.doctype_name or sn.doctype_name.lower() != dt.match.local_name.lower():
+                raise DocumentError(f"{dt.label} is for DOCTYPE <{dt.match.local_name}>; this document's DOCTYPE is <{sn.doctype_name}>")
+            ident = d["identification"]
+            ident.setdefault("notes", []).append(f"Schema chosen by user: {pkg.manifest.standard} {pkg.manifest.issue} / {dt.label}")
+            ident["selection"] = "user"
+            with self.db.tx() as c:
+                c.execute("""UPDATE document SET package_id=?, standard=?, issue=?, doc_type=?, identity_json='{}',
+                             identification_json=? WHERE id=?""",
+                          (package_id, pkg.manifest.standard, pkg.manifest.issue, dt.id, json.dumps(ident), doc_id))
+                c.execute("INSERT INTO audit_event(at,actor,action,subject,detail_json) VALUES (?,?,?,?,?)",
+                          (now(), "local", "document.schema.choose", doc_id,
+                           json.dumps({"package_id": package_id, "doc_type": doc_type_id})))
+            return self.get(doc_id)
         if tree is None:
             raise DocumentError("the document is not well-formed XML; fix it before choosing a schema")
         if not root_fits(dt, tree.getroot()):

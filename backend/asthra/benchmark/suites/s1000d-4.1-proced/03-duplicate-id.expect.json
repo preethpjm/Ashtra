@@ -1,0 +1,11 @@
+{
+  "title": "Duplicate step ID",
+  "clean": false,
+  "expect": [
+    {
+      "category": "duplicate-id",
+      "value": "step-001",
+      "line": 158
+    }
+  ]
+}

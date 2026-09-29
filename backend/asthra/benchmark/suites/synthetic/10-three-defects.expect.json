@@ -1,0 +1,21 @@
+{
+  "title": "Three independent defects in one file",
+  "clean": false,
+  "expect": [
+    {
+      "category": "value-invalid",
+      "value": "Z",
+      "line": 6
+    },
+    {
+      "category": "not-allowed",
+      "element": "bogusThing",
+      "line": 20
+    },
+    {
+      "category": "duplicate-id",
+      "value": "stp-0001",
+      "line": 22
+    }
+  ]
+}

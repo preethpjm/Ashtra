@@ -1,0 +1,12 @@
+{
+  "title": "Missing required element",
+  "clean": false,
+  "expect": [
+    {
+      "category": "missing-element",
+      "element": "preliminaryRqmts",
+      "line": 15,
+      "note": "procedure requires preliminaryRqmts first"
+    }
+  ]
+}

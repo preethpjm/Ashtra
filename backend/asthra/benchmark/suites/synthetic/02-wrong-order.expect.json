@@ -1,0 +1,12 @@
+{
+  "title": "Elements in the wrong order",
+  "clean": false,
+  "expect": [
+    {
+      "category": "wrong-position",
+      "element": "mainProcedure",
+      "line": 20,
+      "note": "closeRqmts placed before mainProcedure"
+    }
+  ]
+}

@@ -4,7 +4,10 @@ export interface Diagnostic {
   source_file?: string; element_path?: string | null; line?: number | null; column?: number | null;
   suggestion?: string | null; reference?: string | null;
   attribute?: string | null; value?: string | null; raw_message?: string | null;
-  fix?: { label: string; kind: "attr" | "text"; attribute?: string | null; value: string } | null;
+  fix?: { label: string; kind: "attr" | "text" | "insert"; attribute?: string | null; value: string;
+    element?: string | null; position?: "before" | "end" | null } | null;
+  category?: string | null;
+  consequence_of?: string | null;
 }
 export interface StageResult { stage: number; status: string; note: string }
 export interface Report {
@@ -13,6 +16,7 @@ export interface Report {
   package_id?: string | null;
   entities?: Record<string, string>;
   rendered_xml?: string | null;
+  render_note?: string | null;
 }
 export interface OutlineNode { name: string; path: string; line: number; label: string; children: OutlineNode[] }
 export interface Outline { root: OutlineNode; truncated: boolean; count: number }
@@ -36,9 +40,9 @@ export interface Proposal {
   notes: string[]; path?: string;
   folders?: { path: string; issue: string | null; doc_types: string[]; files: number; patch: string }[];
   folder?: string | null; entity_folders?: { path: string; files: number; patch: string }[]; entity_folder?: string | null;
-  default_types?: string[]; types?: string[];
+  default_types?: string[]; types?: string[]; aliases?: string[]; missing_files?: string[];
   doc_types?: { id: string; label?: string; schema_file?: string; root?: string | null; root_candidates?: string[];
-    namespace?: string | null; selected?: boolean; problem?: string | null }[];
+    namespace?: string | null; selected?: boolean; problem?: string | null; public_id?: string | null }[];
 }
 export interface Inspect { staging_id: string; proposal: Proposal; installed: string[] }
 

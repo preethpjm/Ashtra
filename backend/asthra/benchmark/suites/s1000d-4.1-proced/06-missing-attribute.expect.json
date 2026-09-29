@@ -1,0 +1,11 @@
+{
+  "title": "dmCode without modelIdentCode",
+  "clean": false,
+  "expect": [
+    {
+      "category": "missing-attribute",
+      "element": "dmCode",
+      "line": 8
+    }
+  ]
+}

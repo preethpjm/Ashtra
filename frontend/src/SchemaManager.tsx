@@ -135,6 +135,17 @@ export function SchemaManager({ onClose, onChanged, say }: Props) {
                   <label className="field">Issue / revision<input value={prop.issue ?? ""} onChange={(e) => set({ issue: e.target.value })} placeholder="required" /></label>
                 </div>
                 <label className="field">Name (optional)<input value={prop.name ?? ""} onChange={(e) => set({ name: e.target.value })} placeholder="e.g. ATR CMM DTD 3.2" /></label>
+                {prop.kind === "sgml" && (<>
+                  {prop.doc_types!.filter((t) => t.public_id).map((t) => (
+                    <p key={t.id} className="muted small">Documents declaring <code>{t.public_id}</code> will be matched to <code>{t.id}</code>.</p>
+                  ))}
+                  <label className="field">Also accept documents that declare (optional, one public identifier per line)
+                    <textarea rows={2} value={(prop.aliases ?? []).join("\n")} placeholder={"e.g. -//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN"}
+                      onChange={(e) => set({ aliases: e.target.value.split("\n") })} />
+                    <span className="muted small">Use this for documents written for another version of this DTD. Every result for them carries a warning that they were checked against this version.</span>
+                  </label>
+                  {!!prop.missing_files?.length && <p className="banner warn">Missing: {prop.missing_files.join(", ")}. An empty placeholder is installed until you add the real file(s); entities they define are reported where used.</p>}
+                </>)}
                 <div className="field">Document types
                   <table className="dt-table"><tbody>{prop.doc_types!.map((t, i) => (
                     <tr key={t.id + i} className={t.problem && t.selected ? "bad" : ""}>

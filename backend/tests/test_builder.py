@@ -184,7 +184,8 @@ def test_iso_entities_missing_gives_a_clear_hint(ctx, tmp_path):
     d = ctx.documents.import_bytes(p["id"], "iso.xml", _iso_doc().encode())
     rep = ctx.documents.validate(d["id"])
     sec = [x for x in rep.diagnostics if x.rule_id == "ASTHRA-SEC-003"]
-    assert sec and "--entities" in sec[0].suggestion and rep.structural_status.value == "failed"
+    assert sec and "Choose folder" in sec[0].suggestion and rep.structural_status.value == "failed"
+    assert sec[0].category == "entity-set-missing"
 
 
 
@@ -290,3 +291,53 @@ def test_s1000d_location_rule():
     assert not f("4.1", "proced.xsd", "http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd")
     assert not f("4.1", "proced.xsd", "http://www.s1000d.org/S1000D_4-1/xml_schema_flat/descript.xsd")
     assert not f("4.1", "proced.xsd", "proced.xsd")
+
+
+def test_s1000d_file_with_iso_boilerplate_but_no_entities_still_validates(ctx, tmp_path):
+    """Regression (real S1000D 4.2 file): DOCTYPE declares %ISOEntities; -> "ent/ISOEntities", the
+    package has no entity files, and the document uses no entities: validate, with a warning."""
+    folder = fake_official(tmp_path)
+    build_s1000d_package(folder, "4.1", tmp_path / "n.zip", only=["proced"])
+    ctx.registry.install(tmp_path / "n.zip")
+    p = ctx.projects.create("iso")
+    src = _iso_doc().replace("&deg;", "degrees ").replace("&plusmn;", "+/-").replace(
+        '"http://www.s1000d.org/S1000D_4-1/ent/ISOEntities"', '"ent/ISOEntities"')
+    d = ctx.documents.import_bytes(p["id"], "iso.xml", src.encode())
+    rep = ctx.documents.validate(d["id"])
+    assert rep.structural_status.value == "passed", [x.message for x in rep.diagnostics]
+    w = [x for x in rep.diagnostics if x.rule_id == "ASTHRA-ENT-001"]
+    assert w and w[0].severity.value == "warning" and "Choose folder" in w[0].suggestion
+
+
+
+def test_missing_entity_set_is_an_error_on_windows_too(ctx, tmp_path, monkeypatch):
+    """Regression (Windows): the quick parse there replaces &deg; with a placeholder, so the tree
+    showed no entities and a document that uses ISO entities was waved through with a warning."""
+    import asthra.identify.service as ident
+    real = ident._strict_parse
+    def strict_like_windows(data):
+        if b"&deg;" in data:
+            class E:
+                message = "Entity 'deg' not defined"; line = 12; column = 1
+            return None, [E()]
+        return real(data)
+    monkeypatch.setattr(ident, "_strict_parse", strict_like_windows)
+    folder = fake_official(tmp_path)
+    build_s1000d_package(folder, "4.1", tmp_path / "n.zip", only=["proced"])
+    ctx.registry.install(tmp_path / "n.zip")
+    p = ctx.projects.create("iso")
+    d = ctx.documents.import_bytes(p["id"], "iso.xml", _iso_doc().encode())
+    rep = ctx.documents.validate(d["id"])
+    assert any(x.rule_id == "ASTHRA-SEC-003" for x in rep.diagnostics)
+    assert rep.structural_status.value == "failed"
+    assert not any(x.rule_id == "ASTHRA-ENT-001" for x in rep.diagnostics)
+
+
+def test_uses_entities_reads_the_text():
+    from asthra.identify.service import sniff
+    from asthra.validation.pipeline import _uses_entities
+    doc = lambda body: ('<?xml version="1.0"?>\n<!DOCTYPE d [<!ENTITY % I SYSTEM "ent/ISOEntities"> %I; '
+                        '<!ENTITY x "&#176;">]>\n<d>' + body + '</d>').encode()
+    assert _uses_entities(doc("20&deg;C"), sniff(doc("20&deg;C")))
+    assert not _uses_entities(doc("a &amp; b &lt; c &#176; &#xB0;"), sniff(doc("x")))
+    assert not _uses_entities(doc("<!-- &deg; --><![CDATA[&deg;]]>"), sniff(doc("x")))

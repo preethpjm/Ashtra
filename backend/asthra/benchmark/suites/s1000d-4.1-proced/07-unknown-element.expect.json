@@ -1,0 +1,11 @@
+{
+  "title": "Element that does not exist in S1000D",
+  "clean": false,
+  "expect": [
+    {
+      "category": "not-allowed",
+      "element": "randomMaintenanceElement",
+      "line": 148
+    }
+  ]
+}

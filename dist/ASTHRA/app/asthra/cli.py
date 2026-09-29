@@ -46,12 +46,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--types", help="comma-separated document types (default: proced,descript,ipd for S1000D)")
     p.add_argument("--entities", help="entity folder to bundle, or 'none' (default: the one found)")
     p.add_argument("--root", action="append", default=[], help="DOCTYPE=element for DTD sets")
+    p.add_argument("--accept-public-id", action="append", default=[],
+                   help="SGML/DTD sets: also validate documents declaring this public identifier (e.g. an older version)")
     p.add_argument("--replace", action="store_true"); p.add_argument("--yes", action="store_true", help="do not ask")
     p = sub.add_parser("schemas", help="list, remove or export installed schema packages")
     p.add_argument("action", choices=["list", "remove", "export", "export-all", "import-set"])
     p.add_argument("target", nargs="?"); p.add_argument("file", nargs="?"); p.add_argument("--force", action="store_true")
+    p = sub.add_parser("export-opensp", help="pack the working OpenSP (programs + exactly the DLLs they need) into a zip for another PC")
+    p.add_argument("out", nargs="?", default="opensp-bundle.zip")
     p = sub.add_parser("install-opensp", help="install OpenSP (for SGML) from a downloaded zip or folder into ASTHRA")
     p.add_argument("path")
+    p = sub.add_parser("benchmark", help="score validation against planted-defect suites and known-good files")
+    p.add_argument("suites", nargs="*", help="suite names or folders (default: all built-in suites)")
+    p.add_argument("--corpus", help="folder of known-good files (e.g. the S1000D Bike data set): every error counts as a false positive")
+    p.add_argument("--json", help="also write the full results to this JSON file")
     sub.add_parser("doctor", help="check this installation: Python, XML libraries, OpenSP, data folder, schemas")
     p = sub.add_parser("why", help="explain which installed schema matches an XML file, and why")
     p.add_argument("file")
@@ -150,8 +158,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{'Replaced' if exists else 'Installed'} {pkg.manifest.key}: "
               f"{', '.join(d.id for d in pkg.manifest.doc_types)}")
         return 0
+    if a.cmd == "export-opensp":
+        return _export_opensp(a)
     if a.cmd == "install-opensp":
         return _install_opensp(a)
+    if a.cmd == "benchmark":
+        return _benchmark(a)
     if a.cmd == "doctor":
         return _doctor(a)
     if a.cmd == "add-schemas":
@@ -207,6 +219,46 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def _export_opensp(a) -> int:
+    """For PCs that cannot download OpenSP (no internet, blocked mirrors): copy it from a PC
+    where it works. The zip installs with `install-opensp <zip>` on the other PC."""
+    import zipfile
+    from .validation.sgml import find_tools, probe
+    from .winpe import dll_closure
+    tools = find_tools()
+    if not tools:
+        print("OpenSP is not available on this PC, so there is nothing to export. Check with: doctor")
+        return 2
+    ok, detail = probe(tools)
+    if not ok:
+        print(f"OpenSP was found but does not work here ({detail}); not exporting a broken copy.")
+        return 2
+    files = dll_closure([Path(tools[0]), Path(tools[1])])
+    out = Path(a.out)
+    share = Path(tools[0]).parent.parent / "share" / "licenses"
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        for f in files:
+            z.write(f, f"OpenSP/usr/bin/{f.name}")          # MSYS2 layout: the runtime expects usr/bin
+        for pkg in ("opensp", "msys2-runtime", "gcc-libs", "libiconv", "libintl"):
+            if (share / pkg).is_dir():
+                for lic in (share / pkg).iterdir():
+                    if lic.is_file():
+                        z.write(lic, f"OpenSP/LICENSES/{pkg}-{lic.name}")
+        z.writestr("OpenSP/README.txt",
+                   "OpenSP (onsgmls, osx) for ASTHRA, with the DLLs these programs import.\r\n"
+                   f"Exported from a working installation ({detail}).\r\n\r\n"
+                   "Install on the other PC (no internet needed):\r\n"
+                   "    python -m asthra.cli install-opensp <this zip>\r\n"
+                   "    python -m asthra.cli doctor\r\n\r\n"
+                   "OpenSP is under a permissive MIT-style licence; the msys-*.dll files are the MSYS2 runtime\r\n"
+                   "and GCC support libraries under their own open-source licences (see LICENSES).\r\n")
+    print(f"Exported OpenSP ({detail}) to {out.resolve()}")
+    for f in files:
+        print(f"   {f.name}")
+    print("On the other PC:  python -m asthra.cli install-opensp " + out.name)
+    return 0
+
+
 def _install_opensp(a) -> int:
     """Make OpenSP available to ASTHRA without PATH changes.
     - a small folder or zip (e.g. an OpenSP download) is copied into <data folder>/tools/opensp
@@ -225,6 +277,10 @@ def _install_opensp(a) -> int:
         if zipped:
             safe_extract_zip(src, Path(tmp) / "x")
             src = Path(tmp) / "x"
+            if os.name != "nt":            # zips do not keep the executable flag
+                for f in src.rglob("*"):
+                    if f.is_file() and f.name in ("onsgmls", "osx", "nsgmls", "spam", "spent", "sx"):
+                        f.chmod(f.stat().st_mode | 0o111)
         if not src.is_dir():
             print(f"Not found: {a.path}")
             return 2
@@ -270,6 +326,28 @@ def _remove_opensp(dest: Path, reg_file: Path) -> None:
     if dest.exists():
         _sh.rmtree(dest, ignore_errors=True)
     reg_file.unlink(missing_ok=True)
+
+
+def _benchmark(a) -> int:
+    from .benchmark.runner import SUITES, print_report, run_corpus, run_suite, summary, to_json
+    ctx = _ctx(a)
+    results = []
+    if a.suites or not a.corpus:
+        folders = [Path(x) if Path(x).is_dir() else SUITES / x for x in a.suites] if a.suites else \
+            sorted(p for p in SUITES.iterdir() if (p / "suite.json").is_file())
+        for f in folders:
+            if not (f / "suite.json").is_file():
+                print(f"Not a benchmark suite: {f}")
+                return 2
+            results += run_suite(f, ctx.registry)
+    if a.corpus:
+        results += run_corpus(ctx.registry, Path(a.corpus))
+    print_report(results)
+    if a.json:
+        Path(a.json).write_text(json.dumps(to_json(results), indent=2), encoding="utf-8")
+        print(f"\nFull results: {a.json}")
+    s = summary(results)
+    return 0 if s["missed"] == 0 and s["false_positives"] == 0 else 1
 
 
 def _doctor(a) -> int:
@@ -367,6 +445,9 @@ def _add_schemas(a) -> int:
                 print(f"  [{'x' if t.get('selected') else ' '}] {t['id']:<24} root <{t.get('root') or '?'}>"
                       + (f"   {t['problem']}" if t.get("problem") else ""))
             print(f"Standard: {choice['standard']}")
+            if a.accept_public_id:
+                choice["aliases"] = a.accept_public_id
+                print("Also accepting: " + "; ".join(a.accept_public_id))
         if a.issue:
             choice["issue"] = a.issue
         if a.name:

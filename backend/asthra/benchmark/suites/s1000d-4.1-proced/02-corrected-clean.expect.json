@@ -1,0 +1,5 @@
+{
+  "title": "Corrected version: no structural errors expected (its -2 / 0 quantities and 250 vs 25 N.m torque are business-rule or engineering defects, outside XSD)",
+  "clean": true,
+  "expect": []
+}

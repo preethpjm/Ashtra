@@ -17,7 +17,8 @@ let RENDER: RenderProfile = { profile: "generic", roles: {}, labels: {}, default
 const roleOf = (name: string, kind: "block" | "text" | "atom") => RENDER.roles[name] ?? (kind === "text" ? RENDER.default_text : "");
 const labelOf = (name: string) => RENDER.labels[name] ?? humanize(name);
 
-const nodeAttrs = { nid: { default: 0 }, name: { default: "" }, summary: { default: "" }, depth: { default: 0 } };
+const nodeAttrs = { nid: { default: 0 }, name: { default: "" }, summary: { default: "" }, depth: { default: 0 },
+  align: { default: "" }, valign: { default: "" } };
 
 function elementView(textblock: boolean) {
   return ({ node }: { node: PMNode }) => {
@@ -38,6 +39,8 @@ function elementView(textblock: boolean) {
       dom.dataset.depth = String(n.attrs.depth);
       dom.dataset.human = humanize(n.attrs.name);
       if (n.attrs.summary) dom.dataset.summary = n.attrs.summary; else delete dom.dataset.summary;
+      if (n.attrs.align) dom.dataset.align = n.attrs.align; else delete dom.dataset.align;
+      if (n.attrs.valign) dom.dataset.valign = n.attrs.valign; else delete dom.dataset.valign;
       label.replaceChildren(
         Object.assign(document.createElement("span"), { className: "l-raw", textContent: n.attrs.name }),
         Object.assign(document.createElement("span"), { className: "l-human", textContent: humanize(n.attrs.name) }),
@@ -144,15 +147,24 @@ export function inlineItems(n: PMNode): InlineItem[] {
 
 const decoKey = new PluginKey<{ errors: Map<number, string>; selected: number | null }>("asthra-deco");
 
-function makeGuard(onBlocked: () => void, onEnter: (mod: boolean) => boolean) {
+export type KeyAction = "enter" | "menu" | "attrs" | "up" | "down" | "delete" | "tab" | "shift-tab" | "escape";
+
+function makeGuard(onBlocked: () => void, onKey: (a: KeyAction) => boolean) {
   return Extension.create({
     name: "asthraGuard",
-    // Enter adds a sibling where the schema allows it; Ctrl+Enter opens the insert menu.
+    // Keyboard-first structure editing; the app decides with the schema model.
     addKeyboardShortcuts() {
       return {
-        Enter: () => onEnter(false) || (onBlocked(), true),
-        "Shift-Enter": () => { onBlocked(); return true; },
-        "Mod-Enter": () => onEnter(true),
+        Enter: () => onKey("enter") || (onBlocked(), true),
+        "Shift-Enter": () => onKey("menu"),
+        "Mod-Enter": () => onKey("menu"),
+        "Alt-Enter": () => onKey("attrs"),
+        "Alt-ArrowUp": () => onKey("up"),
+        "Alt-ArrowDown": () => onKey("down"),
+        "Alt-Backspace": () => onKey("delete"),
+        Tab: () => onKey("tab"),
+        "Shift-Tab": () => onKey("shift-tab"),
+        Escape: () => onKey("escape"),
       };
     },
     addProseMirrorPlugins() {
@@ -201,12 +213,13 @@ export interface VisualProps {
   render: RenderProfile;
   errorNids: Map<number, string>;      // node -> problem text (shown on hover)
   selected: number | null;
-  focusRequest: { nid: number; n: number } | null;
+  focusRequest: { nid: number; n: number; offset?: number; focus?: boolean } | null;
   onEdits: (edits: Map<number, InlineItem[]>) => void;
   onSelect: (nid: number | null) => void;
   onBlocked: () => void;
-  onEnter?: (mod: boolean) => boolean;
+  onKey?: (a: KeyAction) => boolean;
   selectionRef?: { current: TextSel | null };
+  apiRef?: { current: { focus: () => void } | null };
 }
 
 /** Where the cursor is inside a text element (for inline insertion and Enter). */
@@ -227,7 +240,7 @@ export function VisualEditor(p: VisualProps) {
 
   const editor = useEditor({
     extensions: [XDoc, Text, XBlock, XText, XAtom, XInline, XEl, History.configure({ depth: 200 }),
-      makeGuard(() => props.current.onBlocked(), (mod) => props.current.onEnter?.(mod) ?? false)],
+      makeGuard(() => props.current.onBlocked(), (a) => props.current.onKey?.(a) ?? false)],
     content: toProseMirror(p.adm),
     editable: p.editable,
     onCreate: ({ editor }) => { last.current = snapshot(editor.state.doc); },
@@ -300,16 +313,26 @@ export function VisualEditor(p: VisualProps) {
     });
     if (found < 0) return;
     const n = node as PMNode | null;
-    const sel = n && (n.isAtom || n.type.name === "xblock")
-      ? (n.isAtom ? NodeSelection.create(editor.state.doc, found) : TextSelection.near(editor.state.doc.resolve(found + 1)))
-      : TextSelection.near(editor.state.doc.resolve(n ? found + 1 : found));
+    const off = p.focusRequest.offset;
+    const sel = n && n.type.name === "xtext" && off !== undefined
+      ? TextSelection.create(editor.state.doc, found + 1 + Math.min(off, n.content.size))     // caret at a text offset
+      : n && (n.isAtom || n.type.name === "xblock")
+        ? (n.isAtom ? NodeSelection.create(editor.state.doc, found) : TextSelection.near(editor.state.doc.resolve(found + 1)))
+        : TextSelection.near(editor.state.doc.resolve(n ? found + 1 : found));
     suppressSelect.current = true;
     editor.view.dispatch(editor.state.tr.setSelection(sel).scrollIntoView());
     suppressSelect.current = false;
+    if (p.focusRequest.focus) editor.view.focus();
     const dom = editor.view.nodeDOM(found) as HTMLElement | null;
     dom?.scrollIntoView?.({ block: "center", behavior: "smooth" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, p.focusRequest]);
 
+  // lets the app put the caret back where the user was typing (after a popover closes)
+  useEffect(() => {
+    if (!p.apiRef) return;
+    p.apiRef.current = { focus: () => { editor?.commands.focus(); } };
+    return () => { if (p.apiRef) p.apiRef.current = null; };
+  }, [editor, p.apiRef]);
   return <div className={`visual mode-${p.mode}${p.editable ? "" : " readonly"}`}><EditorContent editor={editor} /></div>;
 }
