@@ -64,8 +64,28 @@ async function call<T>(method: string, url: string, body?: unknown, form?: FormD
   return r.json();
 }
 
+export interface KSummary { counts: Record<string, number>; sources: { kind: string; n: number; last: string }[]; findings: number }
+export interface KPart { id: number; part_number: string; manufacturer_code: string; name: string | null; part_type: string;
+  tasks: number; data_modules: number; catalogue: number; superseded_by: string | null; source: string | null }
+export interface KFinding { rule: string; subject: string; message: string; values: Record<string, unknown> }
+export interface KImport { imported: { file: string; dmc: string; title: string; resources: number; parts: number; safety: number; references: number; catalogue: number }[];
+  skipped: { file: string; reason: string }[] }
+
 export const api = {
   projects: () => call<Project[]>("GET", "/api/projects"),
+  kSummary: () => call<KSummary>("GET", "/api/knowledge/summary"),
+  kImportProject: (pid: string) => call<KImport>("POST", `/api/knowledge/import-project/${pid}`),
+  kBike: () => call<{ loaded: boolean; reason?: string }>("POST", "/api/knowledge/examples/bike"),
+  kReset: () => call<{ ok: boolean }>("DELETE", "/api/knowledge"),
+  kParts: (q = "", kind = "") => call<KPart[]>("GET", `/api/knowledge/parts?q=${encodeURIComponent(q)}&kind=${encodeURIComponent(kind)}`),
+  kPart: (id: number) => call<any>("GET", `/api/knowledge/parts/${id}`),
+  kBreakdown: () => call<any[]>("GET", "/api/knowledge/breakdown"),
+  kTasks: () => call<any[]>("GET", "/api/knowledge/tasks"),
+  kTask: (id: string, rev: string) => call<any>("GET", `/api/knowledge/tasks/${encodeURIComponent(id)}/${encodeURIComponent(rev)}`),
+  kDataModules: (q = "") => call<any[]>("GET", `/api/knowledge/data-modules?q=${encodeURIComponent(q)}`),
+  kDataModule: (dmc: string) => call<any>("GET", `/api/knowledge/data-modules/${encodeURIComponent(dmc)}`),
+  kFindings: () => call<KFinding[]>("GET", "/api/knowledge/findings"),
+  kSources: () => call<any[]>("GET", "/api/knowledge/sources"),
   createProject: (name: string) => call<Project>("POST", "/api/projects", { name }),
   documents: (pid: string) => call<Doc[]>("GET", `/api/projects/${pid}/documents`),
   importDocument: (pid: string, file: File) => { const f = new FormData(); f.append("file", file); return call<Doc>("POST", `/api/projects/${pid}/documents`, undefined, f); },

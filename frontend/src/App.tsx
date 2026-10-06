@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Adm, InlineItem, addAttribute, ancestorsOf, applyTextEdits, childElements, deleteElement, diagRange, documentIds,
-  calsTable, editText, headerInfo, insertChild, localName, moveElement, nextCell, parentOf, removeAttribute, tableAddColumn,
+  calsTable, displayText, editText, headerInfo, insertChild, localName, moveElement, nextCell, parentOf, removeAttribute, tableAddColumn,
   tableAddRow, tableContext, tableDeleteColumn, tableDeleteRow, tidy, xmlToSgml, leafDescendants, setEntityValues, elementAtOffset, kindOf, lineAt, parseAdm, readablePath, renderTarget, resolvePath, setAttributeValue, setTextContent } from "./adm";
 import { api, Check, Diagnostic, Doc, Outline, OutlineNode, Pkg, Project, RenderProfile, Report, Revision, SchemaOption } from "./api";
 import { SourceEditor, SrcMarker } from "./SourceEditor";
 import { Tree } from "./Tree";
 import { SchemaManager } from "./SchemaManager";
 import { Sheet, usePrintPage } from "./Sheet";
-import { AttributeEditor, AttrPopover, AttrRow, InsertGroup, InsertMenu, ShortcutHelp, TablePopover, TableSpec } from "./StructureUI";
-import { fillTemplate, idAttributes, inlineAllowed, insertable, isCompletable, isValid, SchemaModel, template, uniqueId } from "./schemaModel";
+import { KnowledgeView } from "./KnowledgeView";
+import { AttributeEditor, AttrPopover, AttrRow, LibraryEntry, InsertGroup, InsertMenu, ShortcutHelp, TablePopover, TableSpec } from "./StructureUI";
+import { filledTemplate, fillTemplate, idAttributes, inlineAllowed, insertable, isCompletable, isValid, SchemaModel, template, uniqueId } from "./schemaModel";
 import type { KeyAction, TextSel } from "./VisualEditor";
 import { humanize } from "./VisualEditor";
 import { VisualEditor } from "./VisualEditor";
@@ -59,6 +60,7 @@ export function App() {
   const [newProject, setNewProject] = useState<string | null>(null);
   const [schemasOpen, setSchemasOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [view, setView] = useState<"documents" | "knowledge">("documents");
   const counter = useRef(0);
   const theme = prefersDark() ? "dark" : "light";
 
@@ -97,7 +99,8 @@ export function App() {
   // ---- schema model (drives insertion, attributes, delete/move checks)
   const [model, setModel] = useState<SchemaModel | null>(null);
   const [menuFor, setMenuFor] = useState<number | null>(null);
-  const [attrAsk, setAttrAsk] = useState<{ nid: number; title: string; rows: AttrRow[]; ok: string; commit: (vals: Record<string, string>) => void } | null>(null);
+  const [attrAsk, setAttrAsk] = useState<{ nid: number; title: string; rows: AttrRow[]; ok: string; commit: (vals: Record<string, string>) => void;
+    crumbs?: { nid: number; label: string }[]; optionalOpen?: boolean; library?: LibraryEntry[] } | null>(null);
   const [tableAsk, setTableAsk] = useState<{ nid: number; canHead: boolean; canTitle: boolean; commit: (s: TableSpec) => void } | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const editorApi = useRef<{ focus: () => void } | null>(null);
@@ -382,14 +385,61 @@ export function App() {
   const needRows = (t: ReturnType<typeof template>): AttrRow[] =>
     t.needs.map((n) => ({ id: n.id, element: n.element, attr: n.attr, value: n.attr.values[0] ?? "", present: false }));
 
-  /** Insert a template: ask for required values inline first if there are any. */
-  const withValues = (nid: number, title: string, t: ReturnType<typeof template>, commit: (xml: string) => void) => {
-    if (t.needs.length) setAttrAsk({ nid, title, rows: needRows(t), ok: "Insert", commit: (vals) => commit(fillTemplate(t.xml, vals)) });
-    else commit(t.xml);
+  /** Insert a template. Required values are asked for inline first; for insertions chosen from the
+   *  suggestions (ask=true) the same panel also offers the element's optional attributes. */
+  const withValues = (nid: number, title: string, t: ReturnType<typeof template>, commit: (xml: string) => void,
+                      name?: string, ask = false) => {
+    const openTag = t.xml.slice(0, t.xml.indexOf(">") + 1);
+    const optional = name && ask && model
+      ? (model.elements[name]?.attrs ?? []).filter((a) => !a.required && !a.fixed && !new RegExp(`\\s${a.name.replace(/[.:]/g, "\\$&")}=`).test(openTag))
+      : [];
+    const textRows: AttrRow[] = (t.texts ?? []).map((x) => ({ id: x.id, element: x.element, value: "", present: false, kind: "text" as const,
+      attr: { name: x.element, required: false, kind: "text", values: [], default: null, fixed: null } }));
+    if (!t.needs.length && !optional.length && !textRows.length) { commit(fillTemplate(t.xml, {})); return; }
+    const rows: AttrRow[] = [...textRows, ...needRows(t), ...optional.map((a) => ({ id: `opt:${a.name}`, element: name!, attr: a, value: "", present: false }))];
+    const finish = (library?: LibraryEntry[]) => setAttrAsk({ nid, title, rows, ok: "Insert", library, commit: (vals) => {
+      let xml = fillTemplate(t.xml, vals);
+      const esc = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+      const extra = optional.filter((a) => vals[`opt:${a.name}`]).map((a) => ` ${a.name}="${esc(vals[`opt:${a.name}`])}"`).join("");
+      if (extra) xml = xml.replace(/^(<[^\s>/]+)/, `$1${extra}`);
+      const lib = library?.find((e) => String(e.id) === vals.__lib);
+      if (lib && model && name) xml = withPartIdentification(xml, name, lib);
+      commit(xml);
+    } });
+    // support equipment, supplies, spares: offer the library's parts
+    const libKind = name && ask ? LIBRARY_KINDS[name] : undefined;
+    if (libKind) {
+      api.kParts("", libKind)
+        .then((ps) => finish(ps.map((p) => ({ id: p.id, name: p.name || p.part_number, pn: p.part_number, cage: p.manufacturer_code,
+          label: `${p.name || p.part_number} — ${p.manufacturer_code ? p.manufacturer_code + " · " : ""}${p.part_number}` }))))
+        .catch(() => finish());
+    } else finish();
   };
 
-  /** Alt+Enter: every attribute of the element, inline. */
-  const editAttributes = (k: number) => {
+  /** Adds the chosen library part's identification after <name>, in the form the schema allows. */
+  const withPartIdentification = (xml: string, element: string, lib: LibraryEntry): string => {
+    if (!model) return xml;
+    const namesIn = (x: any): string[] => !x ? [] : x.k === "el" ? [x.n] : (x.items ?? []).flatMap(namesIn);
+    const kids = namesIn(model.elements[element]?.content);
+    const e = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    let ident = "";
+    if (kids.includes("identNumber") && model.elements.partAndSerialNumber && lib.pn)
+      ident = `<identNumber>${lib.cage && model.elements.manufacturerCode ? `<manufacturerCode>${e(lib.cage)}</manufacturerCode>` : ""}` +
+              `<partAndSerialNumber><partNumber>${e(lib.pn)}</partNumber></partAndSerialNumber></identNumber>`;
+    else if (kids.includes("toolRef") && lib.pn) ident = `<toolRef>${e(lib.pn)}</toolRef>`;
+    if (!ident || xml.includes("<identNumber>") || xml.includes("<toolRef>")) return xml;
+    return xml.includes("</name>") ? xml.replace("</name>", `</name>${ident}`) : xml;
+  };
+
+  /** The elements from the root down to k, for the breadcrumb (last few levels). */
+  const chainOf = (A: Adm, k: number): number[] => {
+    const out: number[] = [];
+    for (let el: Element | null = A.elements[k]; el; el = el.parentElement) out.unshift(A.indexOf.get(el)!);
+    return out.slice(-5);
+  };
+
+  /** Alt+Enter: every attribute of the element, inline; the breadcrumb switches element. */
+  const editAttributes = (k: number, chain?: number[]) => {
     const A = editAdm;
     if (!A?.ok || !model) return;
     const el = A.elements[k];
@@ -399,20 +449,44 @@ export function App() {
       if (!defs.some((d) => d.name === a.name) && !a.name.startsWith("xmlns") && !a.name.startsWith("xsi:"))
         rows.push({ id: a.name, element: localName(el), attr: { name: a.name, required: false, kind: "text", values: [], default: null, fixed: null }, value: a.value, present: true });
     }
-    setAttrAsk({ nid: k, title: `${humanize(localName(el))} — attributes`, rows, ok: "Apply", commit: (vals) => {
-      let text = A.text;
-      for (const r of rows) {
-        const v = vals[r.id] ?? "";
-        const cur = parseAdm(text);
-        if (!cur.ok) break;
-        if (r.present && v === "" && !r.attr.required) text = removeAttribute(cur, k, r.attr.name);
-        else if (!r.present && v !== "") text = addAttribute(cur, k, r.attr.name, v);
-        else if (r.present && v !== r.value) text = setAttributeValue(cur, k, r.attr.name, v);
-      }
-      if (text !== A.text) applyStructure(text, A.spans[k].start);
-      else backToTyping();
-    } });
+    // an inline element with parts (e.g. quantity value + unit, acronym term + definition): its content first
+    const isInlineCompound = !!el.parentElement && kindOf(el.parentElement) === "text" && el.children.length > 0;
+    const leaves = isInlineCompound
+      ? leafDescendants(A, k, 12).filter((i) => i !== k && A.elements[i].children.length === 0 && kindOf(A.elements[i]) === "text")
+      : [];
+    const contentRows: AttrRow[] = leaves.map((i) => ({ id: `text:${i}`, element: localName(A.elements[i]), kind: "text" as const,
+      value: displayText(A.elements[i].textContent ?? "", A.doc), present: true,
+      attr: { name: localName(A.elements[i]), required: false, kind: "text", values: [], default: null, fixed: null } }));
+    rows.unshift(...contentRows);
+    const ch = chain ?? chainOf(A, k);
+    setAttrAsk({ nid: k, title: `${humanize(localName(el))} — ${contentRows.length ? "content and attributes" : "attributes"}`, rows, ok: "Apply",
+      optionalOpen: !contentRows.length,
+      crumbs: ch.map((i) => ({ nid: i, label: localName(A.elements[i]) })),
+      commit: (vals) => {
+        let text = A.text;
+        for (const r of rows) {
+          const v = vals[r.id] ?? "";
+          const cur = parseAdm(text);
+          if (!cur.ok) break;
+          if (r.kind === "text") {
+            const leaf = parseInt(r.id.slice(5), 10);
+            if (v !== r.value) text = setTextContent(cur, leaf, v);
+            continue;
+          }
+          if (r.present && v === "" && !r.attr.required) text = removeAttribute(cur, k, r.attr.name);
+          else if (!r.present && v !== "") text = addAttribute(cur, k, r.attr.name, v);
+          else if (r.present && v !== r.value) text = setAttributeValue(cur, k, r.attr.name, v);
+        }
+        if (text !== A.text) {
+          const s0 = selRef.current;
+          if (s0 && s0.nid !== k && A.elements[s0.nid]) pendingCaret.current = { nid: s0.nid, offset: s0.offset };   // back where you were typing
+          applyStructure(text, s0 && s0.nid !== k ? undefined : A.spans[k].start);
+        } else backToTyping();
+      } });
   };
+
+  const LIBRARY_KINDS: Record<string, string> = { supportEquipDescr: "support-equipment", supportEquip: "support-equipment",
+    supplyDescr: "consumable", supply: "consumable", spareDescr: "spare", spare: "spare" };
 
   const TABLE_CMDS: Record<string, string> = { "row-below": "Add row below", "row-above": "Add row above",
     "col-right": "Add column to the right", "del-row": "Delete this row", "del-col": "Delete this column" };
@@ -443,7 +517,7 @@ export function App() {
     return groups;
   };
 
-  const doInsert = (k: number, where: string, name: string) => {
+  const doInsert = (k: number, where: string, name: string, ask = true) => {
     const A = editAdm;
     if (!A || !model) return;
     setMenuFor(null);
@@ -451,7 +525,7 @@ export function App() {
     if (where === "table-cmd") {
       const ctx = tableContext(A, k);
       if (!ctx) return;
-      const entry = template(model, "entry", used).xml;
+      const entry = filledTemplate(model, "entry", used);
       try {
         if (name === "row-below" || name === "row-above") { const r = tableAddRow(A, ctx, entry, name === "row-above"); applyStructure(r[0], r[1]); }
         else if (name === "col-right") applyStructure(tableAddColumn(A, ctx, entry));
@@ -461,7 +535,9 @@ export function App() {
       } catch (e) { fail(e); backToTyping(); }
       return;
     }
-    const t = template(model, name, used);
+    const t0 = template(model, name, used, 0, { texts: ask });
+    // a paragraph-like element is typed into directly; ask for text slots inside compound/inline elements
+    const t = { ...t0, texts: (t0.texts ?? []).filter((x) => where === "inline" || x.depth > 0) };
     const tableDef = model.elements[name];
     const namesIn = (x: any): string[] => !x ? [] : x.k === "el" ? [x.n] : (x.items ?? []).flatMap(namesIn);
     if (name.toLowerCase() === "table" && namesIn(tableDef?.content).includes("tgroup") && where !== "inline") {
@@ -469,10 +545,10 @@ export function App() {
       const tg = namesIn(model.elements.tgroup?.content);
       setTableAsk({ nid: k, canHead: tg.includes("thead"), canTitle: namesIn(tableDef.content).includes("title"), commit: (spec) => {
         const open = (t.xml.match(/^<[^>]+>/) ?? [`<${name}>`])[0].replace(/\/>$/, ">");
-        const xml = calsTable(open, `</${name}>`, { ...spec, colspec: tg.includes("colspec") }, template(model, "entry", used).xml);
+        const xml = calsTable(open, `</${name}>`, { ...spec, colspec: tg.includes("colspec") }, filledTemplate(model, "entry", used));
         // only the table element's own required values: tgroup/cols etc. are set from the chosen size
         const own = t.needs.filter((n) => n.element === name && t.xml.slice(0, t.xml.indexOf(">") + 1).includes(`@@${n.id}@@`));
-        withValues(k, `Insert ${name}`, { xml, needs: own }, (x) => placeAt(k, where, name, x));
+        withValues(k, `Insert ${name}`, { xml, needs: own }, (x) => placeAt(k, where, name, x), name, false);
       } });
       return;
     }
@@ -497,7 +573,10 @@ export function App() {
             pos += len;
           }
           if (!placed) items.push({ kind: "atom", raw: xml });
-          pendingCaret.current = { nid: k, offset: sel.offset + 1 };      // just after the new element: keep typing
+          // caret just after the new element: a chip counts 1, text-only content counts its length
+          const inner = xml.replace(/^<[^>]*>/, "").replace(/<\/[^>]*>$/, "");
+          const width = /^[^<]*$/.test(inner) && !/\/>$/.test(xml) ? Math.max(1, displayText(inner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&"), A.doc).length) : 1;
+          pendingCaret.current = { nid: k, offset: sel.offset + width };
           applyStructure(applyTextEdits(A, new Map([[k, items]])));
           return;
         }
@@ -513,7 +592,7 @@ export function App() {
         say(`Inserted ${name}.`, "ok");
       } catch (e) { fail(e); }
     };
-    withValues(k, `Insert ${name}`, t, commit);
+    withValues(k, `Insert ${name}`, t, commit, name, ask);
   };
 
   /** Place element XML after/before/inside k (used by table creation). */
@@ -561,6 +640,55 @@ export function App() {
     if (t) applyStructure(t, dir < 0 ? A.spans[sibs[j]].start : undefined);
   };
 
+  /** The nearest element around the caret that can repeat in its parent (a step, a list item …). */
+  const repeatableAncestor = (A: Adm, k: number): number | undefined => {
+    let el = parentOf(A, k), depth = 0;
+    while (el !== undefined && depth++ < 5 && model) {
+      const p = parentOf(A, el);
+      if (p === undefined) return undefined;
+      const sibs = childElements(A, p), names = sibs.map((i) => localName(A.elements[i]));
+      if (insertable(model, localName(A.elements[p]), names, sibs.indexOf(el) + 1, ancestorsOf(A, p)).includes(localName(A.elements[el]))) return el;
+      el = p;
+    }
+    return undefined;
+  };
+
+  /** Tab: make r a child of its previous sibling of the same kind (a sub-step), where allowed. */
+  const indentElement = (A: Adm, r: number): boolean => {
+    const p = parentOf(A, r);
+    if (p === undefined || !model) return false;
+    const sibs = childElements(A, p), i = sibs.indexOf(r), name = localName(A.elements[r]);
+    const prev = sibs.slice(0, i).reverse().find((x) => localName(A.elements[x]) === name);
+    if (prev === undefined) { say(`There is no previous ${name} to put this one under.`, "info"); return true; }
+    const kids = childElements(A, prev).map((x) => localName(A.elements[x]));
+    if (!insertable(model, name, kids, kids.length, ancestorsOf(A, prev)).includes(name)) {
+      say(`The schema does not allow a ${name} inside a ${name} here.`, "info"); return true;
+    }
+    const xml = A.text.slice(A.spans[r].start, A.spans[r].end);
+    const A2 = parseAdm(deleteElement(A, r));
+    if (!A2.ok) return true;
+    const [t, off] = insertChild(A2, prev, childElements(A2, prev).length, xml);
+    applyStructure(t, off);
+    return true;
+  };
+
+  /** Shift+Tab: move r out of its parent, just after it, where allowed. */
+  const outdentElement = (A: Adm, r: number): boolean => {
+    const p = parentOf(A, r), g = p !== undefined ? parentOf(A, p) : undefined;
+    if (p === undefined || g === undefined || !model) return false;
+    const name = localName(A.elements[r]);
+    const gs = childElements(A, g), names = gs.map((x) => localName(A.elements[x]));
+    if (!insertable(model, localName(A.elements[g]), names, gs.indexOf(p) + 1, ancestorsOf(A, g)).includes(name)) {
+      say(`This ${name} is already at the outermost level the schema allows.`, "info"); return true;
+    }
+    const xml = A.text.slice(A.spans[r].start, A.spans[r].end);
+    const A2 = parseAdm(deleteElement(A, r));
+    if (!A2.ok) return true;
+    const [t, off] = insertChild(A2, g, childElements(A2, g).indexOf(p) + 1, xml);
+    applyStructure(t, off);
+    return true;
+  };
+
   const onKey = (a: KeyAction): boolean => {
     const A = editAdm;
     const sel = selRef.current;
@@ -571,14 +699,46 @@ export function App() {
     if (k === null || k === undefined || k < 0) return false;
     switch (a) {
       case "menu": setMenuFor(k); return true;
-      case "attrs": editAttributes(k); return true;
+      case "attrs": editAttributes(!escalated.current && sel?.inlineNid !== undefined ? sel.inlineNid : k); return true;
+      case "backspace": {
+        if (!sel || sel.offset !== 0 || !sel.items.every((it) => it.kind === "text" && it.text === "")) return false;
+        const kk = sel.nid, p = parentOf(A, kk);
+        if (p === undefined) return false;
+        const sibs = childElements(A, p), names = sibs.map((i) => localName(A.elements[i])), idx = sibs.indexOf(kk);
+        const anc = ancestorsOf(A, p), pn = localName(A.elements[p]);
+        let target = kk;
+        if (isValid(model, pn, names, anc) && !isValid(model, pn, names.filter((_, i) => i !== idx), anc)) {
+          // the paragraph is required: if its step/item is otherwise empty, remove the whole step/item
+          const q = parentOf(A, p);
+          const removable = q !== undefined && (() => {
+            const qs = childElements(A, q), qn = qs.map((i) => localName(A.elements[i])), qa = ancestorsOf(A, q), qi = qs.indexOf(p);
+            return !(isValid(model, localName(A.elements[q]), qn, qa) && !isValid(model, localName(A.elements[q]), qn.filter((_, i) => i !== qi), qa));
+          })();
+          if ((A.elements[p].textContent ?? "").trim() === "" && removable) target = p;
+          else {
+            say(`<${pn}> requires this <${names[idx]}>, so it stays. Type into it, or delete <${pn}> (Esc, then Alt+Backspace).`, "info");
+            return true;
+          }
+        }
+        let prev = -1;                                   // caret to the end of the previous text
+        for (let i = target - 1; i >= 0; i--) {
+          if (kindOf(A.elements[i]) === "text" && !A.elements[i].contains(A.elements[target])) { prev = i; break; }
+        }
+        if (prev >= 0) pendingCaret.current = { nid: prev, offset: 1e9 };
+        applyStructure(deleteElement(A, target));
+        return true;
+      }
       case "up": moveSelected(-1); return true;
       case "down": moveSelected(1); return true;
       case "delete": deleteSelected(); return true;
       case "escape": { const p = parentOf(A, k); if (p !== undefined) { setSelected(p); escalated.current = true; } return true; }
       case "tab": case "shift-tab": {
         const ctx = tableContext(A, sel?.nid ?? k);
-        if (!ctx) return false;
+        if (!ctx) {                                          // outside tables: indent / outdent the step or item
+          const r = repeatableAncestor(A, sel?.nid ?? k);
+          if (r === undefined) return false;
+          return a === "tab" ? indentElement(A, r) : outdentElement(A, r);
+        }
         const nxt = nextCell(A, ctx, a === "tab" ? 1 : -1);
         if (nxt !== null) { setSelected(nxt); setFocusReq({ nid: nxt, n: ++counter.current }); return true; }
         if (a === "tab") {                                    // Tab in the last cell: a new row
@@ -594,7 +754,16 @@ export function App() {
         if (p !== undefined) {
           const sibs = childElements(A, p);
           const ok = insertable(model, localName(A.elements[p]), sibs.map((i) => localName(A.elements[i])), sibs.indexOf(k) + 1, ancestorsOf(A, p));
-          if (ok.includes(name)) { doInsert(k, "after", name); return true; }
+          if (ok.includes(name)) { doInsert(k, "after", name, false); return true; }   // Enter: no popup, keep typing
+        }
+        const r = repeatableAncestor(A, k);
+        if (r !== undefined) {
+          const empty = (A.elements[r].textContent ?? "").trim() === "";
+          const pr = parentOf(A, r);
+          // Enter on an empty nested step/item moves it up a level (like a word processor list)
+          if (empty && pr !== undefined && localName(A.elements[pr]) === localName(A.elements[r])) return outdentElement(A, r);
+          doInsert(r, "after", localName(A.elements[r]), false);    // the next step / item, caret in it
+          return true;
         }
         setMenuFor(k);
         return true;
@@ -675,10 +844,14 @@ export function App() {
   );
 
   return (
-    <div className={`app${bottomOpen ? "" : " bottom-closed"}${meta ? "" : " no-doc"}`}>
+    <div className={`app${bottomOpen ? "" : " bottom-closed"}${meta ? "" : " no-doc"}${view === "knowledge" ? " view-knowledge" : ""}`}>
       {/* ---------------- left sidebar ---------------- */}
       <aside className="side">
         <div className="brand"><span className="brand-mark" aria-hidden>◭</span> ASTHRA</div>
+        <div className="view-switch" role="tablist" aria-label="View">
+          <button role="tab" aria-selected={view === "documents"} className={view === "documents" ? "on" : ""} onClick={() => setView("documents")}>Documents</button>
+          <button role="tab" aria-selected={view === "knowledge"} className={view === "knowledge" ? "on" : ""} onClick={() => setView("knowledge")}>Knowledge</button>
+        </div>
 
         <section className="side-sec">
           <div className="sec-head"><span>Project</span>
@@ -699,7 +872,7 @@ export function App() {
             {pid && <label className="link">Import<input type="file" multiple accept=".xml,.sgm,.sgml,.xsd" hidden onChange={(e) => { importFiles(e.target.files); e.target.value = ""; }} /></label>}</div>
           <ul className="doclist">
             {docs.map((d) => (
-              <li key={d.id} className={d.id === docId ? "active" : ""} onClick={() => openDoc(d.id)} title={d.identity.display || d.original_name}>
+              <li key={d.id} className={d.id === docId ? "active" : ""} onClick={() => { setView("documents"); openDoc(d.id); }} title={d.identity.display || d.original_name}>
                 <span className={`dot st-${d.last_validation?.structural_status ?? "none"}`} />
                 <span className="doc-name">{d.original_name}</span>
                 <span className="doc-meta">{d.standard ?? (d.syntax === "sgml" ? "SGML" : "unidentified")}{d.doc_type ? ` · ${d.doc_type}` : ""}{d.has_working_copy ? " · edited" : ""}</span>
@@ -966,13 +1139,16 @@ export function App() {
       {commitOpen && meta && <CommitDialog status={report?.statuses.structural} errors={nErr} onCancel={() => setCommitOpen(false)} onCommit={commit} />}
       {menuFor !== null && editAdm && <InsertMenu anchorNid={menuFor} groups={insertGroups(menuFor)} onClose={() => { setMenuFor(null); backToTyping(); }}
         onPick={(g, n) => doInsert(menuFor, g, n)} />}
-      {attrAsk && <AttrPopover anchorNid={attrAsk.nid} title={attrAsk.title} rows={attrAsk.rows} ids={docIds} okLabel={attrAsk.ok}
+      {attrAsk && <AttrPopover key={attrAsk.nid + attrAsk.title} anchorNid={attrAsk.nid} title={attrAsk.title} rows={attrAsk.rows} ids={docIds} okLabel={attrAsk.ok}
+        crumbs={attrAsk.crumbs} optionalOpen={attrAsk.optionalOpen} library={attrAsk.library}
+        onCrumb={(n) => editAttributes(n, attrAsk.crumbs?.map((c) => c.nid))}
         onCancel={() => { setAttrAsk(null); backToTyping(); }}
         onOk={(vals) => { const a = attrAsk; setAttrAsk(null); a.commit(vals); }} />}
       {tableAsk && <TablePopover anchorNid={tableAsk.nid} canHead={tableAsk.canHead} canTitle={tableAsk.canTitle}
         onCancel={() => { setTableAsk(null); backToTyping(); }}
         onOk={(spec) => { const t = tableAsk; setTableAsk(null); t.commit(spec); }} />}
       {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
+      {view === "knowledge" && <KnowledgeView projects={projects} pid={pid} say={say} />}
       {managerOpen && <SchemaManager onClose={() => setManagerOpen(false)} say={say}
         onChanged={() => { refreshPkgs(); refreshDocs(); if (docId) api.state(docId).then((st) => { setMeta(st.document); setRender(st.render); }).catch(() => {}); }} />}
       {toast && <div className={`toast ${toast.kind}`} role="status">{toast.text}</div>}

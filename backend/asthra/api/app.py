@@ -389,6 +389,69 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def restore(did: str, rid: str):
         return guarded(docs.restore_revision, did, rid)
 
+    # ---------------------------------------------------------------- knowledge library
+    @app.get("/api/knowledge/summary")
+    def knowledge_summary():
+        return ctx.knowledge.summary()
+
+    @app.post("/api/knowledge/import-project/{pid}")
+    def knowledge_import_project(pid: str, include_invalid: bool = False):
+        return ctx.knowledge.import_project(pid, include_invalid)
+
+    @app.post("/api/knowledge/examples/bike")
+    def knowledge_bike():
+        return ctx.knowledge.load_bike_example()
+
+    @app.delete("/api/knowledge")
+    def knowledge_reset():
+        ctx.knowledge.reset()
+        return {"ok": True}
+
+    @app.get("/api/knowledge/parts")
+    def knowledge_parts(q: str = "", kind: str = ""):
+        return ctx.knowledge.parts(q, kind)
+
+    @app.get("/api/knowledge/parts/{part_id}")
+    def knowledge_part(part_id: int):
+        try:
+            return ctx.knowledge.part_detail(part_id)
+        except KeyError:
+            raise HTTPException(404, "no such part in the library")
+
+    @app.get("/api/knowledge/breakdown")
+    def knowledge_breakdown():
+        return ctx.knowledge.breakdown()
+
+    @app.get("/api/knowledge/tasks")
+    def knowledge_tasks():
+        return ctx.knowledge.tasks()
+
+    @app.get("/api/knowledge/tasks/{task_id}/{revision}")
+    def knowledge_task(task_id: str, revision: str):
+        try:
+            return ctx.knowledge.task_detail(task_id, revision)
+        except KeyError:
+            raise HTTPException(404, "no such task")
+
+    @app.get("/api/knowledge/data-modules")
+    def knowledge_dms(q: str = ""):
+        return ctx.knowledge.data_modules(q)
+
+    @app.get("/api/knowledge/data-modules/{dmc}")
+    def knowledge_dm(dmc: str):
+        try:
+            return ctx.knowledge.data_module_detail(dmc)
+        except KeyError:
+            raise HTTPException(404, "no such data module in the library")
+
+    @app.get("/api/knowledge/findings")
+    def knowledge_findings():
+        return ctx.knowledge.findings()
+
+    @app.get("/api/knowledge/sources")
+    def knowledge_sources():
+        return ctx.knowledge.sources()
+
     @app.get("/api/documents/{did}/export")
     def export(did: str, what: str = "current", rid: str | None = None):
         d = guarded(docs.get, did, code=404)

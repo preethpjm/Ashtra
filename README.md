@@ -10,6 +10,9 @@ removing elements) is Milestone 3. See `docs/05-PHASE1-PLAN.md` for exact status
 > **Portable Windows edition (unzip and double-click, no admin):** `python tools\make_portable.py` —
 > see "Portable edition" in [docs/SETUP-GUIDE.md](docs/SETUP-GUIDE.md).
 >
+> **Design of the master knowledge model** (S1000D / S2000M / S3000L sharing one store of product facts,
+> aligned with SX000i / SX002D): [docs/06-KNOWLEDGE-MODEL.md](docs/06-KNOWLEDGE-MODEL.md).
+>
 > **Setting ASTHRA up, installing schemas (S1000D XSD, DTD and SGML sets, ATA iSpec 2200 /
 > Spec 2300, OEM, S2000M/S3000L) and configuring it: see [docs/SETUP-GUIDE.md](docs/SETUP-GUIDE.md).**
 

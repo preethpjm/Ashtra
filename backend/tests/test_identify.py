@@ -86,3 +86,43 @@ def test_synthetic_schema_never_claims_a_real_issue(project, loaded):
     # it fits the synthetic schema structurally, so it is offered as compatible, but never selected
     assert d["identification"]["status"] == "needs-choice" and d["package_id"] is None
     assert [c["doc_type"] for c in d["identification"]["compatible"]] == ["proced"]
+
+
+
+ISO_HEADER = ('<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE dmodule[\n<!ENTITY % ISOEntities PUBLIC '
+              '"ISO 8879-1986//ENTITIES ISO Character Entities 20030531//EN//XML" "ent/ISOEntities">\n%ISOEntities;\n]>\n')
+
+
+def test_iso_boilerplate_does_not_stop_the_structural_parse_on_any_build(monkeypatch):
+    """Regression (Windows): with the S1000D %ISOEntities; header the document could not be read,
+    without it it could. Some libxml2 builds try to load ent/ISOEntities in the quick parse and fail."""
+    import asthra.identify.service as ident
+    real = ident._strict_parse
+    def like_windows(data):
+        if b"%ISOEntities;" in data:
+            class E:
+                message = 'failed to load external entity "ent/ISOEntities"'; line = 4; column = 1
+            return None, [E()]
+        return real(data)
+    monkeypatch.setattr(ident, "_strict_parse", like_windows)
+    src = (DOCS / "s1000d_proced_valid.xml").read_text()
+    doc = (ISO_HEADER + src[src.index("<dmodule"):]).encode()
+    tree, errs = ident.parse_xml(doc)
+    assert tree is not None and tree.getroot().tag == "dmodule" and errs == []
+    assert tree.getroot().sourceline == doc[:doc.index(b"<dmodule")].count(b"\n") + 1     # lines kept
+
+
+def test_structural_parse_never_reads_external_files(tmp_path):
+    """Even a parser that would load the DTD gets empty content from the structural resolver."""
+    from lxml import etree
+    from asthra.security.xml_safe import NoExternalResolver
+    secret = tmp_path / "secret.ent"
+    secret.write_text('<!ENTITY leak "TOP-SECRET">')
+    doc = (f'<!DOCTYPE d [<!ENTITY % s SYSTEM "{secret.as_uri()}"> %s;]><d>&leak;</d>').encode()
+    p = etree.XMLParser(load_dtd=True, resolve_entities=True, no_network=True)
+    p.resolvers.add(NoExternalResolver())
+    try:
+        root = etree.fromstring(doc, p)
+        assert "TOP-SECRET" not in etree.tostring(root).decode()
+    except etree.XMLSyntaxError as e:
+        assert "TOP-SECRET" not in str(e)                          # refused: the entity stays undefined

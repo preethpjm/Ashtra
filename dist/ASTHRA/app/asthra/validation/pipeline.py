@@ -209,12 +209,13 @@ def _validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id
         seen.add(key)
         msg, sugg, attr, val, fix = explain(e.message)
         rule, category = f"XSD-{e.type_name}", None
-        node = None
-        try:
-            hit = tree.xpath(e.path) if getattr(e, "path", None) else []
-            node = hit[0] if hit and isinstance(hit[0], etree._Element) else None
-        except etree.XPathError:
-            node = None
+        node = getattr(e, "node", None)             # the xmlschema engine hands over the element itself
+        if node is None:
+            try:
+                hit = tree.xpath(e.path) if getattr(e, "path", None) else []
+                node = hit[0] if hit and isinstance(hit[0], etree._Element) else None
+            except etree.XPathError:
+                node = None
         if node is not None:
             if attr and val is not None and "'xs:ID'" in e.message:
                 first = duplicate_of(node, attr, val)

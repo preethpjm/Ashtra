@@ -147,7 +147,7 @@ export function inlineItems(n: PMNode): InlineItem[] {
 
 const decoKey = new PluginKey<{ errors: Map<number, string>; selected: number | null }>("asthra-deco");
 
-export type KeyAction = "enter" | "menu" | "attrs" | "up" | "down" | "delete" | "tab" | "shift-tab" | "escape";
+export type KeyAction = "enter" | "menu" | "attrs" | "up" | "down" | "delete" | "tab" | "shift-tab" | "escape" | "backspace";
 
 function makeGuard(onBlocked: () => void, onKey: (a: KeyAction) => boolean) {
   return Extension.create({
@@ -165,6 +165,7 @@ function makeGuard(onBlocked: () => void, onKey: (a: KeyAction) => boolean) {
         Tab: () => onKey("tab"),
         "Shift-Tab": () => onKey("shift-tab"),
         Escape: () => onKey("escape"),
+        Backspace: () => onKey("backspace"),
       };
     },
     addProseMirrorPlugins() {
@@ -223,7 +224,10 @@ export interface VisualProps {
 }
 
 /** Where the cursor is inside a text element (for inline insertion and Enter). */
-export interface TextSel { nid: number; offset: number; atEnd: boolean; items: InlineItem[] }
+export interface TextSel {
+  nid: number; offset: number; atEnd: boolean; items: InlineItem[];
+  inlineNid?: number;       // inline element at the caret: selected, just before the caret, or around it
+}
 
 export function VisualEditor(p: VisualProps) {
   RENDER = p.render;
@@ -265,9 +269,21 @@ export function VisualEditor(p: VisualProps) {
       if (props.current.selectionRef) {
         const $p = sel.$from;
         const tb = $p.parent;
-        props.current.selectionRef.current = tb.type.name === "xtext"
-          ? { nid: tb.attrs.nid, offset: $p.parentOffset, atEnd: $p.parentOffset === tb.content.size, items: inlineItems(tb) }
-          : null;
+        let inlineNid: number | undefined;
+        if (sel instanceof NodeSelection && sel.node.type.name === "xinline" && !sel.node.attrs.misc && sel.node.attrs.nid >= 0)
+          inlineNid = sel.node.attrs.nid;
+        else if ($p.nodeBefore?.type.name === "xinline" && !$p.nodeBefore.attrs.misc && $p.nodeBefore.attrs.nid >= 0)
+          inlineNid = $p.nodeBefore.attrs.nid;
+        else {
+          const mk = ($p.nodeBefore?.marks ?? $p.marks()).find((m) => m.type.name === "xel");
+          if (mk && mk.attrs.nid >= 0) inlineNid = mk.attrs.nid;
+        }
+        if (sel instanceof NodeSelection && sel.node.type.name === "xatom" && sel.node.attrs.nid >= 0)
+          props.current.selectionRef.current = { nid: sel.node.attrs.nid, offset: 0, atEnd: false, items: [] };
+        else
+          props.current.selectionRef.current = tb.type.name === "xtext"
+            ? { nid: tb.attrs.nid, offset: $p.parentOffset, atEnd: $p.parentOffset === tb.content.size, items: inlineItems(tb), inlineNid }
+            : null;
       }
       if (suppressSelect.current) { suppressSelect.current = false; return; }
       if (sel instanceof NodeSelection) { props.current.onSelect(sel.node.attrs.nid >= 0 ? sel.node.attrs.nid : null); return; }

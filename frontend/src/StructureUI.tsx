@@ -82,58 +82,126 @@ export function InsertMenu({ anchorNid, groups, onPick, onClose }: {
   );
 }
 
-export interface AttrRow { id: string; element: string; attr: AttrDef; value: string; present: boolean }
+export interface AttrRow { id: string; element: string; attr: AttrDef; value: string; present: boolean; kind?: "text" }
 
-/** Attributes inline, next to the element: required ones first, allowed values and ID
- *  references as lists. Tab moves between fields, Enter applies, Esc cancels. */
-export function AttrPopover({ anchorNid, title, rows, ids, okLabel, onCancel, onOk }: {
-  anchorNid: number; title: string; rows: AttrRow[]; ids: [string, string][]; okLabel: string;
+/** Attributes inline, next to the element: required ones first, optional ones below, allowed
+ *  values and ID references as lists. Tab moves between fields, Enter applies, Esc cancels,
+ *  Alt+Up / Alt+Down switch to the parent / child element in the breadcrumb. */
+export interface LibraryEntry { id: number; label: string; name: string; pn: string; cage: string }
+
+export function AttrPopover({ anchorNid, title, rows, ids, okLabel, crumbs, onCrumb, onCancel, onOk, optionalOpen, library }: {
+  anchorNid: number; title: string; rows: AttrRow[]; ids: [string, string][]; okLabel: string; optionalOpen?: boolean;
+  library?: LibraryEntry[];
+  crumbs?: { nid: number; label: string }[]; onCrumb?: (nid: number) => void;
   onCancel: () => void; onOk: (values: Record<string, string>) => void;
 }) {
   const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(rows.map((r) => [r.id, r.value])));
-  const pos = usePopoverPos(anchorNid, 380, 60 + rows.length * 44);
+  const content = rows.filter((r) => r.kind === "text");
+  const required = rows.filter((r) => r.kind !== "text" && r.attr.required);
+  const optional = rows.filter((r) => r.kind !== "text" && !r.attr.required);
+  const [showOpt, setShowOpt] = useState(!!optionalOpen || optional.some((r) => r.present));
+  const pos = usePopoverPos(anchorNid, 400, 90 + Math.min(rows.length, 9) * 38);
   const first = useRef<HTMLElement | null>(null);
   const okBtn = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
+  useEffect(() => {                              // only when the panel opens (it is re-mounted per element)
     if (first.current) { first.current.focus(); (first.current as HTMLInputElement).select?.(); }
     else okBtn.current?.focus();                 // no fields: Enter/Esc must still reach the panel
   }, []);
-  const missing = rows.filter((r) => r.attr.required && !vals[r.id]);
+  const missing = required.filter((r) => !vals[r.id]);
   const set = (id: string, v: string) => setVals((x) => ({ ...x, [id]: v }));
-  const ordered = [...rows].sort((a, b) => Number(b.attr.required) - Number(a.attr.required));
+  const at = crumbs ? crumbs.findIndex((c) => c.nid === anchorNid) : -1;
+  let firstAssigned = false;
+  const pickLibrary = (id: string) => {
+    const e = library?.find((x) => String(x.id) === id);
+    setVals((v) => {
+      const next: Record<string, string> = { ...v, __lib: id };
+      const nameRow = content.find((r) => r.element === "name");
+      if (e && nameRow) next[nameRow.id] = e.name;
+      return next;
+    });
+  };
+  const field = (r: AttrRow) => {
+    const ref = !firstAssigned ? ((el: HTMLElement | null) => { first.current = el; }) : undefined;
+    firstAssigned = true;
+    if (r.kind === "text") return (
+      <label key={r.id} className="ap-row ap-text">
+        <span className="ap-name ap-content-name" title={r.element}>{humanize(r.element)}</span>
+        <input ref={ref as any} value={vals[r.id] ?? ""} onChange={(e) => set(r.id, e.target.value)} placeholder="type the text" />
+      </label>
+    );
+    return (
+      <label key={r.id} className="ap-row">
+        <span className="ap-name" title={r.attr.kind}>{r.attr.name}{r.attr.required && <span className="req">*</span>}</span>
+        {r.attr.kind === "enum" ? (
+          <select ref={ref as any} value={vals[r.id] ?? ""} onChange={(e) => set(r.id, e.target.value)}>
+            {!r.attr.required && <option value="">—</option>}
+            {r.attr.values.map((v) => <option key={v}>{v}</option>)}
+          </select>
+        ) : r.attr.kind === "idref" || r.attr.kind === "idrefs" ? (
+          <select ref={ref as any} value={vals[r.id] ?? ""} onChange={(e) => set(r.id, e.target.value)}>
+            <option value="">{r.attr.required ? "choose the target…" : "—"}</option>
+            {!ids.some(([i]) => i === vals[r.id]) && vals[r.id] && <option value={vals[r.id]}>{vals[r.id]} (no such ID)</option>}
+            {ids.map(([id, lab]) => <option key={id} value={id}>{lab}</option>)}
+          </select>
+        ) : (
+          <input ref={ref as any} value={vals[r.id] ?? ""} disabled={!!r.attr.fixed}
+            onChange={(e) => set(r.id, e.target.value)} placeholder={r.attr.required ? "required" : "empty = not set"} />
+        )}
+      </label>
+    );
+  };
   return (
     <>
       <div className="menu-veil" onClick={onCancel} />
-      <form className="attr-popover" style={{ top: pos.top, left: pos.left }} role="dialog" aria-label={title}
+      <form className="attr-popover" style={{ top: pos.top, left: pos.left, width: 400 }} role="dialog" aria-label={title}
         onSubmit={(e) => { e.preventDefault(); if (!missing.length) onOk(vals); }}
         onKeyDown={(e) => {
           if (e.key === "Escape") { e.preventDefault(); onCancel(); }
+          else if (e.altKey && e.key === "ArrowUp" && crumbs && at > 0) { e.preventDefault(); onCrumb?.(crumbs[at - 1].nid); }
+          else if (e.altKey && e.key === "ArrowDown" && crumbs && at >= 0 && at < crumbs.length - 1) { e.preventDefault(); onCrumb?.(crumbs[at + 1].nid); }
           // Enter applies from any field, including lists (browsers do not submit a form from a <select>)
-          else if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!missing.length) onOk(vals); }
+          else if (e.key === "Enter" && !e.shiftKey && !(e.target as HTMLElement).classList.contains("ap-opt-toggle")) {
+            e.preventDefault(); if (!missing.length) onOk(vals);
+          }
         }}>
+        {crumbs && crumbs.length > 1 && (
+          <div className="ap-crumbs" aria-label="Element">
+            {crumbs.map((c, i) => (
+              <span key={c.nid}>{i > 0 && <span className="sep">›</span>}
+                <button type="button" tabIndex={-1} className={c.nid === anchorNid ? "on" : ""} onClick={() => onCrumb?.(c.nid)}>{c.label}</button>
+              </span>
+            ))}
+          </div>
+        )}
         <div className="ap-head">{title}</div>
-        {ordered.map((r, n) => (
-          <label key={r.id} className="ap-row">
-            <span className="ap-name">{r.attr.name}{r.attr.required && <span className="req">*</span>}</span>
-            {r.attr.kind === "enum" ? (
-              <select ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} onChange={(e) => set(r.id, e.target.value)}>
-                {!r.attr.required && <option value="">—</option>}
-                {r.attr.values.map((v) => <option key={v}>{v}</option>)}
+        {library && library.length > 0 && (() => {
+          const ref = !firstAssigned ? ((el: HTMLElement | null) => { first.current = el; }) : undefined;
+          firstAssigned = true;
+          return (
+            <label className="ap-row ap-lib">
+              <span className="ap-name ap-content-name">From the library</span>
+              <select ref={ref as any} value={vals.__lib ?? ""} onChange={(e) => pickLibrary(e.target.value)}>
+                <option value="">— type it instead —</option>
+                {library.map((e) => <option key={e.id} value={e.id}>{e.label}</option>)}
               </select>
-            ) : r.attr.kind === "idref" || r.attr.kind === "idrefs" ? (
-              <select ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} onChange={(e) => set(r.id, e.target.value)}>
-                <option value="">{r.attr.required ? "choose the target…" : "—"}</option>
-                {ids.map(([id, lab]) => <option key={id} value={id}>{lab}</option>)}
-              </select>
-            ) : (
-              <input ref={n === 0 ? (el) => { first.current = el; } : undefined} value={vals[r.id]} disabled={!!r.attr.fixed}
-                onChange={(e) => set(r.id, e.target.value)} placeholder={r.attr.required ? "required" : "optional"} />
-            )}
-          </label>
-        ))}
+            </label>
+          );
+        })()}
+        {content.length > 0 && <div className="ap-section">Content</div>}
+        {content.map(field)}
+        {content.length > 0 && required.length > 0 && <div className="ap-section">Required attributes</div>}
+        {required.map(field)}
+        {optional.length > 0 && (
+          <>
+            <button type="button" className="ap-opt-toggle" aria-expanded={showOpt} onClick={() => setShowOpt((v) => !v)}>
+              {showOpt ? "▾" : "▸"} {content.length ? "Attributes" : "Optional attributes"} ({optional.length})
+            </button>
+            {showOpt && <div className="ap-opt">{optional.map(field)}</div>}
+          </>
+        )}
         {rows.length === 0 && <p className="muted small">This element has no attributes.</p>}
         <div className="ap-foot">
-          <span className="muted small">Tab next field · Enter {okLabel.toLowerCase()} · Esc cancel</span>
+          <span className="muted small">Tab next · Enter {okLabel.toLowerCase()} · Esc {okLabel === "Insert" ? "cancel" : "close"}{crumbs && crumbs.length > 1 ? " · Alt+↑↓ element" : ""}</span>
           <button ref={okBtn} type="submit" className="primary" disabled={missing.length > 0}>{okLabel}</button>
         </div>
       </form>
@@ -176,11 +244,12 @@ export function TablePopover({ anchorNid, canHead, canTitle, onCancel, onOk }: {
 
 export const SHORTCUTS: [string, string][] = [
   ["Shift+Enter", "Insert: what the schema allows here (also Ctrl+Enter)"],
-  ["Enter", "At the end of a paragraph: another one, where allowed"],
-  ["Alt+Enter", "Edit the attributes of this element"],
-  ["Tab / Shift+Tab", "Next / previous table cell (Tab in the last cell adds a row)"],
+  ["Enter", "At the end of a paragraph: another one where allowed, otherwise the next step / list item (caret in it); on an empty sub-step: move it up a level"],
+  ["Alt+Enter", "Attributes of the element at the cursor (a reference or value just before it, else the paragraph); Alt+↑↓ inside switches element"],
+  ["Tab / Shift+Tab", "In a table: next / previous cell (Tab in the last cell adds a row). Elsewhere: indent this step / item under the previous one, or move it up a level"],
   ["Alt+↑ / Alt+↓", "Move this element up / down"],
   ["Alt+Backspace", "Delete this element (asks if the schema requires it)"],
+  ["Backspace", "In an empty element: remove it (unless required) and continue at the end of the previous text; after a reference or value: remove it"],
   ["Esc", "Select the parent element (then Alt+↑↓ or Alt+Backspace act on it)"],
   ["Ctrl+Z / Ctrl+Y", "Undo / redo"],
   ["Ctrl+S", "Save draft"],

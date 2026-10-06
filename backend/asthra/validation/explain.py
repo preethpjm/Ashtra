@@ -24,6 +24,7 @@ _NOT_EXPECTED = re.compile(r"This element is not expected\.(?: Expected is(?: on
 _MISSING_CHILD = re.compile(r"Missing child element\(s\)\. Expected is(?: one of)? \( (?P<exp>.*?) \)")
 _REQ_ATTR = re.compile(r"The attribute '(?P<a>[^']+)' is required but missing")
 _NOT_ALLOWED_ATTR = re.compile(r"The attribute '(?P<a>[^']+)' is not allowed")
+_RULE = re.compile(r"The schema rule \[(?P<test>.*?)\] is not met\.(?: (?P<doc>.*))?$", re.S)
 _IDREF = re.compile(r"Reference '(?P<v>[^']+)' \(attribute (?P<a>[\w:.-]+)\)")
 
 _TYPE_HELP = {
@@ -50,6 +51,12 @@ def explain(raw: str) -> tuple[str, str | None, str | None, str | None, Fix | No
     attr = m.group("attr") if m else None
     body = raw[m.end():] if m else raw
     target = f"attribute {attr} on <{el}>" if attr else (f"<{el}>" if el else "this element")
+
+    if (r := _RULE.search(body)):
+        doc = (r.group("doc") or "").strip()
+        test = r.group("test")
+        msg = f"<{el}> breaks a rule written into the schema: " + (doc if doc else f"the condition {test} is false") + ("" if doc.endswith(".") or not doc else ".")
+        return (msg if msg.endswith(".") else msg + "."), f"Schema rule (XSD assertion): {test}", None, None, None
 
     if (e := _ENUM.search(body)):
         v = e.group("v")

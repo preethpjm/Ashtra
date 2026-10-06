@@ -26,8 +26,12 @@ class Settings:
     def projects_root(self) -> Path:
         return self.data_root / "projects"
 
+    @property
+    def knowledge_db(self) -> Path:
+        return self.data_root / "knowledge" / "library.sqlite3"
+
     def ensure(self) -> "Settings":
-        for p in (self.data_root, self.registry_root, self.projects_root):
+        for p in (self.data_root, self.registry_root, self.projects_root, self.knowledge_db.parent):
             p.mkdir(parents=True, exist_ok=True)
         return self
 

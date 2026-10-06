@@ -81,12 +81,29 @@ class ConfinedResolver(etree.Resolver):
         raise BlockedResolution(f"resolution refused (not in approved local catalog): {system_url}")
 
 
+class NoExternalResolver(etree.Resolver):
+    """For structural parses: nothing external is ever read. Some libxml2 builds (seen on
+    Windows) still try to load an external parameter entity such as %ISOEntities; ->
+    "ent/ISOEntities" even when DTD loading is off; they get empty content, never a file."""
+
+    def resolve(self, url, public_id, context):
+        return self.resolve_string("", context)
+
+
 def document_parser() -> etree.XMLParser:
     return etree.XMLParser(
         resolve_entities=False, no_network=True, load_dtd=False, dtd_validation=False,
         huge_tree=False, remove_blank_text=False, remove_comments=False,
         remove_pis=False, strip_cdata=False, recover=False,
     )
+
+
+def structural_parser() -> etree.XMLParser:
+    """document_parser for parsing documents from memory (never by file name: lxml would ask the
+    resolver for the file itself). Nothing external is read, on any libxml2 build."""
+    p = document_parser()
+    p.resolvers.add(NoExternalResolver())
+    return p
 
 
 def schema_parser(resolver: ConfinedResolver) -> etree.XMLParser:

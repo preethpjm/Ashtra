@@ -48,6 +48,27 @@ class InstalledPackage:
         }
 
 
+# Standard W3C schemas that industry schemas import by web address (e.g. S2000M 7.0 imports XML Signature).
+# ASTHRA never goes online: these addresses resolve to the official copies shipped with the xmlschema
+# library (already a dependency). Every other external address stays blocked.
+WELL_KNOWN_SCHEMAS = {
+    "http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd": "DSIG/xmldsig-core-schema.xsd",
+    "http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/xmldsig-core-schema.xsd": "DSIG/xmldsig-core-schema.xsd",
+    "http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd": "DSIG/xmldsig-core-schema.xsd",
+    "xmldsig-core-schema.xsd": "DSIG/xmldsig-core-schema.xsd",
+    "http://www.w3.org/TR/xmldsig-core1/xmldsig11-schema.xsd": "DSIG/xmldsig11-schema.xsd",
+    "xmldsig11-schema.xsd": "DSIG/xmldsig11-schema.xsd",
+    "http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/xenc-schema.xsd": "XENC/xenc-schema.xsd",
+    "xenc-schema.xsd": "XENC/xenc-schema.xsd",
+    "http://www.w3.org/2001/xml.xsd": "XML/xml.xsd",
+    "http://www.w3.org/2009/01/xml.xsd": "XML/xml.xsd",
+}
+
+
+def well_known_root() -> Path:
+    return Path(xmlschema.__file__).resolve().parent / "schemas"
+
+
 class SchemaRegistry:
     def __init__(self, db: Database, root: Path):
         self.db = db
@@ -330,17 +351,61 @@ class SchemaRegistry:
             roots.extend(self.dependency_roots(d.manifest))
         return roots
 
-    def _compile(self, root: Path, manifest: Manifest, dt: DocType) -> etree.XMLSchema:
-        roots = [root] + self.dependency_roots(manifest)
-        catalog = dict(manifest.catalog)
+    def _xmlschema(self, root: Path, manifest: Manifest, dt: DocType, version: str):
+        """The schema compiled by the xmlschema library (XSD 1.0 or 1.1), with the package's own
+        catalog and no remote access."""
+        roots = [root] + self.dependency_roots(manifest) + [well_known_root()]
+        catalog = {}
+        for url, rel in {**WELL_KNOWN_SCHEMAS, **manifest.catalog}.items():
+            for r in roots:
+                cand = confine(r, rel)
+                if cand.is_file():
+                    catalog[url] = cand.as_uri()
+                    break
+
+        def mapper(uri: str) -> str:
+            return catalog.get(uri, uri)
+
+        cls = xmlschema.XMLSchema11 if version == "1.1" else xmlschema.XMLSchema10
+        import warnings
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            schema = cls(str(confine(root, dt.schema_file)), allow="local", defuse="always", uri_mapper=mapper)
+        # xmlschema skips an import/include it cannot load and carries on; ASTHRA never validates against
+        # a partial schema
+        bad = [str(w.message) for w in caught if "import" in type(w.message).__name__.lower()
+               or "include" in type(w.message).__name__.lower() or "could not be" in str(w.message).lower()]
+        if bad:
+            raise RegistryError("a schema file it imports or includes could not be loaded: " + bad[0][:300])
+        return schema
+
+    def _compile(self, root: Path, manifest: Manifest, dt: DocType):
+        """libxml2 first (fast); if it cannot compile the schema — typically XSD 1.1 features such
+        as xs:assert in the S-Series 2021 block release — the xmlschema library (XSD 1.0 / 1.1)."""
+        from ..validation.xsd11 import XmlschemaValidator, looks_like_xsd11
+        roots = [root] + self.dependency_roots(manifest) + [well_known_root()]
+        catalog = {**WELL_KNOWN_SCHEMAS, **manifest.catalog}
         resolver = ConfinedResolver(roots, catalog)
         entry = confine(root, dt.schema_file)
         try:
             doc = etree.parse(str(entry), schema_parser(resolver))
             return etree.XMLSchema(doc)
         except (etree.XMLSchemaParseError, etree.XMLSyntaxError, BlockedResolution) as e:
-            detail = "; ".join(resolver.log[-3:])
-            raise RegistryError(f"schema {dt.schema_file} for {dt.id} failed to compile: {e} {detail}".strip()) from e
+            first_error = f"{e} {'; '.join(resolver.log[-3:])}".strip()
+            refused = isinstance(e, BlockedResolution) or any("refus" in l.lower() or "blocked" in l.lower() for l in resolver.log)
+            if refused or isinstance(e, etree.XMLSyntaxError):
+                # a reference outside the package, or a broken file: never worked around
+                raise RegistryError(f"schema {dt.schema_file} for {dt.id} failed to compile: {first_error}") from e
+        files = [p for p in root.rglob("*.xsd")]
+        versions = ["1.1"] if looks_like_xsd11(files) else ["1.0", "1.1"]
+        last = None
+        for v in versions:
+            try:
+                return XmlschemaValidator(self._xmlschema(root, manifest, dt, v), v)
+            except Exception as e2:                     # noqa: BLE001 - report both engines' reasons
+                last = e2
+        raise RegistryError(f"schema {dt.schema_file} for {dt.id} failed to compile: libxml2: {first_error}; "
+                            f"xmlschema: {last}")
 
     def _check_dtd(self, root: Path, manifest: Manifest, dt: DocType) -> None:
         from ..validation.dtd import validate_dtd
@@ -398,9 +463,9 @@ class SchemaRegistry:
         ck = (key, doc_type_id)
         if ck not in self._idref:
             _, pkg, dt = self.schema_for(key, doc_type_id)
-            roots = [pkg.path] + self.dependency_roots(pkg.manifest)
+            roots = [pkg.path] + self.dependency_roots(pkg.manifest) + [well_known_root()]
             catalog = {}
-            for url, rel in pkg.manifest.catalog.items():
+            for url, rel in {**WELL_KNOWN_SCHEMAS, **pkg.manifest.catalog}.items():
                 for r in roots:
                     cand = confine(r, rel)
                     if cand.is_file():
@@ -410,6 +475,10 @@ class SchemaRegistry:
             def mapper(uri: str) -> str:
                 return catalog.get(uri, uri)
 
-            self._idref[ck] = xmlschema.XMLSchema(str(confine(pkg.path, dt.schema_file)), allow="local",
-                                                  defuse="always", uri_mapper=mapper)
+            primary, _, _ = self.schema_for(key, doc_type_id)
+            if hasattr(primary, "schema"):             # already compiled by xmlschema (e.g. XSD 1.1): reuse it
+                self._idref[ck] = primary.schema
+            else:
+                self._idref[ck] = xmlschema.XMLSchema(str(confine(pkg.path, dt.schema_file)), allow="local",
+                                                      defuse="always", uri_mapper=mapper)
         return self._idref[ck]

@@ -61,3 +61,19 @@ describe("content-model engine", () => {
     expect(insertable(S, "proceduralStep", ["para"], 1, ["procedure", "mainProcedure", "proceduralStep"])).not.toContain("revst");
   });
 });
+
+
+describe("content prompts", () => {
+  it("marks the text slots of a new element and fills them", () => {
+    const A: SchemaModel = { root: "acronym", kind: "xsd", elements: {
+      acronym: { content: { k: "seq", min: 1, max: 1, items: [el("acronymTerm"), el("acronymDefinition")] }, mixed: false, empty: false, any: false, text: false, attrs: [], inclusions: [], exclusions: [] },
+      acronymTerm: { content: null, mixed: false, empty: false, any: false, text: true, attrs: [], inclusions: [], exclusions: [] },
+      acronymDefinition: { content: null, mixed: false, empty: false, any: false, text: true, attrs: [], inclusions: [], exclusions: [] },
+    } };
+    const t = template(A, "acronym", new Set(), 0, { texts: true });
+    expect(t.texts!.map((x) => x.element)).toEqual(["acronymTerm", "acronymDefinition"]);
+    const xml = fillTemplate(t.xml, { [t.texts![0].id]: "LPT", [t.texts![1].id]: "Low <pressure> turbine & co" });
+    expect(xml).toBe("<acronym><acronymTerm>LPT</acronymTerm><acronymDefinition>Low &lt;pressure&gt; turbine &amp; co</acronymDefinition></acronym>");
+    expect(template(A, "acronym", new Set()).xml).toBe("<acronym><acronymTerm></acronymTerm><acronymDefinition></acronymDefinition></acronym>");
+  });
+});

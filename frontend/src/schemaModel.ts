@@ -159,7 +159,11 @@ export function inlineAllowed(model: SchemaModel, parent: string, ancestors: str
 }
 
 // ---- minimal content for a new element ------------------------------------------
-export interface Template { xml: string; needs: { element: string; attr: AttrDef; id: string }[] }
+export interface Template {
+  xml: string;
+  needs: { element: string; attr: AttrDef; id: string }[];
+  texts?: { element: string; id: string; depth: number }[];   // text slots (with opts.texts): what to fill in
+}
 
 function minimalChildren(model: SchemaModel, p: Particle | null): string[] {
   if (!p || p.min === 0) return [];
@@ -185,9 +189,11 @@ const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").re
 /** XML for a new, minimally valid element: required children and attributes filled in.
  *  IDs are generated unique; enumerations take their default or first value; any other
  *  required attribute is returned in `needs` for the user to fill in. */
-export function template(model: SchemaModel, name: string, usedIds: Set<string>, depth = 0): Template {
+export function template(model: SchemaModel, name: string, usedIds: Set<string>, depth = 0,
+                         opts: { texts?: boolean } = {}): Template {
   const d = model.elements[name];
   const needs: Template["needs"] = [];
+  const texts: NonNullable<Template["texts"]> = [];
   const token = `a${Math.random().toString(36).slice(2, 8)}`;
   const attrs: string[] = [];
   for (const a of d?.attrs ?? []) {
@@ -196,18 +202,28 @@ export function template(model: SchemaModel, name: string, usedIds: Set<string>,
     if (!v && a.kind === "id") v = uniqueId(name, usedIds);
     if (!v && a.kind === "enum" && a.values.length) v = a.values[0];
     const id = `${token}-${a.name}`;
-    if (!v || a.kind === "idref" || a.kind === "idrefs") needs.push({ element: name, attr: a, id });
+    // ask for: values we cannot know, references, and required choices from a list (pre-selected, but the
+    // author chooses); generated IDs and fixed/default values are not asked
+    const choose = a.kind === "enum" && !a.fixed && !a.default;
+    if (!v || a.kind === "idref" || a.kind === "idrefs" || choose) needs.push({ element: name, attr: a, id });
+    if (choose) { attrs.push(` ${a.name}="@@${id}@@"`); continue; }
     attrs.push(` ${a.name}="${v ? escAttr(v) : `@@${id}@@`}"`);
   }
-  if (!d || d.empty) return { xml: `<${name}${attrs.join("")}/>`, needs };
+  if (!d || d.empty) return { xml: `<${name}${attrs.join("")}/>`, needs, texts };
   const kids = depth > 6 ? [] : minimalChildren(model, d.content);
   let inner = "";
   for (const k of kids) {
-    const t = template(model, k, usedIds, depth + 1);
+    const t = template(model, k, usedIds, depth + 1, opts);
     inner += t.xml;
     needs.push(...t.needs);
+    texts.push(...(t.texts ?? []));
   }
-  return { xml: `<${name}${attrs.join("")}>${inner}</${name}>`, needs };
+  if (opts.texts && !kids.length && (d.text || d.mixed)) {         // a place to type: ask for it
+    const id = `${token}-text`;
+    texts.push({ element: name, id, depth });
+    inner = `@@T:${id}@@`;
+  }
+  return { xml: `<${name}${attrs.join("")}>${inner}</${name}>`, needs, texts };
 }
 
 export function uniqueId(name: string, used: Set<string>): string {
@@ -221,7 +237,9 @@ export function uniqueId(name: string, used: Set<string>): string {
 
 /** Fill the placeholders a template left for required attributes. */
 export function fillTemplate(xml: string, values: Record<string, string>): string {
-  return xml.replace(/@@([\w-]+)@@/g, (_, id) => escAttr(values[id] ?? ""));
+  const escText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return xml.replace(/@@T:([\w-]+)@@/g, (_, id) => escText(values[id] ?? ""))
+            .replace(/@@([\w-]+)@@/g, (_, id) => escAttr(values[id] ?? ""));
 }
 
 /** Attribute names of kind "id" per element, to collect the IDs used in a document. */
@@ -232,4 +250,12 @@ export function idAttributes(model: SchemaModel): Map<string, string[]> {
     if (ids.length) m.set(n, ids);
   }
   return m;
+}
+
+
+/** A template with every question answered by its default (first allowed value, empty text),
+ *  for insertions made without a panel (new table cells and rows). */
+export function filledTemplate(model: SchemaModel, name: string, usedIds: Set<string>): string {
+  const t = template(model, name, usedIds);
+  return fillTemplate(t.xml, Object.fromEntries(t.needs.map((n) => [n.id, n.attr.values[0] ?? ""])));
 }

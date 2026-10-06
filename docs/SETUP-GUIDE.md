@@ -474,8 +474,13 @@ python -m asthra.cli add-schemas "C:\...\S3000L_2.0_schemas" --standard S3000L -
 Documents are recognised by root element and namespace. If two installed issues share the
 same namespace and root, ASTHRA reports *ambiguous* and you choose.
 
-Honest note: tested with synthetic S2000M/S3000L schemas; please report how it behaves with
-the official ones.
+The S-Series 2021 block release schemas (S2000M 7.0, S3000L 2.0) use **XSD 1.1** assertions. ASTHRA
+compiles those with the xmlschema library instead of libxml2 and reports assertion failures in words
+(the rule's documentation from the schema), e.g. *"breaks a rule written into the schema: Quantity
+must not be negative."* Compiling and validating with this engine is slower than with libxml2.
+
+Honest note: tested with synthetic XSD 1.1 schemas in the S-Series style; please report how it
+behaves with the official ones.
 
 ### 5.7 Ready-made ASTHRA packages and schema sets
 
@@ -536,15 +541,20 @@ as the printer to get a PDF.
 | Keys | What happens |
 |---|---|
 | **Shift+Enter** (or Ctrl+Enter) | suggestions: what the schema allows here — at the cursor, after, before, inside; in a table also the table commands. ↑↓ choose, Enter insert, typing filters, Esc back to typing |
-| **Enter** | at the end of a paragraph: another one where the schema allows it |
-| **Alt+Enter** | this element's attributes, inline next to it (Tab between fields, Enter apply, Esc cancel) |
-| **Tab / Shift+Tab** | next / previous table cell; Tab in the last cell adds a row |
+| **Enter** | at the end of a paragraph: another paragraph where allowed, otherwise the **next step / list item** with the cursor in it; on an empty sub-step: moves it up a level |
+| **Alt+Enter** | content (for inline elements made of parts) and attributes of the element at the cursor — a reference or value just before it, else the paragraph — inline next to it. Required ones first, optional ones below; clear a value to remove it. **Alt+↑ / Alt+↓** in the panel switch to the parent / child element (breadcrumb) |
+| **Backspace** | in an empty step / item: removes the whole step / item; in an empty element: removes it (unless the schema requires it) and continues at the end of the previous text; just after a reference or value: removes it |
+| **Tab / Shift+Tab** | in a table: next / previous cell (Tab in the last cell adds a row); elsewhere: **indent** the step / item under the previous one, or move it **up a level** (only where the schema allows) |
 | **Alt+↑ / Alt+↓** | move this element (refused if the schema does not allow the new order) |
 | **Alt+Backspace** | delete this element (asks first if the schema requires it) |
 | **Esc** | select the parent element; Alt+Enter, Alt+↑↓ and Alt+Backspace then act on it |
 
-Required values of a new element are asked for inline, next to it; after inserting, the cursor
-is inside the new element (or just after an inline one), so you keep typing.
+Inserting from the suggestions (Shift+Enter) opens a small panel next to the new element: its
+**content** first (e.g. an acronym's term and definition, a quantity's value, the text of an
+inline element), then required values (a reference target, a unit chosen from the allowed list),
+then optional attributes folded below. Enter inserts, Esc cancels. Enter at
+the end of a paragraph adds the next one without a panel. After inserting, the cursor is inside
+the new element (or just after an inline one), so you keep typing.
 
 **Tables**: choose *table* in the suggestions (Shift+Enter) → rows × columns, header row, title →
 Enter. The table is built with the schema's own elements (CALS `tgroup`/`colspec`/`thead`/`tbody`/
@@ -575,6 +585,29 @@ A passed structure is **not** engineering approval; business rules (BREX), refer
 engineering checks are shown separately as "not available yet".
 
 ---
+
+### Knowledge library (K1)
+
+Click **Knowledge** under the ASTHRA name (switch back with **Documents**, or by clicking a document).
+
+| Button / section | What it does |
+|---|---|
+| **Add "<project>" to library** | reads the project's **structurally valid** S1000D data modules: identity (DMC, issue, title), the breakdown element (BEI = the SNS part of the DMC), personnel (persons, skill, trade, time), support equipment, supplies and spares (with manufacturer code and part number when given), warnings and cautions, references to other data modules, and IPD catalogue lines. Invalid or non-S1000D files are listed as skipped with the reason. Adding again replaces what came from the same data module — nothing is duplicated. |
+| **Load Bike example** | the S-Series User Forum 2024 Bike example (front brake system): breakdown, parts, S3000L tasks and subtasks, IPC lines, data modules, accident and design change — to see how everything connects |
+| **Overview** | counts, sources, consistency findings |
+| **Breakdown** | breakdown elements by BEI with LSA candidate status, realising parts, data modules and tasks |
+| **Parts** | search by part number or name, filter by kind; click a part for its **impact**: breakdown elements, tasks, data modules that require it, data modules affected if it changes, IPC lines, assemblies, supersession, training |
+| **Tasks** | click a task for the **procedure derived from the task analysis**: maintenance level, persons, skill, trade, time, support equipment, supplies, spares, conditions, warnings, cautions, steps with their data module references |
+| **Data modules** | what each data module states and requires, what it refers to and what refers to it, the task it documents |
+| **Findings** | where sources disagree (e.g. maintenance level in the task analysis vs the data module) |
+| **Empty library…** | clears the library (your project documents are not touched) |
+
+The library is shared across projects and stored in the data folder (`knowledge\library.sqlite3`).
+
+**Insert from library**: in the editor, inserting support equipment, a supply or a spare
+(Shift+Enter, e.g. after Esc on an existing one) opens the panel with **From the library** at the top:
+choose a part and its name and identification (manufacturer code + part number, or tool number)
+are filled in. "— type it instead —" keeps it manual.
 
 ### Measuring validation quality (benchmark)
 
@@ -724,6 +757,8 @@ permissive (MIT-style) and requires keeping the copyright notice.
 
 | Message / symptom | Cause | Fix |
 |---|---|---|
+| `complexType: The content is not valid. Expected is (annotation?, …` (older ASTHRA) | the schema uses **XSD 1.1** (e.g. `xs:assert`), as the S-Series 2021 block release does (S2000M 7.0, S3000L 2.0); libxml2 supports XSD 1.0 only | m3.12 and later compile such schemas with the xmlschema library (XSD 1.1) automatically; install again. Compiling large S-Series schemas takes longer (up to a minute) |
+| `import … Failed to parse … http://www.w3.org/…/xmldsig-core-schema.xsd … BLOCKED` (older ASTHRA) | the schema imports a standard W3C schema by web address (S2000M 7.0 imports XML Signature) | m3.13 and later resolve the standard W3C schemas (XML Signature, XML Encryption, xml.xsd) to local official copies; other remote addresses stay blocked |
 | `these schemas declare Issue X, not Y` | the folder is a different S1000D issue | use `--issue X`, or the other issue's folder |
 | `skipped (missing dependency) scormcontentpackage …` | that type needs files not in the download | ignore, or add the missing schema folder |
 | `no .xsd files found` / `Not found` | wrong path (or a placeholder like `C:\path\to\…`) | use the real folder; quote paths with spaces |

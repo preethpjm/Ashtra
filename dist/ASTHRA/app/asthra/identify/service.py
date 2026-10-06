@@ -274,7 +274,8 @@ _PREDEF = {"amp", "lt", "gt", "quot", "apos"}
 
 
 def _strict_parse(data: bytes):
-    parser = document_parser()   # per-parse log; never the shared global log
+    from ..security.xml_safe import structural_parser
+    parser = structural_parser()   # per-parse log; never loads external files
     try:
         return etree.ElementTree(etree.fromstring(data, parser)), []
     except etree.XMLSyntaxError as e:
@@ -295,6 +296,29 @@ def _may_declare_externally(text: str) -> bool:
     return bool(re.search(r"\b(PUBLIC|SYSTEM)\b", m.group(1) or "")) or bool(re.search(r"%[A-Za-z_:][\w.:-]*;", m.group(3) or ""))
 
 
+def _without_pe_refs(text: str) -> str:
+    """The same text with %name; references removed from the DOCTYPE's internal subset (as if the
+    external entity set were not referenced). Line numbers are kept."""
+    m = re.search(r"<!DOCTYPE[^\[>]*\[", text, re.I)
+    if not m:
+        return text
+    depth, q, i = 1, "", m.end()
+    while i < len(text) and depth:
+        c = text[i]
+        if q:
+            if c == q:
+                q = ""
+        elif c in "\"'":
+            q = c
+        elif c == "[":
+            depth += 1
+        elif c == "]":
+            depth -= 1
+        i += 1
+    subset = re.sub(r"%[A-Za-z_:][\w.:-]*;", lambda r: " " * len(r.group(0)), text[m.end():i - 1])
+    return text[:m.end()] + subset + text[i - 1:]
+
+
 def parse_xml(data: bytes) -> tuple[etree._ElementTree | None, list[etree._LogEntry] | str]:
     """Well-formedness parse, without loading any DTD or entity file.
 
@@ -307,7 +331,11 @@ def parse_xml(data: bytes) -> tuple[etree._ElementTree | None, list[etree._LogEn
     tree, errors = _strict_parse(data)
     if tree is not None or isinstance(errors, str):
         return tree, errors
-    if not all(re.match(r"Entity '[^']+' not defined", (e.message or "").strip()) for e in errors):
+    # errors that only say an external entity set could not be read, or an entity it would have
+    # declared is unknown: harmless when the DOCTYPE imports declarations (see below)
+    external_only = re.compile(r"Entity '[^']+' not defined|PEReference: %[^;]+; not found|"
+                               r"failed to load external entity|Entity '[^']+' failed to parse")
+    if not all(external_only.search((e.message or "").strip()) for e in errors):
         return None, errors
     enc = sniff(data).encoding or "utf-8"
     try:
@@ -316,7 +344,8 @@ def parse_xml(data: bytes) -> tuple[etree._ElementTree | None, list[etree._LogEn
         return None, errors
     if not _may_declare_externally(text):
         return None, errors                  # a standalone document really is not well-formed
-    body = _ENTREF.sub(lambda m: m.group(0) if m.group(1) in _PREDEF else f"[{m.group(1)}]", text)
+    body = _without_pe_refs(text)
+    body = _ENTREF.sub(lambda m: m.group(0) if m.group(1) in _PREDEF else f"[{m.group(1)}]", body)
     body = re.sub(r"""^(\ufeff?<\?xml[^>]*?)\s+encoding\s*=\s*["'][^"']*["']""", r"\1", body, count=1).lstrip("\ufeff")
     tree2, errors2 = _strict_parse(body.encode("utf-8"))
     return (tree2, []) if tree2 is not None else (None, errors)

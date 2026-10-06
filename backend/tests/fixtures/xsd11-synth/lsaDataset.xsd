@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC test schema in the style of the S-Series 2021 block release: XSD 1.1 with assertions. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           vc:minVersion="1.1" targetNamespace="urn:asthra:synthetic:s3000l-2" xmlns="urn:asthra:synthetic:s3000l-2"
+           elementFormDefault="unqualified" attributeFormDefault="unqualified">
+  <xs:element name="lsaDataset">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="partDefinition" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="partNumber" type="xs:string"/>
+              <xs:element name="manufacturerCode">
+                <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="[0-9A-Z]{5}"/></xs:restriction></xs:simpleType>
+              </xs:element>
+              <xs:element name="quantity" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="uid" type="xs:ID" use="required"/>
+            <xs:attribute name="unitOfIssue">
+              <xs:simpleType><xs:restriction base="xs:string"><xs:enumeration value="EA"/><xs:enumeration value="L"/></xs:restriction></xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="alternateOf" type="xs:IDREF"/>
+            <xs:assert test="quantity ge 0">
+              <xs:annotation><xs:documentation>Quantity must not be negative.</xs:documentation></xs:annotation>
+            </xs:assert>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

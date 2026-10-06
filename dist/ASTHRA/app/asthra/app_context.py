@@ -17,6 +17,7 @@ class AppContext:
     registry: SchemaRegistry
     projects: ProjectService
     documents: DocumentService
+    knowledge: "KnowledgeService"
 
     @classmethod
     def open(cls, settings: Settings) -> "AppContext":
@@ -25,7 +26,10 @@ class AppContext:
         registry = SchemaRegistry(db, settings.registry_root)
         projects = ProjectService(db, settings.projects_root)
         documents = DocumentService(db, projects, registry, settings.max_import_bytes)
-        return cls(settings, db, registry, projects, documents)
+        from .knowledge.service import KnowledgeService
+        knowledge = KnowledgeService(settings, documents, projects)
+        return cls(settings, db, registry, projects, documents, knowledge)
 
     def close(self) -> None:
         self.db.close()
+        self.knowledge.store.db.close()

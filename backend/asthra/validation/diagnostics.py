@@ -235,6 +235,7 @@ def duplicate_of(node, attr: str, value: str):
 # ------------------------------------------------------------------ categories and grouping
 _CATEGORY_RULES = [
     ("duplicate-id", re.compile(r"^Duplicate ID")),
+    ("schema-rule", re.compile(r"breaks a rule written into the schema")),
     ("missing-element", re.compile(r"is missing before|needs one of .* before|is incomplete|required child|is missing\b.*element")),
     ("wrong-position", re.compile(r"in the wrong position")),
     ("not-allowed", re.compile(r"is not allowed (?:at this position|inside|here)|is not defined")),
