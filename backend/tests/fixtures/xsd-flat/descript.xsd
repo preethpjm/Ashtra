@@ -1,0 +1,13 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- flat, S1000D-style: every element declared globally -->
+  <xs:element name="dmodule"><xs:complexType><xs:sequence><xs:element ref="dmCode"/><xs:element ref="description"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="dmCode"><xs:complexType><xs:attribute name="systemCode" use="required"/><xs:attribute name="assyCode" use="required"/></xs:complexType></xs:element>
+  <xs:element name="description"><xs:complexType><xs:choice maxOccurs="unbounded"><xs:element ref="para"/><xs:element ref="levelledPara"/><xs:element ref="note"/></xs:choice></xs:complexType></xs:element>
+  <xs:element name="levelledPara"><xs:complexType><xs:choice maxOccurs="unbounded"><xs:element ref="para"/><xs:element ref="note"/><xs:element ref="graphic"/></xs:choice></xs:complexType></xs:element>
+  <xs:element name="para"><xs:complexType mixed="true"><xs:choice minOccurs="0" maxOccurs="unbounded"><xs:element ref="emphasis"/><xs:element ref="internalRef"/></xs:choice></xs:complexType></xs:element>
+  <xs:element name="emphasis" type="xs:string"/>
+  <xs:element name="internalRef"><xs:complexType><xs:attribute name="internalRefId" type="xs:IDREF" use="required"/></xs:complexType></xs:element>
+  <xs:element name="note"><xs:complexType><xs:sequence><xs:element ref="notePara" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="notePara" type="xs:string"/>
+  <xs:element name="graphic"><xs:complexType><xs:attribute name="infoEntityIdent" type="xs:ENTITY" use="required"/><xs:attribute name="id" type="xs:ID"/></xs:complexType></xs:element>
+</xs:schema>

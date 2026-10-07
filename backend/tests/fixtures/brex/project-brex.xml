@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC project BREX for tests: every kind of rule, a chain to the default BREX. -->
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-1/xml_schema_flat/brex.xsd">
+  <identAndStatusSection><dmAddress><dmIdent>
+    <dmCode modelIdentCode="TESTPRJ" systemDiffCode="A" systemCode="00" subSystemCode="0" subSubSystemCode="0"
+            assyCode="00" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/>
+    <language languageIsoCode="en" countryIsoCode="US"/><issueInfo issueNumber="002" inWork="00"/></dmIdent>
+    <dmAddressItems><issueDate year="2026" month="01" day="01"/>
+      <dmTitle><techName>Test project</techName><infoName>Business rules exchange</infoName></dmTitle></dmAddressItems></dmAddress>
+    <dmStatus issueType="new"><security securityClassification="01"/>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="E" systemCode="04" subSystemCode="1"
+        subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A"
+        itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef></dmStatus>
+  </identAndStatusSection>
+  <content><brex>
+    <contextRules>
+      <structureObjectRuleGroup>
+        <structureObjectRule><objectPath allowedObjectFlag="0">//emphasis[@emphasisType = "em03"]</objectPath>
+          <objectUse>BREX-TEST-00001: Underline (em03) is not allowed.</objectUse></structureObjectRule>
+        <structureObjectRule><objectPath allowedObjectFlag="2">//@securityClassification</objectPath>
+          <objectUse>BREX-TEST-00002: "01" is the only security classification allowed.</objectUse>
+          <objectValue valueForm="single" valueAllowed="01">Unclassified</objectValue></structureObjectRule>
+        <structureObjectRule><objectPath allowedObjectFlag="0">//dmCode[@modelIdentCode][not(matches(@modelIdentCode, '^[A-Z0-9]{2,14}$'))]</objectPath>
+          <objectUse>BREX-TEST-00003: The model identification code has 2 to 14 capital letters or digits.</objectUse></structureObjectRule>
+        <structureObjectRule><objectPath allowedObjectFlag="2">//dmCode/@itemLocationCode</objectPath>
+          <objectUse>BREX-TEST-00004: Item location code A to D.</objectUse>
+          <objectValue valueForm="pattern" valueAllowed="[A-D]">A to D</objectValue></structureObjectRule>
+        <structureObjectRule><objectPath allowedObjectFlag="0">//this-is[not valid xpath</objectPath>
+          <objectUse>BREX-TEST-00099: A rule ASTHRA cannot evaluate.</objectUse></structureObjectRule>
+      </structureObjectRuleGroup>
+    </contextRules>
+    <contextRules rulesContext="http://www.s1000d.org/S1000D_4-1/xml_schema_flat/proced.xsd">
+      <structureObjectRuleGroup>
+        <structureObjectRule><objectPath allowedObjectFlag="1">//mainProcedure/proceduralStep[1]/title</objectPath>
+          <objectUse>BREX-TEST-00010: The first procedural step has a title.</objectUse></structureObjectRule>
+      </structureObjectRuleGroup>
+    </contextRules>
+    <contextRules rulesContext="http://www.s1000d.org/S1000D_4-1/xml_schema_flat/descript.xsd">
+      <structureObjectRuleGroup>
+        <structureObjectRule><objectPath allowedObjectFlag="1">//description/levelledPara[1]/title</objectPath>
+          <objectUse>BREX-TEST-00011: The first levelled paragraph has a title.</objectUse></structureObjectRule>
+      </structureObjectRuleGroup>
+    </contextRules>
+    <snsRules><snsDescr>
+      <snsSystem><snsCode>32</snsCode><snsTitle>Landing gear</snsTitle>
+        <snsSubSystem><snsCode>1</snsCode><snsTitle>Main gear</snsTitle></snsSubSystem></snsSystem>
+    </snsDescr></snsRules>
+  </brex></content>
+</dmodule>

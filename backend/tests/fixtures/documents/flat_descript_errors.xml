@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE dmodule [
+<!NOTATION cgm SYSTEM "cgm">
+<!ENTITY ICN-OK SYSTEM "ok.cgm" NDATA cgm>
+]>
+<dmodule>
+  <dmCode assyCode="00"/>
+  <description>
+    <para>Intro</para>
+    <levelled>
+      <levelledPara>
+        <Para>typo</Para>
+        <para>outer <para>nested</para></para>
+        <note><para>wrong child</para></note>
+        <graphic infoEntity="ICN-X"/>
+        <graphic infoEntityIdent="ICN-NOT-DECLARED"/>
+        <graphic infoEntityIdent="ICN-OK"/>
+      </levelledPara>
+    </levelled>
+    <para>after <internal/></para>
+  </description>
+</dmodule>

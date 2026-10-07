@@ -39,7 +39,35 @@ def wanted(rel: str, size: int) -> bool:
     ext = Path(low).suffix
     if ext in SCHEMA_EXT:
         return size <= 20 * 1024 * 1024
+    if ext == ".xml" and re.search(r"^dmc-.+-022[a-z]-", low) and size <= 20 * 1024 * 1024:
+        return True                                     # a BREX data module (information code 022)
     return ext == ".xml" and "catalog" in low and size <= 2 * 1024 * 1024
+
+
+def find_brex(src: Path) -> list[dict]:
+    """BREX data modules in a download (e.g. the S1000D default BREX shipped with an issue)."""
+    from ..brex.model import parse_brex
+    out = []
+    for p in sorted(src.rglob("*")):
+        if not (p.is_file() and p.suffix.lower() == ".xml" and re.search(r"^dmc-.+-022[a-z]-", p.name.lower())):
+            continue
+        try:
+            b = parse_brex(p.read_bytes())
+        except (ValueError, OSError):
+            continue
+        out.append({"path": p.relative_to(src).as_posix(), "dmc": b.dmc, "issue": b.issue,
+                    "schema_issue": b.schema_issue, "title": b.title, "rules": len(b.rules)})
+    return out
+
+
+def install_brex_found(src: Path, library, issue: str | None = None) -> list[dict]:
+    """Install the BREX data modules found in a download into the BREX library."""
+    done = []
+    for f in find_brex(src):
+        if issue and f["schema_issue"] and f["schema_issue"] != issue and f["dmc"].upper().startswith("S1000D-"):
+            continue                                  # a default BREX for another issue
+        done.append(library.install((src / f["path"]).read_bytes(), f["path"]))
+    return done
 
 
 def new_staging(root: Path) -> tuple[str, Path]:
@@ -387,8 +415,17 @@ def inspect(src: Path) -> dict:
                          f"The latest patch is preselected.")
         if len(issues) > 1:
             notes.append(f"The copies declare different issues ({', '.join(issues)}); choose the one you need.")
-        return {"kind": "s1000d", "standard": "S1000D", "folders": s1, "folder": pick,
-                "issue": next((f["issue"] for f in s1 if f["path"] == pick), None),
+        brex = find_brex(src)
+        chosen_issue = next((f["issue"] for f in s1 if f["path"] == pick), None)
+        defaults = [b for b in brex if b["dmc"].upper().startswith("S1000D-")]
+        if defaults:
+            notes.append("Default BREX found (" + ", ".join(f"DMC-{b['dmc']} issue {b['issue']}" for b in defaults[:3])
+                         + "): it is installed with the schemas, so business rules can be checked.")
+        else:
+            notes.append("No default BREX was found in this folder. Business rules can still be checked once you add the "
+                         "BREX your documents name (Schemas → Manage → BREX, or “Add BREX…” on a document).")
+        return {"kind": "s1000d", "standard": "S1000D", "folders": s1, "folder": pick, "brex": brex,
+                "issue": chosen_issue,
                 "entity_folders": ents, "entity_folder": _pick(ents),
                 "default_types": ["proced", "descript", "ipd"], "notes": notes}
     dtds = sorted(src.rglob("*.dtd"))

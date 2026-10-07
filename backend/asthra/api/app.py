@@ -22,6 +22,11 @@ from ..registry.service import RegistryError
 from ..standards.registry import all_adapters
 
 
+class BrexSubstituteIn(BaseModel):
+    named: str
+    use: str
+
+
 class ProjectIn(BaseModel):
     name: str
     description: str = ""
@@ -209,8 +214,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 action = "replaced"
         except (BuildError, RegistryError) as e:
             fail(e)
+        brex = []
+        if pkg.manifest.standard.upper() == "S1000D":
+            brex = installer.install_brex_found(src, ctx.registry.brex, pkg.manifest.issue)
         installer.cleanup(staging_root)
-        return {"action": action, **pkg.summary()}
+        return {"action": action, **pkg.summary(), "brex_added": brex}
 
     @app.delete("/api/registry/packages/{key:path}")
     def remove_package(key: str, force: bool = False):
@@ -451,6 +459,45 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/knowledge/sources")
     def knowledge_sources():
         return ctx.knowledge.sources()
+
+    # ---------------------------------------------------------------- BREX library
+    @app.get("/api/brex")
+    def brex_list():
+        return ctx.registry.brex.list()
+
+    @app.post("/api/brex", status_code=201)
+    async def brex_add(file: UploadFile = File(...)):
+        data = await file.read()
+        if len(data) > 50 * 1024 * 1024:
+            fail(ValueError("BREX file larger than 50 MB"))
+        try:
+            return ctx.registry.brex.install(data, file.filename or "")
+        except ValueError as e:
+            fail(e)
+
+    @app.get("/api/brex/substitutes")
+    def brex_substitutes():
+        return ctx.registry.brex.substitutes()
+
+    @app.post("/api/brex/substitutes")
+    def brex_set_substitute(body: BrexSubstituteIn):
+        try:
+            ctx.registry.brex.set_substitute(body.named, body.use)
+        except ValueError as e:
+            fail(e)
+        return ctx.registry.brex.substitutes()
+
+    @app.delete("/api/brex/substitutes/{named}")
+    def brex_remove_substitute(named: str):
+        if not ctx.registry.brex.remove_substitute(named):
+            raise HTTPException(404, "no such substitute")
+        return ctx.registry.brex.substitutes()
+
+    @app.delete("/api/brex/{dmc}/{issue}")
+    def brex_remove(dmc: str, issue: str):
+        if not ctx.registry.brex.remove(dmc, issue):
+            raise HTTPException(404, "no such BREX installed")
+        return {"ok": True}
 
     @app.get("/api/documents/{did}/export")
     def export(did: str, what: str = "current", rid: str | None = None):

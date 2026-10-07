@@ -219,12 +219,33 @@ def identify_sgml(text: str, packages: list[InstalledPackage]) -> Identification
     return ident
 
 
+def recover_root(data: bytes):
+    """The readable part of a document that is not well-formed (lxml recovery), or None. Nothing
+    external is loaded."""
+    from ..security.xml_safe import NoExternalResolver
+    p = etree.XMLParser(recover=True, resolve_entities=False, no_network=True, load_dtd=False, huge_tree=False)
+    p.resolvers.add(NoExternalResolver())
+    try:
+        root = etree.fromstring(data, p)
+    except (etree.XMLSyntaxError, ValueError):
+        return None
+    return root if root is not None and isinstance(root.tag, str) else None
+
+
 def identify(root: etree._Element | None, packages: list[InstalledPackage], sniffed: Sniff,
              data: bytes | None = None) -> Identification:
     if root is None:
         syntax = "sgml" if sniffed.syntax_hint in ("sgml", "unknown") and sniffed.doctype_name else sniffed.syntax_hint
         if syntax == "sgml" and data is not None:
             return identify_sgml(data.decode(sniffed.encoding or "utf-8", errors="replace"), packages)
+        if syntax == "xml" and data is not None:
+            rec = recover_root(data)
+            if rec is not None:
+                # not well-formed (e.g. cut off): identified from the part that can be read, so it can
+                # still be checked against its schema up to the point where it breaks
+                ident = identify(rec, packages, sniffed, None)
+                ident.notes.append("The document is not well-formed XML; it was identified from the part that can be read.")
+                return ident
         ident = Identification(syntax=syntax, status="not-parsed")
         if syntax == "sgml":
             ident.notes.append("Document appears to be SGML. Install its DTD set to identify it.")

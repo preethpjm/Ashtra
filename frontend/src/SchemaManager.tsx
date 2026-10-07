@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, Pkg, Proposal } from "./api";
+import { api, BrexEntry, Pkg, Proposal } from "./api";
 
 const EXT = new Set([".xsd", ".dtd", ".ent", ".mod", ".elm", ".cat", ".soc"]);
 /** Same rule as the server: only schema-related files are uploaded, never manuals or images. */
@@ -8,6 +8,7 @@ function wanted(f: File): boolean {
   if (["isoentities", "catalog", "asthra-package.json"].includes(name)) return true;
   const ext = name.includes(".") ? name.slice(name.lastIndexOf(".")) : "";
   if (EXT.has(ext)) return f.size <= 20 * 1024 * 1024;
+  if (ext === ".xml" && /^dmc-.+-022[a-z]-/.test(name)) return f.size <= 20 * 1024 * 1024;   // BREX data modules
   return ext === ".xml" && name.includes("catalog") && f.size <= 2 * 1024 * 1024;
 }
 const KIND: Record<string, string> = { package: "a ready-made ASTHRA package", s1000d: "S1000D schemas", dtd: "a DTD set (ATA iSpec 2200, ATA Spec 2300 or OEM)", sgml: "an SGML DTD set (legacy ATA iSpec 2200 or OEM)", xsd: "an XSD schema set" };
@@ -25,7 +26,24 @@ export function SchemaManager({ onClose, onChanged, say }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<Set<string>>(new Set());
 
-  const refresh = async () => setPkgs(await api.packages());
+  const [brex, setBrex] = useState<BrexEntry[]>([]);
+  const [subs, setSubs] = useState<Record<string, string>>({});
+  const refreshBrex = async () => { setBrex(await api.brexList().catch(() => [])); setSubs(await api.brexSubstitutes().catch(() => ({}))); };
+  const refresh = async () => { setPkgs(await api.packages()); refreshBrex(); };
+  const addBrex = async (files: FileList | null) => {
+    if (!files?.length) return;
+    for (const f of Array.from(files)) {
+      try {
+        const e = await api.brexAdd(f);
+        say(`Added BREX DMC-${e.dmc} issue ${e.issue}: ${e.rules} rules.`, "ok");
+      } catch (err) { say(`${f.name}: ${err instanceof Error ? err.message : String(err)}`, "err"); }
+    }
+    refreshBrex(); onChanged();
+  };
+  const removeBrex = async (e: BrexEntry) => {
+    if (!window.confirm(`Remove BREX DMC-${e.dmc} issue ${e.issue}? Documents that name it will show business rules as not checked.`)) return;
+    await api.brexRemove(e.dmc, e.issue); refreshBrex(); onChanged();
+  };
   useEffect(() => { refresh().catch(() => {}); }, []);
 
   const folderTypes = useMemo(() => prop?.kind === "s1000d" ? (prop.folders?.find((f) => f.path === prop.folder)?.doc_types ?? []) : [], [prop]);
@@ -54,7 +72,9 @@ export function SchemaManager({ onClose, onChanged, say }: Props) {
     setBusy("Building and checking every schema… this can take a minute."); setError(null);
     try {
       const r = await api.buildSchemas(staging, choice, replace);
-      say(`${r.action === "replaced" ? "Updated" : "Installed"} ${r.standard} ${r.issue}: ${r.doc_types.map((d) => d.id).join(", ")}.`, "ok");
+      const added = (r as any).brex_added as BrexEntry[] | undefined;
+      say(`${r.action === "replaced" ? "Updated" : "Installed"} ${r.standard} ${r.issue}: ${r.doc_types.map((d) => d.id).join(", ")}.`
+        + (added?.length ? ` Default BREX added: ${added.map((b) => `DMC-${b.dmc} issue ${b.issue}`).join(", ")}.` : ""), "ok");
       setProp(null); setStaging(null); setConflict(null);
       await refresh(); onChanged();
     } catch (e) {
@@ -183,6 +203,40 @@ export function SchemaManager({ onClose, onChanged, say }: Props) {
                 <td className="actions-cell"><a className="link" href={api.exportPackageUrl(p.id)}>Export</a> <button className="link" onClick={() => remove(p)}>Remove</button></td>
               </tr>))}
           </tbody></table>
+        </section>
+
+        <section className="sm-set">
+          <h3>Business rules (BREX)</h3>
+          <p className="muted small">A BREX data module is a project's rule book on top of the schema (what is prohibited, required,
+            which values and SNS codes). Documents name theirs in <code>brexDmRef</code>; a BREX may build on another, up to the
+            S1000D default BREX of its issue. All BREX in the chain are applied.</p>
+          {brex.length === 0 ? <p className="muted small">No BREX installed yet.</p> : (
+            <table className="sm-table"><thead><tr><th>BREX</th><th>For</th><th>Rules</th><th>Builds on</th><th></th></tr></thead>
+              <tbody>{brex.map((e) => {
+                const parentInstalled = !e.parent_dmc || brex.some((x) => x.dmc === e.parent_dmc);
+                return (
+                  <tr key={e.dmc + e.issue}>
+                    <td><b className="mono small">DMC-{e.dmc}</b> <span className="muted small">issue {e.issue}</span><div className="muted small">{e.title}</div></td>
+                    <td className="small">S1000D {e.schema_issue ?? "?"}</td>
+                    <td className="small">{e.rules}{e.sns_systems ? ` + SNS (${e.sns_systems})` : ""}</td>
+                    <td className="small">{e.parent_dmc ? <><span className="mono">DMC-{e.parent_dmc}</span>
+                      {!parentInstalled && <div className="warn-text">not installed — add it so its rules apply too</div>}</> : <span className="muted">top of its chain</span>}</td>
+                    <td className="actions-cell"><button className="link" onClick={() => removeBrex(e)}>Remove</button></td>
+                  </tr>);
+              })}</tbody></table>
+          )}
+          {Object.keys(subs).length > 0 && (<>
+            <h4 className="sm-sub">Substitutes</h4>
+            <p className="muted small">Documents naming a BREX that is not installed are checked with the one you chose; every result says so.</p>
+            <table className="sm-table"><tbody>{Object.entries(subs).map(([named, use]) => (
+              <tr key={named}><td className="small">documents naming <span className="mono">DMC-{named}</span></td>
+                <td className="small">are checked with <span className="mono">DMC-{use}</span></td>
+                <td className="actions-cell"><button className="link" onClick={async () => { setSubs(await api.brexRemoveSubstitute(named)); onChanged(); }}>Remove</button></td></tr>
+            ))}</tbody></table>
+          </>)}
+          <div className="row">
+            <label className="btn">Add BREX…<input type="file" hidden multiple accept=".xml" onChange={(e) => { addBrex(e.target.files); e.target.value = ""; }} /></label>
+          </div>
         </section>
 
         <section className="sm-set">

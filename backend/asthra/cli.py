@@ -60,6 +60,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("suites", nargs="*", help="suite names or folders (default: all built-in suites)")
     p.add_argument("--corpus", help="folder of known-good files (e.g. the S1000D Bike data set): every error counts as a false positive")
     p.add_argument("--json", help="also write the full results to this JSON file")
+    p = sub.add_parser("brex", help="business rules (BREX): add, list, remove")
+    p.add_argument("action", choices=["add", "list", "remove", "use", "unuse"])
+    p.add_argument("items", nargs="*", help="add: BREX files; remove: <DMC> <issue>; use: <named DMC> <installed DMC>; unuse: <named DMC>")
     sub.add_parser("doctor", help="check this installation: Python, XML libraries, OpenSP, data folder, schemas")
     p = sub.add_parser("why", help="explain which installed schema matches an XML file, and why")
     p.add_argument("file")
@@ -164,6 +167,8 @@ def main(argv: list[str] | None = None) -> int:
         return _install_opensp(a)
     if a.cmd == "benchmark":
         return _benchmark(a)
+    if a.cmd == "brex":
+        return _brex(a)
     if a.cmd == "doctor":
         return _doctor(a)
     if a.cmd == "add-schemas":
@@ -350,6 +355,64 @@ def _benchmark(a) -> int:
     return 0 if s["missed"] == 0 and s["false_positives"] == 0 else 1
 
 
+def _brex(a) -> int:
+    ctx = _ctx(a)
+    lib = ctx.registry.brex
+    if a.action == "add":
+        if not a.items:
+            print("Give one or more BREX files:  brex add <file> [<file> …]")
+            return 2
+        rc = 0
+        for f in a.items:
+            try:
+                e = lib.install(Path(f).read_bytes(), Path(f).name)
+                parent = f"builds on DMC-{e['parent_dmc']}" if e["parent_dmc"] else "top of its chain"
+                print(f"Added DMC-{e['dmc']} issue {e['issue']}: {e['rules']} rules"
+                      f"{', ' + str(e['sns_systems']) + ' SNS systems' if e['sns_systems'] else ''}"
+                      f" (S1000D {e['schema_issue'] or '?'}; {parent})")
+            except (OSError, ValueError) as ex:
+                print(f"{f}: {ex}")
+                rc = 2
+        return rc
+    if a.action == "remove":
+        if len(a.items) != 2:
+            print("Usage:  brex remove <DMC> <issue>   (as shown by: brex list)")
+            return 2
+        ok = lib.remove(a.items[0], a.items[1])
+        print("Removed." if ok else "No such BREX installed.")
+        return 0 if ok else 2
+    if a.action == "use":
+        if len(a.items) != 2:
+            print("Usage:  brex use <DMC the documents name> <installed DMC to use instead>")
+            return 2
+        try:
+            lib.set_substitute(a.items[0].removeprefix("DMC-"), a.items[1].removeprefix("DMC-"))
+        except ValueError as ex:
+            print(ex)
+            return 2
+        print(f"Documents naming DMC-{a.items[0].removeprefix('DMC-')} are now checked with DMC-{a.items[1].removeprefix('DMC-')} "
+              "(each result says so).")
+        return 0
+    if a.action == "unuse":
+        if len(a.items) != 1:
+            print("Usage:  brex unuse <DMC the documents name>")
+            return 2
+        ok = lib.remove_substitute(a.items[0].removeprefix("DMC-"))
+        print("Substitute removed." if ok else "No such substitute.")
+        return 0 if ok else 2
+    entries = lib.list()
+    if not entries:
+        print("No BREX installed. Add one with:  brex add <file>")
+        return 0
+    for e in entries:
+        chain, missing = lib.chain(e["dmc"])
+        tail = f"  ⚠ builds on DMC-{missing}, which is not installed" if missing else ""
+        print(f"DMC-{e['dmc']}  issue {e['issue']}  S1000D {e['schema_issue'] or '?'}  {e['rules']} rules  {e['title'][:60]}{tail}")
+    for named, use in lib.substitutes().items():
+        print(f"substitute: documents naming DMC-{named} are checked with DMC-{use}")
+    return 0
+
+
 def _doctor(a) -> int:
     import platform
     import subprocess
@@ -474,6 +537,12 @@ def _add_schemas(a) -> int:
             print(f"Could not install: {e}")
             return 2
         print(f"{action} {pkg.manifest.key}: {', '.join(d.id for d in pkg.manifest.doc_types)}")
+        if pkg.manifest.standard.upper() == "S1000D":
+            got = installer.install_brex_found(src, ctx.registry.brex, pkg.manifest.issue)
+            for e in got:
+                print(f"Added BREX DMC-{e['dmc']} issue {e['issue']} ({e['rules']} rules)")
+            if not got:
+                print("No default BREX found in that folder; add BREX files with:  brex add <file>")
         return 0
 
 

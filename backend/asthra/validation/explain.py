@@ -92,6 +92,13 @@ def explain(raw: str) -> tuple[str, str | None, str | None, str | None, Fix | No
         return (f"'{v}' has the wrong format for {target}.", f"It must match the pattern {pat}." +
                 (f" For example '{cand}'." if cand else ""), attr, v, fix)
 
+    if (e := _TYPE.search(body)) and e.group("t") in ("xs:ENTITY", "xs:ENTITIES"):
+        v = e.group("v")
+        return (f"{target} refers to '{v}', which is not declared as an entity in the document's DOCTYPE.",
+                f"Declare it in the DOCTYPE, e.g. <!ENTITY {v} SYSTEM \"{v}.CGM\" NDATA cgm> (with the matching "
+                "<!NOTATION>), or correct the reference. In S1000D this is usually an ICN of a graphic.",
+                attr, v, None)
+
     if (e := _TYPE.search(body)):
         v, t = e.group("v"), e.group("t")
         help_ = _TYPE_HELP.get(t, f"a value of type {t}")

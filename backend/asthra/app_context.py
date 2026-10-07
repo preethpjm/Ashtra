@@ -24,6 +24,8 @@ class AppContext:
         settings.ensure()
         db = Database(settings.db_path)
         registry = SchemaRegistry(db, settings.registry_root)
+        from .brex.library import BrexLibrary
+        registry.brex = BrexLibrary(settings.data_root / "brex")      # business rules travel with the schemas
         projects = ProjectService(db, settings.projects_root)
         documents = DocumentService(db, projects, registry, settings.max_import_bytes)
         from .knowledge.service import KnowledgeService

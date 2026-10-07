@@ -262,7 +262,11 @@ class DocumentService:
                            json.dumps({"package_id": package_id, "doc_type": doc_type_id})))
             return self.get(doc_id)
         if tree is None:
-            raise DocumentError("the document is not well-formed XML; fix it before choosing a schema")
+            from ..identify.service import recover_root
+            rec = recover_root(data) if data is not None else None
+            if rec is None:
+                raise DocumentError("the document is not well-formed XML and nothing of it can be read; fix it first")
+            tree = rec.getroottree()             # not well-formed: choose from the part that can be read
         if not root_fits(dt, tree.getroot()):
             raise DocumentError(f"{dt.label} ({pkg.manifest.standard} {pkg.manifest.issue}) is for <{dt.match.local_name}>"
                                 f"{' with ' + dt.discriminator if dt.discriminator else ''}; this document does not fit it")

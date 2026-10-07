@@ -8,6 +8,7 @@ import { Tree } from "./Tree";
 import { SchemaManager } from "./SchemaManager";
 import { Sheet, usePrintPage } from "./Sheet";
 import { KnowledgeView } from "./KnowledgeView";
+import { BrexPrompt } from "./BrexPrompt";
 import { AttributeEditor, AttrPopover, AttrRow, LibraryEntry, InsertGroup, InsertMenu, ShortcutHelp, TablePopover, TableSpec } from "./StructureUI";
 import { filledTemplate, fillTemplate, idAttributes, inlineAllowed, insertable, isCompletable, isValid, SchemaModel, template, uniqueId } from "./schemaModel";
 import type { KeyAction, TextSel } from "./VisualEditor";
@@ -61,6 +62,8 @@ export function App() {
   const [schemasOpen, setSchemasOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
   const [view, setView] = useState<"documents" | "knowledge">("documents");
+  const [brexAsk, setBrexAsk] = useState<string | null>(null);              // DMC of a missing BREX to ask about
+  const brexDismissed = useRef<Set<string>>(new Set());
   const counter = useRef(0);
   const theme = prefersDark() ? "dark" : "light";
 
@@ -261,6 +264,16 @@ export function App() {
       if (mode === "doc") setMode("split");
     }
   }, [mode]);
+
+  useEffect(() => {
+    const miss = report?.diagnostics.find((d) => d.rule_id === "ASTHRA-BREX-MISSING" && d.value);
+    if (miss?.value && !brexDismissed.current.has(miss.value) && !brexAsk) setBrexAsk(miss.value);
+  }, [report]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const brexRecheck = async () => {
+    setBrexAsk(null);
+    if (docId) { try { applyCheck(await api.check(docId, textRef.current)); } catch (e) { fail(e); } }
+  };
 
   const applyFix = (d: Diagnostic) => {
     if (d.fix?.kind === "insert" && d.fix.element) {
@@ -813,8 +826,8 @@ export function App() {
   };
 
   // ---- render --------------------------------------------------------------------------------
-  const statusPill = (label: string, s?: string) => (
-    <span className={`pill st-${s ?? "none"}`} title={`${label}: ${s ? STATUS_TEXT[s] ?? s : "—"}`}>{label} <b>{s ? STATUS_TEXT[s] ?? s : "—"}</b></span>
+  const statusPill = (label: string, s?: string, note?: string, words?: Record<string, string>) => (
+    <span className={`pill st-${s ?? "none"}`} title={`${label}: ${s ? (words?.[s] ?? STATUS_TEXT[s] ?? s) : "—"}${note ? "\n" + note : ""}`}>{label} <b>{s ? (words?.[s] ?? STATUS_TEXT[s] ?? s) : "—"}</b></span>
   );
 
   const visual = viewAdm ? (
@@ -980,11 +993,12 @@ export function App() {
               <h3>Status</h3>
               <div className="pills">
                 {statusPill("Structure", checking ? "checking" : report?.statuses.structural)}
-                {statusPill("Business rules", report?.statuses.business_rules)}
+                {statusPill("Business rules", report?.statuses.business_rules,
+                  report?.stages.find((x) => x.stage === 4)?.note, { "not-run": "Not checked" })}
                 {statusPill("References", report?.statuses.references)}
                 {statusPill("Engineering", report?.statuses.engineering)}
               </div>
-              <p className="muted small">A valid structure is not engineering approval. The other checks arrive in later milestones.</p>
+              <p className="muted small">Structure and business rules (BREX) are checked; a valid result is not engineering approval. References and engineering checks arrive in later milestones.</p>
             </section>
             {selEl && elAdm.ok ? (
               <section>
@@ -1105,6 +1119,8 @@ export function App() {
                     {d.consequence_of && <span className="msg-cons">Probably follows from an earlier problem ({d.consequence_of}).</span>}
                     {d.fix && <button className="fix" onClick={(e) => { e.stopPropagation(); applyFix(d); }}
                       disabled={d.fix.kind === "insert" ? !(editAdm?.ok && model && visualEditable) : !adm.ok}>{d.fix.label}</button>}
+                    {d.rule_id === "ASTHRA-BREX-MISSING" && d.value && (
+                      <button className="fix" onClick={(e) => { e.stopPropagation(); setBrexAsk(d.value!); }}>Add or choose BREX…</button>)}
                   </td>
                   <td className="where">{d.line ? `line ${d.line}` : ""}</td>
                   <td className="rule" title={`${d.rule_id}${d.reference ? "\n" + d.reference : ""}`}>{d.rule_id}</td>
@@ -1149,6 +1165,8 @@ export function App() {
         onOk={(spec) => { const t = tableAsk; setTableAsk(null); t.commit(spec); }} />}
       {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
       {view === "knowledge" && <KnowledgeView projects={projects} pid={pid} say={say} />}
+      {brexAsk && <BrexPrompt named={brexAsk} say={say} onDone={brexRecheck}
+        onClose={() => { brexDismissed.current.add(brexAsk); setBrexAsk(null); }} />}
       {managerOpen && <SchemaManager onClose={() => setManagerOpen(false)} say={say}
         onChanged={() => { refreshPkgs(); refreshDocs(); if (docId) api.state(docId).then((st) => { setMeta(st.document); setRender(st.render); }).catch(() => {}); }} />}
       {toast && <div className={`toast ${toast.kind}`} role="status">{toast.text}</div>}

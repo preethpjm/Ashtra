@@ -755,3 +755,19 @@ kbd { font-family: var(--mono); font-size: 11.5px; border: 1px solid var(--rule)
 .kn-filter select { flex: 0 0 auto; width: 210px; }
 .kd-t.mono { font-size: 16px; }
 .kn-card.link { font: inherit; color: inherit; padding: 12px 14px; display: block; width: 100%; }
+
+.warn-text { color: #9b1c1c; font-size: 11.5px; }
+label.fix { cursor: pointer; }
+
+/* ---------- BREX not installed: add or choose ---------- */
+.brex-prompt { position: fixed; z-index: 41; top: 90px; left: 50%; transform: translateX(-50%); width: min(600px, 92vw);
+  background: var(--sheet); color: var(--ink); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 14px 40px rgba(0,0,0,.28); padding: 16px 18px 14px; }
+.brex-prompt p { font-size: 13.5px; margin: 6px 0 10px; }
+.bp-head { font-weight: 650; font-size: 15px; }
+.bp-option { border-top: 1px solid var(--rule); padding: 10px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bp-option .bp-k { width: 100%; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.bp-option select { width: 100%; font-size: 13px; }
+.bp-option .row { display: flex; gap: 10px; align-items: center; width: 100%; }
+.bp-foot { display: flex; justify-content: flex-end; border-top: 1px solid var(--rule); padding-top: 10px; }
+.sm-sub { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.bp-option .row button { white-space: nowrap; }

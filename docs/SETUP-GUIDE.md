@@ -586,6 +586,34 @@ engineering checks are shown separately as "not available yet".
 
 ---
 
+### Business rules (BREX)
+
+A **BREX data module** is a project's rule book on top of the schema: what is prohibited, what is
+required, which values are allowed, which SNS codes may be used. The schema (`brex.xsd`) only
+describes how a BREX is written; the **rules are in the BREX data module itself**, so that file is
+needed to check them. Each document names its BREX in `dmStatus/brexDmRef`; a BREX can build on
+another (e.g. a customer BREX on the S1000D default BREX of its issue) and **all BREX in the chain
+apply**.
+
+| Where | What happens |
+|---|---|
+| Installing S1000D schemas from an issue folder | the **default BREX** found in the download (e.g. `DMC-S1000D-E-04-10-0301-00A-022A-D` in the Patches folder) is installed with the schemas; if none is found, the install says so |
+| Validating a document | after the schema check, the **Business rules** stage follows the document's BREX chain and checks every rule; findings show the rule ID (e.g. `BREX-CMMST-00013`), the rule text, the line and which BREX it came from |
+| A BREX in the chain is missing | a pop-up opens: **add the BREX file**, or **use an installed BREX instead** (e.g. the customer or ATA BREX when the document names a project BREX you do not have), or *Not now*. Until then: **Business rules: Not checked**, with **Add or choose BREX…** in Problems. Partly installed chains say which link is missing |
+| A substitute is used | every result says *"Business rules checked with DMC-X instead of DMC-Y, which is not installed"*; substitutes are listed (and removable) under Schemas → Manage → BREX, or on the command line with `brex use <named> <installed>` / `brex unuse <named>` |
+| A BREX written for another issue | a warning (e.g. an S1000D 4.1 BREX on a 4.2 document) — rules are still applied |
+| A rule ASTHRA cannot evaluate | listed as **not checked**, never counted as passed |
+| **Schemas → Manage → Business rules (BREX)** | the installed BREX, the issue each is for, rule counts, what it builds on (with a warning if that is not installed), Add BREX… and Remove |
+
+Command line:
+```powershell
+python -m asthra.cli brex add "C:\...\DMC-A350-E-00-00-00-10A-022A-D_001-00_EN-US.xml"
+python -m asthra.cli brex list
+python -m asthra.cli brex remove A350-E-00-00-00-10A-022A-D 001-00
+```
+Rule paths are XPath, including XPath 2.0 functions (`matches`, `tokenize`, `lower-case` …) used by
+many project BREX; checking a document against a 3,800-rule BREX takes well under a second.
+
 ### Knowledge library (K1)
 
 Click **Knowledge** under the ASTHRA name (switch back with **Documents**, or by clicking a document).
@@ -608,6 +636,19 @@ The library is shared across projects and stored in the data folder (`knowledge\
 (Shift+Enter, e.g. after Esc on an existing one) opens the panel with **From the library** at the top:
 choose a part and its name and identification (manufacturer code + part number, or tool number)
 are filled in. "— type it instead —" keeps it manual.
+
+### How thoroughly documents are checked (same coverage as Oxygen/Xerces)
+
+- **After a misplaced element** the XML library (libxml2) stops checking the rest of that element's
+  content. ASTHRA then checks the skipped parts itself: the contents of the misplaced element (through
+  the schema's global declarations, as Xerces does) and of every later sibling. So an error such as
+  `<levelled> is not allowed inside <description>` no longer hides the errors inside and after it.
+  As in Xerces, the order of a parent's children is judged once (the first error); their contents
+  are always checked.
+- **A file that is not well-formed** (e.g. cut off, an end tag missing) is still checked against its
+  schema **up to the point where it breaks**; those errors say *"found before the file breaks off at
+  line N"*. Errors caused only by the file ending early are not reported. Such a file is identified
+  from the part that can be read, so its schema is known.
 
 ### Measuring validation quality (benchmark)
 

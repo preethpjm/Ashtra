@@ -170,8 +170,10 @@ def refine_not_expected(node, expected: list[str], helper: ModelHelper):
         return None
     pname, off = _local(parent), _local(node)
     nfa = helper.nfa(pname)
-    if nfa is None:
-        return None
+    if nfa is None:                                  # content model not usable here: still name the parent
+        exp = (" At this position the schema allows: " + ", ".join(f"<{x}>" for x in expected) + ".") if expected else ""
+        return (f"<{off}> is not allowed at this position inside <{pname}>.",
+                f"Remove it or move it to where it belongs.{exp}", None, "not-allowed")
     kids = _kids(parent)
     i = kids.index(node)
     prefix = [_local(k) for k in kids[:i]]
@@ -259,18 +261,10 @@ def categorize(d: Diagnostic) -> str:
 
 
 def finalize(rep: ValidationReport) -> None:
-    """Categories for every diagnostic; errors inside a misplaced element point to that cause."""
+    """A category for every diagnostic. (Errors inside a misplaced element are not marked as
+    consequences: every part is checked against its own declaration, so they are real errors.)"""
     for d in rep.diagnostics:
         d.category = categorize(d)
-    causes = [(i, d) for i, d in enumerate(rep.diagnostics)
-              if d.category in ("not-allowed", "wrong-position") and d.element_path]
-    for d in rep.diagnostics:
-        if d.consequence_of or not d.element_path or d.severity not in (Severity.ERROR, Severity.FATAL):
-            continue
-        for _, c in causes:
-            if c is not d and d.element_path.startswith(c.element_path + "/"):
-                d.consequence_of = f"inside <{c.element_path.rsplit('/', 1)[-1].split('[')[0]}>, which is itself misplaced"
-                break
 
 
 def document_duplicate_ids(tree, helper: ModelHelper, reported: set[tuple[str, int | None]], file: str, ref: str):

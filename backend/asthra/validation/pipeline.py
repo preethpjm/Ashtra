@@ -118,7 +118,10 @@ def _validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id
         if sn.syntax_hint != "xml" and sn.doctype_name:
             note = "Possibly SGML: SGML parsing is Milestone 4 (OpenSP)."
         rep.stages.append(StageResult(stage=Stage.PARSE, status=Status.FAILED, note=note))
-        _skip_rest(rep, from_stage=Stage.SCHEMA, reason="document is not well-formed XML")
+        if _partial_schema_check(data, errors_iter, registry, package_id, doc_type_id, file, rep):
+            _skip_rest(rep, from_stage=Stage.BUSINESS_RULES, reason="document is not well-formed XML")
+        else:
+            _skip_rest(rep, from_stage=Stage.SCHEMA, reason="document is not well-formed XML")
         return rep, None
     rep.stages.append(StageResult(stage=Stage.PARSE, status=Status.PASSED))
 
@@ -197,11 +200,32 @@ def _validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id
         rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.FAILED))
         _skip_rest(rep, from_stage=Stage.BUSINESS_RULES, reason="schema stage failed")
         return rep, tree
-    from .diagnostics import ModelHelper, duplicate_of, refine_missing_child, refine_not_expected
-    from .explain import _MISSING_CHILD, _NOT_EXPECTED, _names
+    from .diagnostics import ModelHelper
+    from .partial import continue_after_skips
     helper = ModelHelper(registry, package_id, doc_type_id)
+    entries = list(schema.error_log)
+    # libxml2 stops checking an element's remaining content at the first element it does not expect;
+    # validate those skipped parts too, so every error is reported (as Xerces does)
+    entries += continue_after_skips(schema, tree, data, entries)
+    if entries:
+        ok = False
+    _xsd_diagnostics(entries, tree, helper, pkg, dt, file, rep)
+    from .diagnostics import document_duplicate_ids
+    reported = {(d.value, d.line) for d in rep.diagnostics if d.category == "duplicate-id"}
+    extra = document_duplicate_ids(tree, helper, reported, file, f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}")
+    rep.diagnostics.extend(extra)
+    ok = not extra and ok
+    ok = _idref_check(tree, registry, package_id, doc_type_id, file, pkg, dt, rep) and ok
+    _finish_schema_stage(ok, pkg, rep, tree, registry, file, dt)
+    return rep, tree
+
+
+def _xsd_diagnostics(entries, tree, helper, pkg, dt, file: str, rep: ValidationReport, note: str = "") -> None:
+    """Schema errors → precise diagnostics (explanations, missing/wrong position/not allowed, duplicate IDs)."""
+    from .diagnostics import duplicate_of, refine_missing_child, refine_not_expected
+    from .explain import _MISSING_CHILD, _NOT_EXPECTED, _names
     seen = set()
-    for e in schema.error_log:
+    for e in entries:
         path = _nice_path(tree, getattr(e, "path", None))
         key = (e.line, path, e.message)
         if key in seen:              # libxml2 sometimes repeats the same error
@@ -236,26 +260,23 @@ def _validate_bytes(data: bytes, file: str, registry: SchemaRegistry, package_id
                     msg, sugg, fix, category = r
         rep.diagnostics.append(Diagnostic(
             stage=Stage.SCHEMA, severity=Severity.ERROR, rule_id=rule, category=category,
-            message=msg, suggestion=sugg, attribute=attr, value=val, fix=fix, raw_message=e.message,
+            message=msg + note, suggestion=sugg, attribute=attr, value=val, fix=fix, raw_message=e.message,
             source_file=file, element_path=path, line=e.line or None, column=e.column or None,
             reference=f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}"))
-    from .diagnostics import document_duplicate_ids
-    reported = {(d.value, d.line) for d in rep.diagnostics if d.category == "duplicate-id"}
-    extra = document_duplicate_ids(tree, helper, reported, file, f"{pkg.manifest.standard} {pkg.manifest.issue} · {dt.schema_file}")
-    rep.diagnostics.extend(extra)
-    ok = not extra and ok
-    ok = _idref_check(tree, registry, package_id, doc_type_id, file, pkg, dt, rep) and ok
-    _finish_schema_stage(ok, pkg, rep)
-    return rep, tree
 
 
-def _finish_schema_stage(ok: bool, pkg, rep: ValidationReport) -> None:
+def _finish_schema_stage(ok: bool, pkg, rep: ValidationReport, tree=None, registry=None, file: str = "",
+                         dt=None) -> None:
     note = ""
     if pkg.manifest.provenance == "synthetic":
         note = "Validated against a SYNTHETIC test schema, not an official issue of the standard."
     rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.PASSED if ok else Status.FAILED, note=note))
     adapter = adapter_for(pkg.manifest.standard)
     for st, (ms, what) in PLANNED.items():
+        if st == Stage.BUSINESS_RULES and tree is not None and getattr(registry, "brex", None) is not None \
+                and pkg.manifest.standard.upper() == "S1000D":
+            _brex_stage(tree, registry.brex, pkg, dt, file, rep)
+            continue
         cap_note = ""
         if st == Stage.BUSINESS_RULES and adapter and adapter.capabilities.get(Cap.VALIDATE_RULES):
             cap_note = f" ({adapter.capabilities[Cap.VALIDATE_RULES].note})"
@@ -624,3 +645,105 @@ def _uses_entities(data: bytes, sn) -> bool:
         text = text[i + 1:]
     text = re.sub(r"<!--.*?-->|<!\[CDATA\[.*?\]\]>", " ", text, flags=re.S)
     return any(n not in _PREDEFINED for n in re.findall(r"&([A-Za-z_:][\w.:-]*);", text))
+
+
+
+def _partial_schema_check(data: bytes, errors_iter, registry, package_id, doc_type_id, file: str,
+                          rep: ValidationReport) -> bool:
+    """A document that is not well-formed is still checked against its schema up to the point where it
+    breaks (as a streaming validator does). True if the schema stage was recorded."""
+    if not package_id or not doc_type_id:
+        return False
+    try:
+        schema, pkg, dt = registry.schema_for(package_id, doc_type_id)
+    except RegistryError:
+        return False
+    if dt.schema_kind != "xsd":
+        return False
+    from .diagnostics import ModelHelper
+    from .partial import partial_check
+    lines = [l for l, _, _ in errors_iter if l]
+    break_line = min(lines) if lines else None
+    entries, tree = partial_check(schema, data, break_line)
+    if tree is None:
+        return False
+    where = f" (found before the file breaks off at line {break_line})" if break_line else ""
+    _xsd_diagnostics(entries, tree, ModelHelper(registry, package_id, doc_type_id), pkg, dt, file, rep, note=where)
+    rep.stages.append(StageResult(stage=Stage.SCHEMA, status=Status.FAILED if entries else Status.NOT_RUN,
+                                  note=f"checked only up to line {break_line}, where the file is not well-formed"
+                                  if break_line else "partial check"))
+    return True
+
+
+
+def _brex_stage(tree, library, pkg, dt, file: str, rep: ValidationReport) -> None:
+    """Stage 4: the document against the BREX it names (brexDmRef) and every BREX that one builds on."""
+    from ..brex.engine import Result, document_brex_ref
+    from ..brex.model import XSI
+    from .diagnostics import _local
+    root = tree.getroot()
+    if _local(root) not in ("dmodule", "pm"):
+        rep.stages.append(StageResult(stage=Stage.BUSINESS_RULES, status=Status.NOT_RUN,
+                                      note="BREX applies to S1000D data modules and publication modules"))
+        return
+    named = document_brex_ref(root)
+    start, how = named, "named by the document (brexDmRef)"
+    if not named:
+        d = library.default_for(pkg.manifest.issue)
+        if d is None:
+            rep.stages.append(StageResult(stage=Stage.BUSINESS_RULES, status=Status.NOT_RUN,
+                                          note=f"the document names no BREX, and no default BREX for S1000D {pkg.manifest.issue} is installed"))
+            return
+        start, how = d["dmc"], f"the S1000D {pkg.manifest.issue} default BREX (the document names none)"
+    chain, missing = library.chain(start)
+    if missing:
+        first = not chain
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.BUSINESS_RULES, severity=Severity.WARNING, rule_id="ASTHRA-BREX-MISSING", category="brex-missing",
+            value=missing, source_file=file,
+            message=(f"Business rules not checked: the BREX DMC-{missing} is not installed." if first else
+                     f"Business rules only partly checked: DMC-{missing}, which DMC-{chain[-1]['dmc']} builds on, is not installed."),
+            suggestion="Add the BREX file, or choose an installed BREX to use instead (“Add or choose BREX…”, or Schemas → Manage → BREX). The document is checked again right away."))
+        if first:
+            rep.stages.append(StageResult(stage=Stage.BUSINESS_RULES, status=Status.NOT_RUN, note=f"BREX DMC-{missing} not installed"))
+            return
+    dm_type = (root.get(f"{XSI}noNamespaceSchemaLocation") or (dt.schema_file if dt else "") or "").replace("\\", "/").split("/")[-1] or None
+    result = Result()
+    for e in chain:
+        if e.get("substitute_for"):
+            rep.diagnostics.append(Diagnostic(
+                stage=Stage.BUSINESS_RULES, severity=Severity.WARNING, rule_id="ASTHRA-BREX-SUBSTITUTE", category="brex-substitute",
+                source_file=file, value=e["substitute_for"],
+                message=f"Business rules checked with DMC-{e['dmc']} instead of DMC-{e['substitute_for']}, which is not installed "
+                        "(a substitute you chose).",
+                suggestion="Results reflect the substitute, not necessarily the document's own BREX. Change or remove the "
+                           "substitute under Schemas → Manage → BREX, or add the real BREX."))
+        if e.get("schema_issue") and e["schema_issue"] != pkg.manifest.issue:
+            rep.diagnostics.append(Diagnostic(
+                stage=Stage.BUSINESS_RULES, severity=Severity.WARNING, rule_id="ASTHRA-BREX-ISSUE", category="brex-issue",
+                source_file=file, value=e["dmc"],
+                message=f"The BREX DMC-{e['dmc']} was written for S1000D {e['schema_issue']}; this document is S1000D {pkg.manifest.issue}.",
+                suggestion="Rules about elements that differ between the issues may not apply as intended. Check which issue the project requires."))
+        library.compiled(e).check(root, dm_type, result)
+    for f in result.findings:
+        text = re.sub(r"^\s*" + re.escape(f.rule.rule_id) + r"\s*(\([^)]*\))?\s*:\s*", "", f.rule.use) or f.rule.use
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.BUSINESS_RULES, severity=Severity.ERROR, rule_id=f.rule.rule_id, category="business-rule",
+            message=text + (f" — {f.detail}" if f.detail and f.detail not in text else ""),
+            suggestion=f"Business rule from {f.brex.title or 'BREX'} (DMC-{f.brex.dmc}, issue {f.brex.issue}).",
+            source_file=file, line=f.line, element_path=readable_path(f.element) if f.element is not None else None,
+            reference=f"BREX DMC-{f.brex.dmc} issue {f.brex.issue}"))
+    if result.not_checked:
+        ids = ", ".join(r.rule_id for r, _ in result.not_checked[:5])
+        rep.diagnostics.append(Diagnostic(
+            stage=Stage.BUSINESS_RULES, severity=Severity.WARNING, rule_id="ASTHRA-BREX-NOT-CHECKED", category="brex-not-checked",
+            source_file=file,
+            message=f"{len(result.not_checked)} business rule(s) could not be evaluated and were NOT checked.",
+            suggestion=f"First: {ids}{' …' if len(result.not_checked) > 5 else ''}. Their paths use expressions ASTHRA cannot evaluate yet."))
+    names = " → ".join(f"DMC-{e['dmc']}" + (f" (instead of DMC-{e['substitute_for']})" if e.get("substitute_for") else "") for e in chain)
+    note = f"{result.checked} rules checked ({how}): {names}"
+    if missing:
+        note += f"; DMC-{missing} missing"
+    if result.not_checked:
+        note += f"; {len(result.not_checked)} not checked"
+    rep.stages.append(StageResult(stage=Stage.BUSINESS_RULES, status=Status.FAILED if result.findings else Status.PASSED, note=note))

@@ -71,8 +71,17 @@ export interface KFinding { rule: string; subject: string; message: string; valu
 export interface KImport { imported: { file: string; dmc: string; title: string; resources: number; parts: number; safety: number; references: number; catalogue: number }[];
   skipped: { file: string; reason: string }[] }
 
+export interface BrexEntry { dmc: string; issue: string; title: string; schema_issue: string | null; parent_dmc: string | null;
+  rules: number; sns_systems: number; file: string; source_name: string; installed_at: string }
+
 export const api = {
   projects: () => call<Project[]>("GET", "/api/projects"),
+  brexList: () => call<BrexEntry[]>("GET", "/api/brex"),
+  brexAdd: (file: File) => { const f = new FormData(); f.append("file", file); return call<BrexEntry>("POST", "/api/brex", undefined, f); },
+  brexSubstitutes: () => call<Record<string, string>>("GET", "/api/brex/substitutes"),
+  brexSetSubstitute: (named: string, use: string) => call<Record<string, string>>("POST", "/api/brex/substitutes", { named, use }),
+  brexRemoveSubstitute: (named: string) => call<Record<string, string>>("DELETE", `/api/brex/substitutes/${encodeURIComponent(named)}`),
+  brexRemove: (dmc: string, issue: string) => call<{ ok: boolean }>("DELETE", `/api/brex/${encodeURIComponent(dmc)}/${encodeURIComponent(issue)}`),
   kSummary: () => call<KSummary>("GET", "/api/knowledge/summary"),
   kImportProject: (pid: string) => call<KImport>("POST", `/api/knowledge/import-project/${pid}`),
   kBike: () => call<{ loaded: boolean; reason?: string }>("POST", "/api/knowledge/examples/bike"),
