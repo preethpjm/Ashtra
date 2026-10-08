@@ -147,3 +147,15 @@ def test_idref_check_does_not_depend_on_libxml2(ata, monkeypatch):
     d = ctx.documents.import_path(p["id"], DOCS / "ata_cmm_invalid.xml")
     rep = ctx.documents.validate(d["id"])
     assert any(x.rule_id == "DTD-IDREF" and x.value == "T-999" for x in rep.diagnostics)
+
+
+def test_profiles_carry_publication_numbering():
+    from asthra.render.profiles import resolve
+    ata = resolve("ATA2200", "cmm")
+    assert ata["numbering"]["scheme"] == "ata"
+    assert ata["roles"]["prcitem2"] == "proc-item" and ata["roles"]["revst"] == "change-mark"
+    assert ata["numbering"]["ident"]["subtask"] == "SUBTASK"
+    assert ata["columns"]["prtlist"][1] == "Part number"
+    s1k = resolve("S1000D", "dmodule")
+    assert s1k["numbering"]["scheme"] == "decimal" and "levelledPara" in s1k["numbering"]["elements"]
+    assert resolve(None, "unknown")["numbering"] is None

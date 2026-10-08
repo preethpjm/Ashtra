@@ -6,19 +6,23 @@ import { NodeSelection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/stat
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { useEffect, useRef } from "react";
-import { Adm, InlineItem, toProseMirror } from "./adm";
+import { Adm, InlineItem, Numbering, toProseMirror } from "./adm";
 
 export const humanize = (n: string) =>
   n.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase()).replace(/ ([A-Z])(?=[a-z])/g, (_, c) => " " + c.toLowerCase());
 
-export interface RenderProfile { profile: string; roles: Record<string, string>; labels: Record<string, string>; default_text: string }
+export interface RenderProfile { profile: string; roles: Record<string, string>; labels: Record<string, string>; default_text: string;
+  numbering?: Numbering | null; columns?: Record<string, string[]> }
 // The active display profile (element name -> role). Node views read it when they draw.
 let RENDER: RenderProfile = { profile: "generic", roles: {}, labels: {}, default_text: "para" };
 const roleOf = (name: string, kind: "block" | "text" | "atom") => RENDER.roles[name] ?? (kind === "text" ? RENDER.default_text : "");
 const labelOf = (name: string) => RENDER.labels[name] ?? humanize(name);
 
 const nodeAttrs = { nid: { default: 0 }, name: { default: "" }, summary: { default: "" }, depth: { default: 0 },
-  align: { default: "" }, valign: { default: "" } };
+  align: { default: "" }, valign: { default: "" }, grid: { default: "" }, x: { default: null } };
+
+// publication data computed from the document (numbers, identifiers, change bars, IPL items): display only
+const X_KEYS = ["num", "ns", "nd", "nl", "lead", "chg", "item", "ind", "selfnum", "cols", "ident"] as const;
 
 function elementView(textblock: boolean) {
   return ({ node }: { node: PMNode }) => {
@@ -41,16 +45,31 @@ function elementView(textblock: boolean) {
       if (n.attrs.summary) dom.dataset.summary = n.attrs.summary; else delete dom.dataset.summary;
       if (n.attrs.align) dom.dataset.align = n.attrs.align; else delete dom.dataset.align;
       if (n.attrs.valign) dom.dataset.valign = n.attrs.valign; else delete dom.dataset.valign;
+      // CALS tables: column widths on the tgroup, exact row/column position and spans on each entry
+      const g = String(n.attrs.grid || "").split("|");
+      content.style.gridTemplateColumns = g[0] === "T" ? g[1] : "";
+      dom.style.gridRow = g[0] === "C" ? g[1] : "";
+      dom.style.gridColumn = g[0] === "C" ? g[2] : "";
+      if (g[0] === "C" && g[3]) dom.dataset.head = g[3]; else delete dom.dataset.head;
+      const x = (n.attrs.x ?? {}) as Record<string, string>;
+      for (const k of X_KEYS) if (x[k]) dom.dataset[k] = x[k]; else delete dom.dataset[k];
+      if (x.num) content.dataset.num = x.num; else delete content.dataset.num;
+      if (x.ident) label.dataset.ident = x.ident; else delete label.dataset.ident;
       label.replaceChildren(
         Object.assign(document.createElement("span"), { className: "l-raw", textContent: n.attrs.name }),
         Object.assign(document.createElement("span"), { className: "l-human", textContent: humanize(n.attrs.name) }),
       );
+      if (x.cols) {
+        const head = Object.assign(document.createElement("span"), { className: "x-colhead" });
+        for (const c of x.cols.split("|")) head.append(Object.assign(document.createElement("span"), { textContent: c }));
+        label.append(head);
+      }
       label.title = n.attrs.summary || n.attrs.name;
     };
     apply(node);
     return {
       dom, contentDOM: content,
-      update: (n: PMNode) => { if (n.type !== node.type) return false; node = n; apply(n); return true; },
+      update: (n: PMNode) => { if (n.type !== node.type) return false; const same = n.attrs === node.attrs; node = n; if (!same) apply(n); return true; },
       ignoreMutation: (m: any) => m.target === label || label.contains(m.target),
     };
   };
@@ -242,10 +261,13 @@ export function VisualEditor(p: VisualProps) {
     return m;
   };
 
+  // the first content is converted once (the editor reads it only when it is created)
+  const initial = useRef<ReturnType<typeof toProseMirror> | null>(null);
+  if (!initial.current) initial.current = toProseMirror(p.adm, p.render);
   const editor = useEditor({
     extensions: [XDoc, Text, XBlock, XText, XAtom, XInline, XEl, History.configure({ depth: 200 }),
       makeGuard(() => props.current.onBlocked(), (a) => props.current.onKey?.(a) ?? false)],
-    content: toProseMirror(p.adm),
+    content: initial.current,
     editable: p.editable,
     onCreate: ({ editor }) => { last.current = snapshot(editor.state.doc); },
     onUpdate: ({ editor, transaction }) => {
@@ -301,13 +323,13 @@ export function VisualEditor(p: VisualProps) {
   // rebuild on external change
   useEffect(() => {
     if (!editor) return;
-    const json = toProseMirror(p.adm);
+    const json = toProseMirror(p.adm, p.render);
     const doc = PMNode.fromJSON(editor.schema, json);
     const tr = editor.state.tr.replaceWith(0, editor.state.doc.content.size, doc.content).setMeta("asthra-load", true).setMeta("addToHistory", false);
     editor.view.dispatch(tr);
     last.current = snapshot(editor.state.doc);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor, p.generation]);
+  }, [editor, p.generation, p.render]);
 
   useEffect(() => { editor?.setEditable(p.editable); }, [editor, p.editable]);
 

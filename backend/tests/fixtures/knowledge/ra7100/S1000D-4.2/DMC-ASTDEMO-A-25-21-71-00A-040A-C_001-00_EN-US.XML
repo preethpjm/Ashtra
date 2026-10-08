@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="040" infoCodeVariant="A" itemLocationCode="C"/>
+        <language languageIsoCode="en" countryIsoCode="US"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="10" day="08"/>
+        <dmTitle><techName>Seat recline actuator</techName><infoName>Description and operation</infoName></dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <dataRestrictions>
+        <restrictionInstructions><dataDistribution>Test data for ASTHRA. Product, company and part numbers are fictitious.</dataDistribution></restrictionInstructions>
+        <restrictionInfo><copyright><copyrightPara>ASTHRA Demo Seating Ltd (fictitious)</copyrightPara></copyright></restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></responsiblePartnerCompany>
+      <originator enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></originator>
+      <applic><displayText><simplePara>RA-7100-01 and RA-7100-02</simplePara></displayText></applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="G" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance><unverified/></qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara id="par-0001"><title>General</title>
+        <para>The seat recline actuator is a mechanical lockable spring strut. It holds the seat back at the selected recline angle and returns it to upright when released. Part numbers RA-7100-01 and RA-7100-02 (after SB 25-0012).</para>
+        <figure id="fig-0001"><title>Seat recline actuator</title><graphic infoEntityIdent="ICN-ASTDEMO-A-252171-C-ZZD01-00001-A-001-01"/></figure>
+      </levelledPara>
+      <levelledPara id="par-0002"><title>Main parts</title>
+        <para>The actuator has these main parts:</para>
+        <para><randomList>
+          <listItem><para>A housing (10) which contains a piston rod (20) sealed by two packings (110).</para></listItem>
+          <listItem><para>A compression spring (50, or 50A after SB 25-0012) which pushes the piston rod to the extended position.</para></listItem>
+          <listItem><para>A lock mechanism (60) with a release lever (70) and a lock pin (80), attached by four screws (90) and washers (100).</para></listItem>
+          <listItem><para>A threaded rod end (30) with a bushing (120), held by a self-locking nut (40).</para></listItem>
+        </randomList></para>
+      </levelledPara>
+      <levelledPara id="par-0003"><title>Operation</title>
+        <para>When the release lever is pulled, the lock pin disengages and the piston rod can move. Full stroke is 75 mm (2.95 in).</para>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

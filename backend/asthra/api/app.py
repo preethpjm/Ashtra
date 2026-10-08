@@ -66,7 +66,7 @@ for _ext, _type in ((".js", "text/javascript"), (".mjs", "text/javascript"), (".
 WEB_DIST = Path(__file__).resolve().parent.parent / "web" / "dist"
 WRITE_HEADER = "x-asthra"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
-       "font-src 'self' data:; worker-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; "
+       "font-src 'self' data:; worker-src 'self' blob:; connect-src 'self' blob: data:; frame-ancestors 'none'; "
        "base-uri 'none'; form-action 'none'")
 
 
@@ -405,6 +405,51 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.post("/api/knowledge/import-project/{pid}")
     def knowledge_import_project(pid: str, include_invalid: bool = False):
         return ctx.knowledge.import_project(pid, include_invalid)
+
+    @app.post("/api/knowledge/engineering")
+    async def knowledge_engineering(file: UploadFile = File(...)):
+        data = await file.read()
+        try:
+            return ctx.knowledge.import_engineering(file.filename or "bom.csv", data)
+        except (ValueError, UnicodeDecodeError) as e:
+            raise HTTPException(400, f"Could not read {file.filename}: {e}")
+
+    @app.post("/api/knowledge/engineering-set")
+    async def knowledge_engineering_set(files: list[UploadFile] = File(...)):
+        got = [(f.filename or "file", await f.read()) for f in files]
+        return ctx.knowledge.import_engineering_set(got)
+
+    @app.post("/api/knowledge/models")
+    async def knowledge_add_model(file: UploadFile = File(...)):
+        data = await file.read()
+        try:
+            return ctx.knowledge.add_model(file.filename or "model.glb", data)
+        except ValueError as e:
+            raise HTTPException(400, f"Could not read {file.filename}: {e}")
+
+    @app.get("/api/knowledge/models")
+    def knowledge_models():
+        return ctx.knowledge.models()
+
+    @app.get("/api/knowledge/models/{mid}/file")
+    def knowledge_model_file(mid: int):
+        try:
+            return FileResponse(ctx.knowledge.model_path(mid), media_type="model/gltf-binary")
+        except KeyError:
+            raise HTTPException(404, "no such model")
+
+    @app.get("/api/knowledge/models/{mid}/status")
+    def knowledge_model_status(mid: int):
+        return ctx.knowledge.model_status(mid)
+
+    @app.delete("/api/knowledge/models/{mid}")
+    def knowledge_delete_model(mid: int):
+        ctx.knowledge.delete_model(mid)
+        return {"ok": True}
+
+    @app.get("/api/knowledge/locate")
+    def knowledge_locate(pn: str):
+        return ctx.knowledge.locate(pn)
 
     @app.post("/api/knowledge/examples/bike")
     def knowledge_bike():

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- S2000M-style provisioning data in ASTHRA's built-in S2000M test schema (urn:asthra:synthetic:s2000m).
+     Not the official S2000M schema: same facts, simplified structure. -->
+<provisioningExchange xmlns="urn:asthra:synthetic:s2000m">
+  <header><exchangeId>PX-RA7100-0001</exchangeId><issue>001</issue><productIdentifier>RA-7100</productIdentifier></header>
+  <parts>
+    <part id="p001"><partNumber>RA-7100-01</partNumber><cage>ZZD01</cage><nomenclature>ACTUATOR ASSY, RECLINE</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p002"><partNumber>RA-7100-02</partNumber><cage>ZZD01</cage><nomenclature>ACTUATOR ASSY, RECLINE</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p003"><partNumber>RA-7110-1</partNumber><cage>ZZD01</cage><nomenclature>HOUSING, ACTUATOR</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p004"><partNumber>RA-7120-1</partNumber><cage>ZZD01</cage><nomenclature>ROD, PISTON</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p005"><partNumber>RA-7130-1</partNumber><cage>ZZD01</cage><nomenclature>ROD END, THREADED</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p006"><partNumber>MS21042L4</partNumber><cage>96906</cage><nomenclature>NUT, SELF-LOCKING</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p007"><partNumber>RA-7150-1</partNumber><cage>ZZV02</cage><nomenclature>SPRING, COMPRESSION</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p008"><partNumber>RA-7150-2</partNumber><cage>ZZV02</cage><nomenclature>SPRING, COMPRESSION, HIGH RATE</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p009"><partNumber>RA-7160-1</partNumber><cage>ZZD01</cage><nomenclature>LOCK MECHANISM ASSY</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p010"><partNumber>RA-7170-1</partNumber><cage>ZZD01</cage><nomenclature>LEVER, RELEASE</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p011"><partNumber>RA-7180-1</partNumber><cage>ZZD01</cage><nomenclature>PIN, LOCK</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p012"><partNumber>NAS1352C3-8</partNumber><cage>80205</cage><nomenclature>SCREW, CAP, SOCKET HEAD</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p013"><partNumber>NAS1149C0363R</partNumber><cage>80205</cage><nomenclature>WASHER, FLAT</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p014"><partNumber>M83248/1-210</partNumber><cage>81349</cage><nomenclature>PACKING, PREFORMED</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p015"><partNumber>RA-7190-1</partNumber><cage>ZZV03</cage><nomenclature>BUSHING, ROD END</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p016"><partNumber>RA-7200-1</partNumber><cage>ZZD01</cage><nomenclature>PLACARD, IDENTIFICATION</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p017"><partNumber>ADT-7100-01</partNumber><cage>ZZD01</cage><nomenclature>Spring compressor</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p018"><partNumber>ADT-7100-02</partNumber><cage>ZZD01</cage><nomenclature>Holding fixture, rod end</nomenclature><unitOfIssue>EA</unitOfIssue></part>
+    <part id="p019"><partNumber>MIL-PRF-23827</partNumber><cage>81349</cage><nomenclature>Grease, aircraft and instrument</nomenclature><unitOfIssue>TU</unitOfIssue></part>
+    <part id="p020"><partNumber>LOCTITE 242</partNumber><cage>05972</cage><nomenclature>Threadlocker, medium strength</nomenclature><unitOfIssue>BT</unitOfIssue></part>
+    <part id="p021"><partNumber>TT-I-735</partNumber><cage>81348</cage><nomenclature>Isopropyl alcohol</nomenclature><unitOfIssue>LI</unitOfIssue></part>
+  </parts>
+  <ipdRecords>
+    <ipdItem partRef="p001"><figureNumber>01</figureNumber><itemNumber>001</itemNumber><indenture>1</indenture><quantityPerAssembly>1</quantityPerAssembly><effectivity>RA-7100-01 (PRE SB 25-0012)</effectivity></ipdItem>
+    <ipdItem partRef="p002"><figureNumber>01</figureNumber><itemNumber>001A</itemNumber><indenture>1</indenture><quantityPerAssembly>1</quantityPerAssembly><effectivity>RA-7100-02 (POST SB 25-0012)</effectivity></ipdItem>
+    <ipdItem partRef="p003"><figureNumber>01</figureNumber><itemNumber>010</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p004"><figureNumber>01</figureNumber><itemNumber>020</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p005"><figureNumber>01</figureNumber><itemNumber>030</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p006"><figureNumber>01</figureNumber><itemNumber>040</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p007"><figureNumber>01</figureNumber><itemNumber>050</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly><effectivity>RA-7100-01 (PRE SB 25-0012)</effectivity></ipdItem>
+    <ipdItem partRef="p008"><figureNumber>01</figureNumber><itemNumber>050A</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly><effectivity>RA-7100-02 (POST SB 25-0012)</effectivity></ipdItem>
+    <ipdItem partRef="p009"><figureNumber>01</figureNumber><itemNumber>060</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p010"><figureNumber>01</figureNumber><itemNumber>070</itemNumber><indenture>3</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p011"><figureNumber>01</figureNumber><itemNumber>080</itemNumber><indenture>3</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p012"><figureNumber>01</figureNumber><itemNumber>090</itemNumber><indenture>2</indenture><quantityPerAssembly>4</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p013"><figureNumber>01</figureNumber><itemNumber>100</itemNumber><indenture>2</indenture><quantityPerAssembly>4</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p014"><figureNumber>01</figureNumber><itemNumber>110</itemNumber><indenture>2</indenture><quantityPerAssembly>2</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p015"><figureNumber>01</figureNumber><itemNumber>120</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+    <ipdItem partRef="p016"><figureNumber>01</figureNumber><itemNumber>130</itemNumber><indenture>2</indenture><quantityPerAssembly>1</quantityPerAssembly></ipdItem>
+  </ipdRecords>
+</provisioningExchange>

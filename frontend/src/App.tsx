@@ -7,6 +7,7 @@ import { SourceEditor, SrcMarker } from "./SourceEditor";
 import { Tree } from "./Tree";
 import { SchemaManager } from "./SchemaManager";
 import { Sheet, usePrintPage } from "./Sheet";
+import { Part3DPanel } from "./Part3DPanel";
 import { KnowledgeView } from "./KnowledgeView";
 import { BrexPrompt } from "./BrexPrompt";
 import { AttributeEditor, AttrPopover, AttrRow, LibraryEntry, InsertGroup, InsertMenu, ShortcutHelp, TablePopover, TableSpec } from "./StructureUI";
@@ -1056,6 +1057,7 @@ export function App() {
                     </tbody></table>
                   </>
                 ) : null}
+                <Part3DPanel el={selEl} />
                 {selDiags.length > 0 && <><h3>Problems here</h3>{selDiags.map((d, i) => <div key={i} className={`diag-card sev-${d.severity}`} title={d.raw_message ?? undefined}>{d.message}{d.suggestion && <div className="hint">{d.suggestion}</div>}{d.fix && <button className="fix" onClick={() => applyFix(d)}>{d.fix.label}</button>}</div>)}</>}
                 {!isSgml && <button className="link" onClick={() => goTo(selected!)}>Show in source</button>}
               </section>

@@ -139,6 +139,51 @@ emits facts with provenance. Examples:
 Identity matching is by the keys in 4.1. A record that matches nothing becomes a new entity;
 a record that matches two becomes a **conflict to resolve**, never a guess.
 
+### 5.1 Built (m4.7): four kinds of source, one set of facts
+
+| Source | Importer | Facts |
+|---|---|---|
+| S1000D data module | `knowledge/s1000d_import.py` | identity, personnel, tools / supplies / spares, warnings, references, IPD lines (with `usableOnCodeAssy`) |
+| ATA iSpec 2200 manual (SGML via OpenSP, or XML) | `knowledge/ata_import.py` | manual and TASK identities, `<ted>` tools and `<con>` consumables per task, warnings and cautions, IPL lines, vendors, service bulletins |
+| S2000M provisioning (ASTHRA test schema) | `knowledge/s2000m_import.py` | parts (unit of issue), parts-list lines with effectivity |
+| Engineering BOM (CSV, Excel, JSON) | `knowledge/engineering.py` | parts, parent-child structure (`part_list_entry`), BOM lines as written (`bom_line`), engineering attributes such as mass, material, CAD file (`part_property`) |
+
+"Add project to library" reads every document of the project that is one of the first three (identified by
+schema or by its top element; documents whose structure failed are skipped; documents no installed schema covers
+are read and marked "not validated"). The engineering BOM is imported from the Knowledge screen. BOM columns are
+recognised by name (Part Number / P/N, CAGE, Description, Qty, UoM, Level, Find No, Parent, Effectivity, Item type,
+Make/Buy); every other column becomes a part property. A JSON file uses the `asthra-engineering/1` format
+(documented in `engineering.py`) or a plain list of objects with the same names.
+
+**Conventions** so the sources compare: ATA item `50A` = S1000D item `050` + variant `A` = S2000M `050A`;
+ATA indent 0/1/2 = indenture 1/2/3; `RF` = quantity 1; ATA vendor code `V` + CAGE = CAGE.
+
+**Cross-source checks** (`knowledge/crosscheck.py`, shown under Findings): two parts lists sharing a top-level part
+number are compared item by item (part number, CAGE, quantity, indenture, effectivity, missing items); the engineering
+BOM is compared with the structure the parts lists imply (quantity, part in one and not the other); a part number
+without a CAGE that matches exactly one part with a CAGE is reported as a suggested match, never merged.
+
+Test data: `backend/tests/fixtures/knowledge/ra7100` — one product in all four forms, consistent, plus planted
+disagreements in `tests/test_knowledge_crosssource.py`.
+
+### 5.2 Built (m4.8): 3D models and the STEP ↔ MBOM reconciliation
+
+| Input | Where | What ASTHRA keeps |
+|---|---|---|
+| Reconciliation result (JSON from the STEP→GLB / MBOM tool: `matched`, `unmatched_step`, `unmatched_mbom`) | Knowledge → Import engineering data… | MBOM lines (part numbers without their level dots, level, quantity), one `cad_link` per 3D item (3D name, quantity, status, confidence, the tool's flags), the tool's findings: quantity differs, matched with doubt, which BOM line (candidates), 3D item not in the MBOM, MBOM lines not modelled |
+| 3D model (GLB) | Knowledge → 3D models → Add 3D model | the file in the data folder (`knowledge/models`), its node names (`cad_node`) |
+
+A node shows a part when its name is the part number, or the 3D name the reconciliation linked to the part,
+optionally followed by an instance suffix (`_1`, `.001`, `:2`, `(3)`), or contains it as a whole token
+(`F6137-C75930` shows `C75930`); see `knowledge/models.py`.
+
+Where the 3D model appears:
+- **Knowledge → 3D models**: the whole model coloured by status (matched, matched with doubt, quantity differs,
+  not in the BOM, part number in the library); click a part to see and open it.
+- **Knowledge → Parts → a part**: the part highlighted in its model, with its 3D items and their status.
+- **Document view (any standard)**: select a part number, an IPL / IPD line, a tool or a part record; the
+  inspector shows that part highlighted in the model.
+
 ## 6. Mappings and filling (core → standard)
 
 A **mapping file** per standard issue describes, for each target place, where the value comes from:

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="710" infoCodeVariant="A" itemLocationCode="C"/>
+        <language languageIsoCode="en" countryIsoCode="US"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="10" day="08"/>
+        <dmTitle><techName>Seat recline actuator</techName><infoName>Assemble procedure</infoName></dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <dataRestrictions>
+        <restrictionInstructions><dataDistribution>Test data for ASTHRA. Product, company and part numbers are fictitious.</dataDistribution></restrictionInstructions>
+        <restrictionInfo><copyright><copyrightPara>ASTHRA Demo Seating Ltd (fictitious)</copyrightPara></copyright></restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></responsiblePartnerCompany>
+      <originator enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></originator>
+      <applic><displayText><simplePara>RA-7100-01 and RA-7100-02</simplePara></displayText></applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="G" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance><unverified/></qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <warningsAndCautions><warning id="wrn-0001"><warningAndCautionPara>THE SPRING IS COMPRESSED. USE THE SPRING COMPRESSOR TO RELEASE IT SLOWLY. IF YOU DO NOT, THE PARTS CAN MOVE SUDDENLY AND CAUSE INJURY.</warningAndCautionPara></warning></warningsAndCautions>
+    <procedure>
+      <commonInfo><title>Job description</title><para>This procedure gives the instructions to assemble the actuator.</para></commonInfo>
+      <preliminaryRqmts><reqCondGroup><noConds/></reqCondGroup><reqPersons><personnel numRequired="1"><personCategory personCategoryCode="Shop technician"/><personSkill skillLevelCode="sk02"/><estimatedTime unitOfMeasure="h">1</estimatedTime></personnel></reqPersons><reqSupportEquips><supportEquipDescrGroup><supportEquipDescr id="seq-adt-7100-01"><name>Spring compressor</name><identNumber><manufacturerCode>ZZD01</manufacturerCode><partAndSerialNumber><partNumber>ADT-7100-01</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="EA">1</reqQuantity></supportEquipDescr><supportEquipDescr id="seq-adt-7100-02"><name>Holding fixture, rod end</name><identNumber><manufacturerCode>ZZD01</manufacturerCode><partAndSerialNumber><partNumber>ADT-7100-02</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="EA">1</reqQuantity></supportEquipDescr><supportEquipDescr id="seq-tw-0110"><name>Torque wrench, 1 to 10 N.m</name><toolRef toolNumber="TW-0110"/><reqQuantity unitOfMeasure="EA">1</reqQuantity></supportEquipDescr></supportEquipDescrGroup></reqSupportEquips><reqSupplies><supplyDescrGroup><supplyDescr id="sup-mil-prf-23827"><name>Grease, aircraft and instrument</name><identNumber><manufacturerCode>81349</manufacturerCode><partAndSerialNumber><partNumber>MIL-PRF-23827</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="g">5</reqQuantity></supplyDescr><supplyDescr id="sup-loctite-242"><name>Threadlocker, medium strength</name><identNumber><manufacturerCode>05972</manufacturerCode><partAndSerialNumber><partNumber>LOCTITE 242</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="ml">1</reqQuantity></supplyDescr></supplyDescrGroup></reqSupplies><reqSpares><spareDescrGroup><spareDescr id="spa-m83248-1-210"><name>Packing, preformed (O-ring)</name><identNumber><manufacturerCode>81349</manufacturerCode><partAndSerialNumber><partNumber>M83248/1-210</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="EA">2</reqQuantity></spareDescr></spareDescrGroup></reqSpares><reqSafety><safetyRqmts><warning><warningAndCautionPara>THE SPRING IS COMPRESSED. USE THE SPRING COMPRESSOR TO RELEASE IT SLOWLY. IF YOU DO NOT, THE PARTS CAN MOVE SUDDENLY AND CAUSE INJURY.</warningAndCautionPara></warning></safetyRqmts></reqSafety></preliminaryRqmts>
+      <mainProcedure><proceduralStep><title>Install the packings and the piston rod</title><proceduralStep><para>Lubricate two new packings (110) with grease, <internalRef internalRefId="sup-mil-prf-23827" internalRefTargetType="irtt04"/>.</para></proceduralStep><proceduralStep><para>Install the packings on the piston rod (20).</para></proceduralStep><proceduralStep><para>Install the piston rod in the housing (10).</para></proceduralStep></proceduralStep><proceduralStep warningRefs="wrn-0001"><title>Install the spring and the lock mechanism</title><proceduralStep><para>Install the spring (50 or 50A) and compress it with the spring compressor, <internalRef internalRefId="seq-adt-7100-01" internalRefTargetType="irtt05"/>.</para></proceduralStep><proceduralStep><para>Install the lock mechanism (60) with the four washers (100) and the four screws (90). Torque the screws to 2.8 to 3.4 N.m (25 to 30 lbf.in) with the torque wrench, <internalRef internalRefId="seq-tw-0110" internalRefTargetType="irtt05"/>.</para></proceduralStep><proceduralStep><para>Slowly release the spring compressor.</para></proceduralStep></proceduralStep><proceduralStep><title>Install the rod end</title><proceduralStep><para>Install the actuator in the holding fixture, <internalRef internalRefId="seq-adt-7100-02" internalRefTargetType="irtt05"/>.</para></proceduralStep><proceduralStep><para>Apply threadlocker, <internalRef internalRefId="sup-loctite-242" internalRefTargetType="irtt04"/> to the threads of the piston rod (20). Install the rod end (30).</para></proceduralStep><proceduralStep><para>Install the nut (40). Torque the nut to 6.8 to 7.9 N.m (60 to 70 lbf.in). Refer to the technical data (<dmRef><dmRefIdent><dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="030" infoCodeVariant="A" itemLocationCode="C"/></dmRefIdent></dmRef>).</para></proceduralStep><proceduralStep><para>Do the functional test (<dmRef><dmRefIdent><dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="340" infoCodeVariant="A" itemLocationCode="C"/></dmRefIdent></dmRef>).</para></proceduralStep></proceduralStep></mainProcedure>
+      <closeRqmts><reqCondGroup><noConds/></reqCondGroup></closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

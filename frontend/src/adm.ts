@@ -291,6 +291,19 @@ export function knownSummary(el: Element): string | null {
       const v = DMC_ATTRS.map(g);
       return `DMC-${v[0]}-${v[1]}-${v[2]}-${v[3]}${v[4]}-${v[5]}-${v[6]}${v[7]}-${v[8]}${v[9]}-${v[10]}`;
     }
+    case "graphic": {                 // S1000D illustration: its ICN
+      const icn = g("infoEntityIdent") || g("boardno");
+      return icn ? (el.children.length ? null : icn) : null;
+    }
+    case "toolRef": case "supplyRef": case "partRef": case "spareRef": case "supplyRqmtRef": {
+      const num = g("toolNumber") || g("supplyNumber") || g("partNumberValue") || g("supplyRqmtNumber");
+      const mfr = g("manufacturerCodeValue");
+      return num ? `${num}${mfr ? `  (CAGE ${mfr})` : ""}` : null;
+    }
+    case "sheet": {                   // ATA illustration sheet: number and graphic file
+      const n = g("sheetnbr"), f = g("gnbr");
+      return n || f ? [n && `Sheet ${n}`, f].filter(Boolean).join("  \u00b7  ") : null;
+    }
     case "issueInfo": return `Issue ${g("issueNumber")}${el.hasAttribute("inWork") ? "-" + g("inWork") : ""}`;
     case "language": return [g("languageIsoCode"), g("countryIsoCode")].filter(Boolean).join("-");
     case "issueDate": return [g("year"), g("month"), g("day")].filter(Boolean).join("-");
@@ -418,7 +431,7 @@ export function inlineLabel(el: Element): string {
     }
     case "dmRef": {
       const c = el.getElementsByTagName("dmCode")[0];
-      return c ? "DMC " + ["modelIdentCode", "systemDiffCode", "systemCode", "subSystemCode", "subSubSystemCode", "assyCode", "disassyCode", "disassyCodeVariant", "infoCode", "infoCodeVariant", "itemLocationCode"].map((a) => c.getAttribute(a) ?? "").join("-") : "data module reference";
+      return c ? (knownSummary(c) ?? "DMC") : "data module reference";
     }
     default: {
       // generic: a value with a unit attribute reads "45 lbf.in"; an empty reference reads "→ target"
@@ -448,10 +461,140 @@ export function leafDescendants(adm: Adm, k: number, max = 60): number[] {
   return out;
 }
 
+// ------------------------------------------------------------------ CALS table layout
+export interface CellPlace { row: number; col: number; rowSpan: number; colSpan: number; head: boolean; headEnd: boolean }
+export interface CalsLayout { cols: number; template: string; cells: Map<Element, CellPlace> }
+
+/** Width of a CALS colwidth as a relative weight ("2*" -> 2, "30mm" -> 30 (mm), "" -> 1*). */
+function colWeight(w: string): { star: number; mm: number } {
+  const v = (w || "").trim().toLowerCase();
+  if (!v) return { star: 1, mm: 0 };
+  let star = 0, mm = 0;
+  for (const m of v.matchAll(/([0-9.]*)\s*\*|([0-9.]+)\s*(mm|cm|in|pt|pi|px)?/g)) {
+    if (m[0].includes("*")) star += m[1] ? parseFloat(m[1]) || 1 : 1;
+    else if (m[2]) {
+      const n = parseFloat(m[2]) || 0, u = m[3] || "pt";
+      mm += n * ({ mm: 1, cm: 10, in: 25.4, pt: 25.4 / 72, pi: 25.4 / 6, px: 25.4 / 96 } as Record<string, number>)[u];
+    }
+  }
+  return star || mm ? { star, mm } : { star: 1, mm: 0 };
+}
+
+/** Where every entry of a CALS tgroup sits: column spans (namest/nameend, spanname), row spans
+ *  (morerows), cells pushed right past cells spanning down from rows above, and column widths
+ *  from colspec. Rows of thead, tbody and tfoot are numbered on one grid. */
+export function calsLayout(tgroup: Element): CalsLayout {
+  const kids = (e: Element, n?: string) => Array.from(e.children).filter((c) => !n || localName(c) === n);
+  const specsOf = (e: Element) => {
+    const names = new Map<string, number>();
+    const widths: string[] = [];
+    let num = 0;
+    for (const c of kids(e, "colspec")) {
+      num = parseInt(c.getAttribute("colnum") ?? "", 10) || num + 1;
+      const n = c.getAttribute("colname");
+      if (n) names.set(n, num);
+      widths[num - 1] = c.getAttribute("colwidth") ?? "";
+    }
+    const spans = new Map<string, [string, string]>();
+    for (const c of kids(e, "spanspec")) spans.set(c.getAttribute("spanname") ?? "", [c.getAttribute("namest") ?? "", c.getAttribute("nameend") ?? ""]);
+    return { names, widths, spans, count: num };
+  };
+  const top = specsOf(tgroup);
+  const sections = kids(tgroup).filter((c) => /^(thead|tbody|tfoot)$/.test(localName(c)));
+  let cols = parseInt(tgroup.getAttribute("cols") ?? "", 10) || 0;
+  const taken: boolean[][] = [];
+  const cells = new Map<Element, CellPlace>();
+  let r = 0;
+  for (const sec of sections) {
+    const own = specsOf(sec);
+    const specs = own.names.size ? { ...top, names: own.names } : top;
+    const colOf = (n: string | null) => (n ? specs.names.get(n) ?? 0 : 0);
+    const head = localName(sec) === "thead";
+    const rows = kids(sec, "row");
+    rows.forEach((row, ri) => {
+      taken[r] ??= [];
+      let next = 1;
+      for (const e of kids(row).filter((c) => /^(entry|entrytbl)$/.test(localName(c)))) {
+        let st = 0, en = 0;
+        const sp = e.getAttribute("spanname");
+        if (sp && specs.spans.has(sp)) { const [a, b] = specs.spans.get(sp)!; st = colOf(a); en = colOf(b); }
+        if (!st) { st = colOf(e.getAttribute("namest")); en = colOf(e.getAttribute("nameend")); }
+        if (!st) { st = colOf(e.getAttribute("colname")); en = st; }
+        if (!st) { st = next; while (taken[r][st]) st++; en = st; }
+        if (en < st) en = st;
+        const down = Math.max(0, parseInt(e.getAttribute("morerows") ?? "", 10) || 0);
+        for (let y = r; y <= r + down; y++) { taken[y] ??= []; for (let x = st; x <= en; x++) taken[y][x] = true; }
+        cells.set(e, { row: r + 1, col: st, rowSpan: down + 1, colSpan: en - st + 1, head, headEnd: head && ri === rows.length - 1 });
+        next = en + 1;
+        cols = Math.max(cols, en);
+      }
+      r++;
+    });
+  }
+  cols = Math.max(cols, top.count, 1);
+  const ws = Array.from({ length: cols }, (_, i) => colWeight(top.widths[i] ?? ""));
+  const allAbs = ws.every((w) => !w.star && w.mm);
+  const template = ws.map((w) => {
+    const fr = allAbs ? w.mm : w.star || 1;
+    return `minmax(min-content, ${+fr.toFixed(3)}fr)`;
+  }).join(" ");
+  return { cols, template, cells };
+}
+
+// ------------------------------------------------------------------ publication numbering
+/** How a standard numbers its headings and steps (from the display profile). */
+export interface Numbering {
+  scheme: "ata" | "decimal";       // ATA iSpec 2200: 1. A. (1) (a) 1 a ; S1000D: 1 1.1 1.1.1
+  elements: string[];              // numbered element names
+  resets?: string[];               // numbering restarts inside each of these
+  ident?: Record<string, string>;  // ATA: element -> identifier line prefix (TASK, SUBTASK)
+}
+export interface ViewProfile { numbering?: Numbering | null; columns?: Record<string, string[]> }
+
+const alpha = (n: number): string => { let s = ""; for (; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s; return s; };
+const roman = (n: number): string => {
+  const t: [number, string][] = [[10, "x"], [9, "ix"], [5, "v"], [4, "iv"], [1, "i"]];
+  let s = ""; for (const [v, r] of t) while (n >= v) { s += r; n -= v; } return s;
+};
+/** ATA iSpec 2200 procedure numbering by level: 1.  A.  (1)  (a)  1  a  (i) */
+export function ataNumber(depth: number, n: number): string {
+  switch (depth) {
+    case 0: return `${n}.`;
+    case 1: return `${alpha(n)}.`;
+    case 2: return `(${n})`;
+    case 3: return `(${alpha(n).toLowerCase()})`;
+    case 4: return `${n}`;
+    case 5: return alpha(n).toLowerCase();
+    default: return `(${roman(n)})`;
+  }
+}
+/** ATA task / subtask identifier, e.g. TASK 25-26-62-99F-801-A01 (from the element's attributes). */
+export function ataIdent(el: Element, prefix: string): string {
+  const g = (a: string) => (el.getAttribute(a) ?? "").trim();
+  const [ch, se, su, seq, vn] = [g("chapnbr"), g("sectnbr"), g("subjnbr"), g("seq"), g("varnbr")];
+  if (!ch || !se || !su || !seq) return "";
+  const p2 = (v: string) => (/^\d$/.test(v) ? "0" + v : v);
+  const p3 = (v: string) => (/^\d+$/.test(v) ? v.padStart(3, "0") : v);
+  const tail = g("confltr").toUpperCase() + (vn ? p2(vn) : "");
+  return `${prefix} ${[p2(ch), p2(se), p2(su), g("func").toUpperCase(), p3(seq)].filter(Boolean).join("-")}${tail ? "-" + tail : ""}`;
+}
+
+// elements whose text keeps its line breaks and spaces
+const PRE_NAMES = new Set(["verbatimText", "programListing", "pre", "screen", "literallayout", "codeblock"]);
+const keepsSpace = (el: Element): boolean => {
+  for (let e: Element | null = el; e; e = e.parentElement) {
+    const sp = e.getAttribute("xml:space");
+    if (sp === "preserve") return true;
+    if (sp === "default") return false;
+    if (PRE_NAMES.has(localName(e))) return true;
+  }
+  return false;
+};
+
 // ------------------------------------------------------------------ ADM -> ProseMirror JSON
 type Json = Record<string, any>;
 
-export function toProseMirror(adm: Adm): Json {
+export function toProseMirror(adm: Adm, view: ViewProfile = {}): Json {
   const nid = (n: Node) => adm.indexOf.get(n)!;
   const depthOf = (el: Element) => { let d = 0; for (let p = el.parentElement; p; p = p.parentElement) d++; return d; };
   const raw = (n: Node): string => {
@@ -460,6 +603,78 @@ export function toProseMirror(adm: Adm): Json {
     const s = adm.miscSpans[k]; return adm.text.slice(s.start, s.end);
   };
   const names = entityNames(adm.doc);
+  const layouts = new Map<Element, CalsLayout>();
+  const gridOf = (el: Element): string => {
+    const n = localName(el);
+    if (n === "tgroup") { const l = calsLayout(el); layouts.set(el, l); return `T|${l.template}`; }
+    if (n !== "entry" && n !== "entrytbl") return "";
+    const tg = el.closest("tgroup");
+    if (!tg) return "";
+    const l = layouts.get(tg) ?? calsLayout(tg);
+    layouts.set(tg, l);
+    const p = l.cells.get(el);
+    return p ? `C|${p.row} / span ${p.rowSpan}|${p.col} / span ${p.colSpan}|${p.head ? (p.headEnd ? "hend" : "h") : ""}` : "";
+  };
+
+  // ---- numbering (display only): counted in document order, restarting per numbered parent / reset element
+  const nb = view.numbering && view.numbering.elements?.length ? view.numbering : null;
+  const numbered = new Set(nb?.elements ?? []);
+  const resets = new Set(nb?.resets ?? []);
+  const counters = new Map<Element | null, Map<string, number>>();
+  const numOf = new Map<Element, { label: string; depth: number }>();
+  const numberedParent = (el: Element): Element | null => {
+    for (let p = el.parentElement; p; p = p.parentElement) if (numbered.has(localName(p))) return p;
+    return null;
+  };
+  const numberAttrs = (el: Element, x: Record<string, string>) => {
+    if (!nb || !numbered.has(localName(el))) return;
+    let scope: Element | null = null;
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      const pn = localName(p);
+      if (numbered.has(pn) || resets.has(pn)) { scope = p; break; }
+    }
+    const m = counters.get(scope) ?? new Map<string, number>();
+    counters.set(scope, m);
+    const name = localName(el);
+    const n = (m.get(name) ?? 0) + 1;
+    m.set(name, n);
+    const parent = numberedParent(el);
+    const pd = parent ? numOf.get(parent) : undefined;
+    const depth = pd ? pd.depth + 1 : 0;
+    const label = nb.scheme === "ata" ? ataNumber(depth, n) : (pd ? `${pd.label}.${n}` : String(n));
+    numOf.set(el, { label, depth });
+    x.num = label; x.ns = nb.scheme; x.nd = String(depth);
+    const pre = nb.ident?.[name];
+    if (pre) { const id = ataIdent(el, pre); if (id) x.ident = id; }
+    // a step that opens with a warning, caution or note: the number goes on its first paragraph
+    let body: Element = el;
+    for (let guard = 0; guard < 4; guard++) {
+      const kids = Array.from(body.children).filter((c) => !/^(revst|revend|effect)$/.test(localName(c)));
+      const first = kids[0];
+      if (!first) break;
+      if (/^(warning|caution|note)$/.test(localName(first))) {
+        const para = kids.find((c) => !/^(warning|caution|note)$/.test(localName(c)));
+        if (para && kindOf(para) === "text") { leadOf.set(para, label); x.nl = "1"; }
+        break;
+      }
+      if (first.children.length === 0 || kindOf(first) === "text" || numbered.has(localName(first))) break;
+      body = first;                       // look through wrappers such as ATA <prcitem>
+    }
+  };
+  const leadOf = new Map<Element, string>();
+  // how far text is indented by numbering (places revision bars in the page margin)
+  const indentOf = (el: Element): string => {
+    if (!nb) return "0";
+    let d = 0;
+    for (let p: Element | null = el; p; p = p.parentElement) if (numbered.has(localName(p))) d++;
+    return d === 0 ? "0" : nb.scheme === "ata" ? "a" + Math.min(d, 7) : "d1";
+  };
+
+  // ---- change marks: revst ... revend (ATA), changeMark="1" (S1000D)
+  let inRev = false;
+  const isRevStart = (e: Element) => localName(e) === "revst";
+  const isRevEnd = (e: Element) => localName(e) === "revend";
+
   const pushText = (content: Json[], t: string) => {
     let last = 0;
     for (const m of t.matchAll(MARK_RE)) {
@@ -470,30 +685,76 @@ export function toProseMirror(adm: Adm): Json {
     }
     if (last < t.length) content.push({ type: "text", text: t.slice(last) });
   };
+  // printed text: source line breaks and indentation read as one space (display only; unedited
+  // elements are never rewritten, so the saved file keeps its layout)
+  const tidy = (content: Json[]): Json[] => {
+    for (const c of content) if (c.type === "text") c.text = c.text.replace(/[ \t\r\n]+/g, " ");
+    const visible = (c: Json) => !(c.type === "xinline" && c.attrs.misc);
+    const first = content.findIndex(visible), lastI = content.length - 1 - [...content].reverse().findIndex(visible);
+    if (first >= 0 && content[first].type === "text") content[first].text = content[first].text.replace(/^ /, "");
+    if (lastI >= 0 && lastI < content.length && content[lastI].type === "text") content[lastI].text = content[lastI].text.replace(/ $/, "");
+    for (let i = 1; i < content.length; i++) {
+      const a = content[i - 1], b = content[i];
+      if (a.type === "text" && b.type === "text" && / $/.test(a.text) && /^ /.test(b.text)) b.text = b.text.slice(1);
+    }
+    return content.filter((c) => c.type !== "text" || c.text.length > 0);
+  };
   const block = (el: Element): Json => {
     const kind = kindOf(el);
-    const attrs = { nid: nid(el), name: localName(el), summary: attrSummary(el), depth: depthOf(el),
-      align: (el.getAttribute("align") ?? "").toLowerCase(), valign: (el.getAttribute("valign") ?? "").toLowerCase() };
+    const x: Record<string, string> = {};
+    const name = localName(el);
+    numberAttrs(el, x);
+    if (name === "catalogSeqNumber" && el.hasAttribute("item")) {    // S1000D IPD line: item 050 + variant A reads "50A"
+      const nil = el.getElementsByTagName("notIllustrated").length > 0;
+      x.item = (nil ? "-" : "") + (el.getAttribute("item") ?? "").replace(/^0+(?=\d)/, "") + (el.getAttribute("itemVariant") ?? "");
+      const ind = parseInt(el.getAttribute("indenture") ?? "", 10);
+      if (ind > 1) x.ind = String(Math.min(ind - 1, 7));
+    }
+    if (el.hasAttribute("itemnbr")) {           // IPL item: "-" marks a part not shown in the illustration
+      x.item = (el.getAttribute("illusind") === "0" ? "-" : "") + (el.getAttribute("itemnbr") ?? "");
+      const ind = el.getAttribute("indent");
+      if (ind && /^\d+$/.test(ind) && +ind > 0) x.ind = String(Math.min(+ind, 7));
+    }
+    const cols = view.columns?.[name];
+    if (cols?.length) x.cols = cols.join("|");
+    if (name === "title" && /^(table|figure|fig\.?)\s*[0-9]/i.test((el.textContent ?? "").trim())) x.selfnum = "1";
+    if (leadOf.has(el)) x.lead = leadOf.get(el)!;
+    if (isRevStart(el)) inRev = true;
+    if (isRevEnd(el)) inRev = false;
+    const attrs: Json = { nid: nid(el), name, summary: attrSummary(el), depth: depthOf(el),
+      align: (el.getAttribute("align") ?? "").toLowerCase(), valign: (el.getAttribute("valign") ?? "").toLowerCase(),
+      grid: gridOf(el), x };
     if (kind === "atom") return { type: "xatom", attrs };
     if (kind === "text") {
+      let changed = inRev || el.getAttribute("changeMark") === "1";
       const content: Json[] = [];
       for (const c of Array.from(el.childNodes)) {
         if (c.nodeType === Node.TEXT_NODE) {
           pushText(content, c.textContent ?? "");
         } else if (c.nodeType === Node.ELEMENT_NODE) {
           const ce = c as Element;
+          if (isRevStart(ce)) { inRev = true; changed = true; }
+          if (isRevEnd(ce)) inRev = false;
+          if (ce.getAttribute("changeMark") === "1") changed = true;
           if (isMarkable(ce) && ce.textContent) {
             const unit = ce.getAttribute("unit") ?? ce.getAttribute("uom") ?? ce.getAttribute("quantityUnitOfMeasure") ?? "";
             content.push({ type: "text", text: ce.textContent, marks: [{ type: "xel", attrs: { nid: nid(ce), name: localName(ce), unit } }] });
           } else {
-            content.push({ type: "xinline", attrs: { nid: nid(ce), name: localName(ce), summary: inlineLabel(ce), raw: raw(ce), misc: false } });
+            let summary = inlineLabel(ce);
+            // "Refer to Table <refint/>": the reference reads "9", not "Table Table 9"
+            const prev = content[content.length - 1];
+            const w = prev?.type === "text" ? /\b(table|figure|fig\.?|step|para|sheet)\s*$/i.exec(prev.text) : null;
+            if (w && summary.toLowerCase().startsWith(w[1].toLowerCase() + " ")) summary = summary.slice(w[1].length + 1);
+            content.push({ type: "xinline", attrs: { nid: nid(ce), name: localName(ce), summary, raw: raw(ce), misc: false } });
           }
         } else {
           content.push({ type: "xinline", attrs: { nid: nid(c), name: c.nodeType === Node.COMMENT_NODE ? "comment" : c.nodeType === Node.CDATA_SECTION_NODE ? "CDATA" : "PI", summary: "", raw: raw(c), misc: true } });
         }
       }
-      return { type: "xtext", attrs, content };
+      if (changed) x.chg = indentOf(el);
+      return { type: "xtext", attrs, content: keepsSpace(el) ? content : tidy(content) };
     }
+    if (el.getAttribute("changeMark") === "1") x.chg = indentOf(el);
     const content: Json[] = [];
     for (const c of Array.from(el.childNodes)) {
       if (c.nodeType === Node.ELEMENT_NODE) content.push(block(c as Element));

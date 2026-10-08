@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/descript.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="030" infoCodeVariant="A" itemLocationCode="C"/>
+        <language languageIsoCode="en" countryIsoCode="US"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="10" day="08"/>
+        <dmTitle><techName>Seat recline actuator</techName><infoName>Technical data</infoName></dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <dataRestrictions>
+        <restrictionInstructions><dataDistribution>Test data for ASTHRA. Product, company and part numbers are fictitious.</dataDistribution></restrictionInstructions>
+        <restrictionInfo><copyright><copyrightPara>ASTHRA Demo Seating Ltd (fictitious)</copyrightPara></copyright></restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></responsiblePartnerCompany>
+      <originator enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></originator>
+      <applic><displayText><simplePara>RA-7100-01 and RA-7100-02</simplePara></displayText></applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="G" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance><unverified/></qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <description>
+      <levelledPara id="par-0001"><title>Fits and clearances</title>
+        <para>The fits and clearances are given in <internalRef internalRefId="tab-0001" internalRefTargetType="irtt02"/>. Replace a part that is not in its wear limit.</para>
+        <table id="tab-0001" frame="topbot"><title>Fits and clearances</title><tgroup cols="6"><colspec colname="c1" colwidth="0.6*"/><colspec colname="c2" colwidth="0.7*"/><colspec colname="c3" colwidth="2.4*"/><colspec colname="c4" colwidth="1.4*"/><colspec colname="c5" colwidth="1.4*"/><colspec colname="c6" colwidth="1.6*"/><thead><row><entry><para>Ref</para></entry><entry><para>Item</para></entry><entry><para>Dimension</para></entry><entry><para>New min mm (in)</para></entry><entry><para>New max mm (in)</para></entry><entry><para>Wear limit mm (in)</para></entry></row></thead><tbody><row><entry><para>A</para></entry><entry><para>20</para></entry><entry><para>Piston rod outside diameter</para></entry><entry><para>9.500 (0.3740)</para></entry><entry><para>9.520 (0.3748)</para></entry><entry><para>9.450 (0.3720) min</para></entry></row><row><entry><para>A</para></entry><entry><para>10</para></entry><entry><para>Housing bore inside diameter</para></entry><entry><para>9.550 (0.3760)</para></entry><entry><para>9.600 (0.3780)</para></entry><entry><para>9.650 (0.3799) max</para></entry></row><row><entry><para>A</para></entry><entry><para>10/20</para></entry><entry><para>Rod-to-bore clearance</para></entry><entry><para>0.030 (0.0012)</para></entry><entry><para>0.100 (0.0039)</para></entry><entry><para>0.200 (0.0079) max</para></entry></row><row><entry><para>B</para></entry><entry><para>120</para></entry><entry><para>Bushing inside diameter</para></entry><entry><para>6.350 (0.2500)</para></entry><entry><para>6.400 (0.2520)</para></entry><entry><para>6.450 (0.2539) max</para></entry></row><row><entry><para>C</para></entry><entry><para>50</para></entry><entry><para>Spring free length (RA-7150-1)</para></entry><entry><para>61.500 (2.4213)</para></entry><entry><para>62.500 (2.4606)</para></entry><entry><para>60.500 (2.3819) min</para></entry></row><row><entry><para>C</para></entry><entry><para>50A</para></entry><entry><para>Spring free length (RA-7150-2)</para></entry><entry><para>61.500 (2.4213)</para></entry><entry><para>62.500 (2.4606)</para></entry><entry><para>60.500 (2.3819) min</para></entry></row></tbody></tgroup></table>
+      </levelledPara>
+      <levelledPara id="par-0002"><title>Torque values</title>
+        <para>Torque values are given in <internalRef internalRefId="tab-0002" internalRefTargetType="irtt02"/>.</para>
+        <table id="tab-0002" frame="topbot"><title>Torque values</title><tgroup cols="4"><colspec colname="c1" colwidth="0.6*"/><colspec colname="c2" colwidth="3*"/><colspec colname="c3" colwidth="1.2*"/><colspec colname="c4" colwidth="1.2*"/><thead><row><entry><para>Item</para></entry><entry><para>Fastener</para></entry><entry><para>Torque N.m</para></entry><entry><para>Torque lbf.in</para></entry></row></thead><tbody><row><entry><para>40</para></entry><entry><para>MS21042L4 nut (rod end)</para></entry><entry><para>6.8 to 7.9</para></entry><entry><para>60 to 70</para></entry></row><row><entry><para>90</para></entry><entry><para>NAS1352C3-8 screws (lock mechanism)</para></entry><entry><para>2.8 to 3.4</para></entry><entry><para>25 to 30</para></entry></row></tbody></tgroup></table>
+      </levelledPara>
+    </description>
+  </content>
+</dmodule>

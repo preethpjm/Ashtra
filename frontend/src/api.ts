@@ -1,3 +1,4 @@
+import type { Numbering } from "./adm";
 // Thin client for the local ASTHRA API. Write calls carry X-Asthra (CSRF guard).
 export interface Diagnostic {
   stage: number; severity: "fatal" | "error" | "warning" | "info"; rule_id: string; message: string;
@@ -34,7 +35,8 @@ export interface Pkg {
   id: string; name: string; standard: string; issue: string; provenance: string; enabled: boolean; documents?: number; checksum?: string;
   doc_types: { id: string; label: string; content_family: string }[]; licence_note: string;
 }
-export interface RenderProfile { profile: string; roles: Record<string, string>; labels: Record<string, string>; default_text: string }
+export interface RenderProfile { profile: string; roles: Record<string, string>; labels: Record<string, string>; default_text: string;
+  numbering?: Numbering | null; columns?: Record<string, string[]> }
 export interface Proposal {
   kind: "package" | "s1000d" | "dtd" | "sgml" | "xsd"; standard?: string | null; issue?: string | null; name?: string | null;
   notes: string[]; path?: string;
@@ -68,7 +70,7 @@ export interface KSummary { counts: Record<string, number>; sources: { kind: str
 export interface KPart { id: number; part_number: string; manufacturer_code: string; name: string | null; part_type: string;
   tasks: number; data_modules: number; catalogue: number; superseded_by: string | null; source: string | null }
 export interface KFinding { rule: string; subject: string; message: string; values: Record<string, unknown> }
-export interface KImport { imported: { file: string; dmc: string; title: string; resources: number; parts: number; safety: number; references: number; catalogue: number }[];
+export interface KImport { imported: { file: string; dmc: string; title: string; kind?: string; note?: string; [count: string]: any }[];
   skipped: { file: string; reason: string }[] }
 
 export interface BrexEntry { dmc: string; issue: string; title: string; schema_issue: string | null; parent_dmc: string | null;
@@ -84,6 +86,17 @@ export const api = {
   brexRemove: (dmc: string, issue: string) => call<{ ok: boolean }>("DELETE", `/api/brex/${encodeURIComponent(dmc)}/${encodeURIComponent(issue)}`),
   kSummary: () => call<KSummary>("GET", "/api/knowledge/summary"),
   kImportProject: (pid: string) => call<KImport>("POST", `/api/knowledge/import-project/${pid}`),
+  kEngineeringSet: (files: File[]) => {
+    const f = new FormData();
+    for (const x of files) f.append("files", x, (x as any).webkitRelativePath || x.name);
+    return call<KImport>("POST", "/api/knowledge/engineering-set", undefined, f);
+  },
+  kEngineering: (file: File) => { const f = new FormData(); f.append("file", file); return call<KImport>("POST", "/api/knowledge/engineering", undefined, f); },
+  kModels: () => call<any[]>("GET", "/api/knowledge/models"),
+  kAddModel: (file: File) => { const f = new FormData(); f.append("file", file); return call<{ id: number; name: string; nodes: number; linked: number }>("POST", "/api/knowledge/models", undefined, f); },
+  kDeleteModel: (id: number) => call<{ ok: boolean }>("DELETE", `/api/knowledge/models/${id}`),
+  kModelStatus: (id: number) => call<Record<string, any>>("GET", `/api/knowledge/models/${id}/status`),
+  kLocate: (pn: string) => call<{ model_id: number; model: string; nodes: string[] }[]>("GET", `/api/knowledge/locate?pn=${encodeURIComponent(pn)}`),
   kBike: () => call<{ loaded: boolean; reason?: string }>("POST", "/api/knowledge/examples/bike"),
   kReset: () => call<{ ok: boolean }>("DELETE", "/api/knowledge"),
   kParts: (q = "", kind = "") => call<KPart[]>("GET", `/api/knowledge/parts?q=${encodeURIComponent(q)}&kind=${encodeURIComponent(kind)}`),

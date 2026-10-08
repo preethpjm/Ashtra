@@ -28,6 +28,12 @@ ROLES = {
     "table", "tgroup", "thead", "tbody", "tfoot", "row", "entry", "figure", "graphic",
     # data-exchange style content
     "record", "field",
+    # ATA procedure lists (numbered by depth, see NUMBERING) and transparent wrappers
+    "proc-list", "proc-item", "wrap",
+    # change marks (revst / revend): shown as revision bars, never as text
+    "change-mark",
+    # rows of data shown as a ruled table (IPL detailed parts list, vendor and SB lists)
+    "row-list", "data-row",
 }
 
 S1000D = {
@@ -48,9 +54,13 @@ S1000D = {
         "table": "table", "tgroup": "tgroup", "thead": "thead", "tbody": "tbody", "tfoot": "tfoot",
         "row": "row", "entry": "entry", "colspec": "hidden", "spanspec": "hidden",
         "figure": "figure", "graphic": "graphic",
-        "illustratedPartsCatalog": "section-labeled", "catalogSeqNumber": "record", "itemSeqNumber": "record",
+        "illustratedPartsCatalog": "row-list", "catalogSeqNumber": "data-row", "itemSeqNumber": "wrap",
         "description": "section", "procedure": "section",
     },
+    "columns": {"illustratedPartsCatalog": ["Fig. item", "Part number", "Nomenclature", "Usable on", "Qty per assy"]},
+    # S1000D: decimal numbering 1, 1.1, 1.1.1 in a fixed left column
+    "numbering": {"scheme": "decimal", "elements": ["levelledPara", "proceduralStep"],
+                  "resets": ["description", "mainProcedure", "content", "procedure"]},
     "labels": {
         "preliminaryRqmts": "Preliminary requirements", "closeRqmts": "Requirements after job completion",
         "refs": "References", "reqCondGroup": "Required conditions", "reqPersons": "Required persons",
@@ -74,6 +84,24 @@ ATA2200 = {
         "table": "table", "tgroup": "tgroup", "thead": "thead", "tbody": "tbody", "tfoot": "tfoot",
         "row": "row", "entry": "entry", "colspec": "hidden", "spanspec": "hidden",
         "figure": "figure", "graphic": "figure", "sheet": "graphic", "effect": "meta",
+        **{f"prclist{i}": "proc-list" for i in range(1, 8)},
+        **{f"prcitem{i}": "proc-item" for i in range(1, 8)},
+        "prcitem": "wrap",
+        "revst": "change-mark", "revend": "change-mark",
+        "prtlist": "row-list", "itemdata": "data-row",
+        "vendlist": "section", "vendata": "data-row",
+        "sblist": "section", "sbdata": "data-row",
+        "trlist": "section", "trdata": "data-row",
+    },
+    # ATA iSpec 2200: TASK 1. / SUBTASK A. / (1) / (a) / 1 / a, indented one step per level
+    "numbering": {"scheme": "ata", "elements": ["task", "subtask"] + [f"prcitem{i}" for i in range(1, 8)],
+                  "resets": ["pgblk"], "ident": {"task": "TASK", "subtask": "SUBTASK"}},
+    # column headings of row lists (one heading per child element, in order)
+    "columns": {
+        "prtlist": ["Fig. item", "Part number", "Nomenclature", "Eff. code", "Units per assy"],
+        "vendlist": ["Code", "Name and address"],
+        "sblist": ["Effect", "Service bulletin", "Title", "Issue date"],
+        "trlist": ["Revision", "Status", "Location"],
     },
     "labels": {},
     "default_text": "para",
@@ -120,4 +148,5 @@ def resolve(standard: str | None, root_name: str | None, overrides: dict[str, st
     for k, v in (overrides or {}).items():
         if v in ROLES:
             roles[k] = v
-    return {"profile": name, "roles": roles, "labels": dict(base["labels"]), "default_text": base["default_text"]}
+    return {"profile": name, "roles": roles, "labels": dict(base["labels"]), "default_text": base["default_text"],
+            "numbering": base.get("numbering"), "columns": dict(base.get("columns", {}))}

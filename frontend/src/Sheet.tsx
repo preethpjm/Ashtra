@@ -6,7 +6,7 @@ import type { HeaderInfo } from "./adm";
 export function Sheet({ info, standardLine, children }: { info: HeaderInfo | null; standardLine?: string; children: ReactNode }) {
   const end = info?.kind === "s1000d" ? "End of data module" : "End of document";
   return (
-    <div className={`sheet${info && info.kind !== "generic" ? " has-header" : ""}`}>
+    <div lang="en" className={`sheet${info && info.kind !== "generic" ? " has-header" : ""}`}>
       {info && info.kind !== "generic" && (
         <header className="doc-head">
           <div className="dh-top">

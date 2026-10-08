@@ -165,3 +165,13 @@ def test_substitute_api(tmp_path):
     assert r.status_code == 200 and r.json() == {"B7772S11MON-A-00-00-00-10A-022A-D": "S1000D-E-04-10-0301-00A-022A-D"}
     assert c.post("/api/brex/substitutes", json={"named": "X", "use": "NOT-THERE"}).status_code == 400
     assert c.delete("/api/brex/substitutes/B7772S11MON-A-00-00-00-10A-022A-D").json() == {}
+
+
+def test_xml_schema_class_subtraction_in_patterns():
+    """Regression (ATA BREX-CMMST-00007): '^[-A-Z0-9-[O]]{1,15}$' means A-Z except O, digits, hyphen.
+    Python has no class subtraction; untranslated, every part number failed."""
+    from asthra.brex.engine import _value_ok, XPATH2
+    v = [("pattern", "^[-A-Z0-9-[O]]{1,15}$", "")]
+    assert _value_ok("2S11ZD0011L", v) and _value_ok("AB-12", v)
+    assert not _value_ok("O123", v) and not _value_ok("TOOLONG123456789", v)
+    assert XPATH2["matches"](None, "B7", "^[A-Z-[O]][0-9]$") and not XPATH2["matches"](None, "O7", "^[A-Z-[O]][0-9]$")

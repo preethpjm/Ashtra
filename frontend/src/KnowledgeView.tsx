@@ -1,17 +1,40 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { api, KFinding, KImport, KPart, KSummary, Project } from "./api";
+import { STATUS_COLOR, STATUS_LABEL } from "./modelColors";
 
-type Section = "overview" | "breakdown" | "parts" | "tasks" | "dms" | "findings" | "sources";
+const ModelViewer = lazy(() => import("./ModelViewer"));
+
+type Section = "overview" | "breakdown" | "parts" | "tasks" | "dms" | "models" | "findings" | "sources";
 type Sel = { kind: "part"; id: number } | { kind: "task"; id: string; rev: string } | { kind: "dm"; dmc: string } | null;
 
 const SECTIONS: [Section, string][] = [
   ["overview", "Overview"], ["breakdown", "Breakdown"], ["parts", "Parts"], ["tasks", "Tasks"],
-  ["dms", "Data modules"], ["findings", "Findings"], ["sources", "Sources"],
+  ["dms", "Data modules"], ["models", "3D models"], ["findings", "Findings"], ["sources", "Sources"],
 ];
 const RULES: Record<string, string> = {
   "maintenance-level": "Maintenance level differs", "task-duration": "Task time differs",
   "superseded-part": "Superseded part still used", "unknown-data-module": "Data module not in library",
+  "catalogue-part": "Parts lists: part number differs", "catalogue-quantity": "Parts lists: quantity differs",
+  "catalogue-indenture": "Parts lists: indenture differs", "catalogue-effectivity": "Parts lists: effectivity differs",
+  "catalogue-cage": "Parts lists: CAGE differs", "catalogue-missing": "Parts lists: item missing",
+  "bom-quantity": "BOM and parts list: quantity differs", "bom-missing": "In the parts list, not in the BOM",
+  "catalogue-missing-bom-line": "In the BOM, not in the parts list", "identity-suggestion": "Same part? (no CAGE)",
+  "3d-quantity": "3D model and MBOM: quantity differs", "3d-fuzzy": "3D item matched with doubt", "3d-ambiguous": "3D item: which BOM line?",
+  "3d-unmatched": "3D item not in the MBOM", "3d-mbom-only": "MBOM lines not in the 3D model",
 };
+/** What one import read, in words: only the counts that apply to that kind of source. */
+function importFacts(r: Record<string, any>): string {
+  const n = (k: string, one: string, many = one + "s") => (r[k] ? `${r[k]} ${r[k] === 1 ? one : many}` : "");
+  const out = [n("tasks", "task"), n("lines", "BOM line"), n("structure", "parent-child link"), n("resources", "tool/consumable", "tools/consumables"),
+    n("safety", "warning/caution", "warnings/cautions"), n("references", "reference"), n("catalogue", "parts-list line"),
+    n("properties", "engineering attribute"), n("vendors", "vendor"), n("bulletins", "service bulletin"),
+    n("links", "3D item"), n("findings", "finding"), n("nodes", "3D node"), n("linked", "linked to a part", "linked to parts")].filter(Boolean);
+  if (!out.length && r.parts) out.push(n("parts", "part"));
+  return (out.join(", ") || "recorded; it lists no parts, tools or warnings") + (r.note ? ` (${r.note})` : "") +
+    (r.warnings?.length ? ` · ${r.warnings.length} warning(s): ${r.warnings.slice(0, 3).join("; ")}` : "");
+}
+
+const SRC_LABEL: Record<string, string> = { "ATA-CMM": "ATA IPL", "S1000D-DM": "S1000D IPD", S2000M: "S2000M", "ENG-BOM": "BOM", "ENG-3D": "3D ↔ MBOM" };
 const KIND_LABEL: Record<string, string> = { "support-equipment": "Support equipment", consumable: "Supplies", spare: "Spares", part: "Part",
   component: "Component" };
 
@@ -44,6 +67,7 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
     else if (section === "dms") api.kDataModules(q).then(set);
     else if (section === "findings") api.kFindings().then(set);
     else if (section === "sources") api.kSources().then(set);
+    else if (section === "models") api.kModels().then(set);
     else set([]);
     return () => { alive = false; };
   }, [section, q, kind, summary]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -79,6 +103,23 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
       await refreshSummary();
     } catch (e) { say(String(e), "err"); } finally { setBusy(""); }
   };
+  /** One or more engineering files, or a whole folder (BOM, reconciliation JSON, GLB …). Only the file types ASTHRA
+   *  reads are sent: a folder may also hold STEP files or drawings that are large and not needed here. */
+  const importEngineering = async (list: FileList | null) => {
+    const all = Array.from(list ?? []);
+    const files = all.filter((f) => /\.(csv|tsv|txt|xlsx|xlsm|json|glb|zip)$/i.test(f.name));
+    if (!files.length) { say(all.length ? "No BOM, JSON or GLB file in that selection." : "Nothing selected.", "info"); return; }
+    const mb = files.reduce((n, f) => n + f.size, 0) / 1e6;
+    setBusy(`Reading ${files.length} file(s)${mb > 5 ? ` (${mb.toFixed(0)} MB)` : ""}…`);
+    try {
+      const r = await api.kEngineeringSet(files);
+      setLastImport(r); setSection("overview");
+      const n3d = r.imported.filter((x) => x.kind === "3D model").length;
+      say(`Imported ${r.imported.length} file(s)${n3d ? `, ${n3d} 3D model(s)` : ""}${r.skipped.length ? `; ${r.skipped.length} skipped (see Overview)` : ""}.`,
+        r.imported.length ? "ok" : "info");
+      await refreshSummary();
+    } catch (e) { say(String(e), "err"); } finally { setBusy(""); }
+  };
   const loadBike = async () => {
     setBusy("Loading the S-Series Bike example…");
     try {
@@ -99,12 +140,23 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
     <div className="knowledge">
       <header className="kn-top">
         <div className="kn-title"><div className="t1">Knowledge library</div>
-          <div className="t2">One store of product facts shared by S1000D, S2000M and S3000L — every value keeps its source.</div></div>
+          <div className="t2">One store of product facts shared by S1000D, ATA iSpec 2200, S2000M, S3000L and engineering BOMs — every value keeps its source.</div></div>
         <div className="kn-actions">
           {busy && <span className="muted small">{busy}</span>}
           <button className="primary" onClick={importProject} disabled={!pid || !!busy}
-            title="Read the project's valid S1000D data modules into the library">
+            title="Read the project's S1000D data modules, ATA manuals (SGML or XML) and S2000M data into the library">
             Add {project ? `“${project.name}”` : "project"} to library</button>
+          <span className="kn-split">
+            <label className={`btn${busy ? " disabled" : ""}`}
+              title="Engineering files: BOM (CSV, Excel, JSON), STEP ↔ MBOM reconciliation (JSON), 3D model (GLB), or a zip of them. Select several at once.">
+              Import engineering data…
+              <input type="file" multiple accept=".csv,.tsv,.txt,.xlsx,.xlsm,.json,.glb,.zip" hidden disabled={!!busy}
+                onChange={(e) => { const f = e.target.files; importEngineering(f); e.target.value = ""; }} /></label>
+            <label className={`btn${busy ? " disabled" : ""}`} title="A whole folder, e.g. the one the STEP→GLB / MBOM tool writes (GLB + JSON); other files in it are ignored">
+              Folder…
+              <input type="file" hidden disabled={!!busy} {...({ webkitdirectory: "", directory: "" } as any)}
+                onChange={(e) => { const f = e.target.files; importEngineering(f); e.target.value = ""; }} /></label>
+          </span>
           <button onClick={loadBike} disabled={!!busy} title="The S-Series User Forum 2024 Bike example, front brake system">Load Bike example</button>
           <button className="ghost" onClick={reset} disabled={!!busy}>Empty library…</button>
         </div>
@@ -150,8 +202,10 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
                 <table className="kn-table compact"><thead><tr><th>File</th><th>Result</th></tr></thead>
                   <tbody>
                     {lastImport.imported.map((r) => <tr key={r.file}><td>{r.file}</td>
-                      <td><button className="link" onClick={() => openDm(r.dmc)}>{r.dmc}</button>
-                        <span className="muted"> · {r.resources} resources, {r.safety} warnings/cautions, {r.references} references{r.catalogue ? `, ${r.catalogue} IPD lines` : ""}</span></td></tr>)}
+                      <td>{r.kind && <span className="kn-kind">{r.kind}</span>}
+                        {(!r.kind || r.kind === "S1000D" || r.kind === "ATA iSpec 2200")
+                          ? <button className="link" onClick={() => openDm(r.dmc)}>{r.dmc}</button> : <span>{r.dmc}</span>}
+                        <span className="muted"> · {importFacts(r)}</span></td></tr>)}
                     {lastImport.skipped.map((r) => <tr key={r.file} className="skipped"><td>{r.file}</td><td className="muted">skipped: {r.reason}</td></tr>)}
                   </tbody></table></>
             )}
@@ -218,6 +272,7 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
           </div>
         )}
 
+        {section === "models" && <ModelsSection rows={rows} say={say} reload={refreshSummary} openPart={openPart} busy={!!busy} />}
         {section === "sources" && (
           <table className="kn-table"><thead><tr><th>Kind</th><th>Document</th><th>Issue</th><th>Schema</th><th>Imported</th><th>Note</th></tr></thead>
             <tbody>{rows.map((s) => <tr key={s.id}><td>{s.kind}</td><td className="mono small">{s.document}</td><td>{s.issue}</td><td className="small">{s.schema}</td>
@@ -267,8 +322,27 @@ function PartDetail({ d, openDm, openTask, openPart }: { d: any; openDm: (s: str
         <button key={r.dmc + r.kind} className="kd-row" onClick={() => openDm(r.dmc)}><span className="mono">{r.dmc}</span><span className="muted">{KIND_LABEL[r.kind] ?? r.kind}</span></button>))}</Sec>
       <Sec title="Data modules affected if it changes" n={imp.data_modules?.length}>{(imp.data_modules ?? []).map((m: string) => (
         <button key={m} className="kd-row" onClick={() => openDm(m)}><span className="mono">{m}</span></button>))}</Sec>
-      <Sec title="Illustrated parts catalogue" n={imp.catalogue?.length}>{(imp.catalogue ?? []).map((c: any, i: number) => (
-        <div key={i} className="small">Figure {c.figure} item {c.item} · indenture {c.indenture} · qty {c.qty_per_next_assy} · SMR <span className="mono">{c.smr_code}</span></div>))}</Sec>
+      {imp.catalogue_lines ? (
+        <Sec title="Parts lists" n={imp.catalogue_lines.length}>{imp.catalogue_lines.map((c: any, i: number) => (
+          <div key={i} className="small"><span className="kn-kind">{SRC_LABEL[c.kind] ?? c.kind}</span> Figure {c.figure} item {String(c.item).replace(/^0+/, "")}{c.item_variant}
+            {" "}· indenture {c.indenture} · qty {c.qty_per_next_assy}{c.usable_on_code ? ` · effectivity ${c.usable_on_code}` : ""}
+            <span className="muted"> · {c.document}</span></div>))}</Sec>
+      ) : (
+        <Sec title="Illustrated parts catalogue" n={imp.catalogue?.length}>{(imp.catalogue ?? []).map((c: any, i: number) => (
+          <div key={i} className="small">Figure {c.figure} item {c.item} · indenture {c.indenture} · qty {c.qty_per_next_assy} · SMR <span className="mono">{c.smr_code}</span></div>))}</Sec>
+      )}
+      {(d.models ?? []).length > 0 && <Part3D models={d.models} />}
+      {(imp.cad ?? []).length > 0 && (
+        <Sec title="3D model items" n={imp.cad.length}>{imp.cad.map((c: any, i: number) => (
+          <div key={i} className="small"><span className="kn-dot" style={{ background: STATUS_COLOR[cadStatus(c)] }} />
+            <span className="mono">{c.cad_name}</span> · {c.cad_label} · × {c.cad_qty}
+            <span className="muted"> · {STATUS_LABEL[cadStatus(c)]}{c.confidence != null && c.confidence < 1 ? ` (${Math.round(c.confidence * 100)} %)` : ""}</span></div>))}</Sec>
+      )}
+      <Sec title="Same part number elsewhere" n={imp.same_number?.length}>{(imp.same_number ?? []).map((u: any) => (
+        <div key={u.id} className="small">CAGE <b className="mono">{u.manufacturer_code || "none"}</b> · {u.name}
+          <span className="muted"> · {SRC_LABEL[u.kind] ?? u.kind} {u.document}</span></div>))}</Sec>
+      <Sec title="Engineering attributes" n={imp.properties?.length}>{(imp.properties ?? []).map((u: any) => (
+        <div key={u.name + u.document} className="small">{u.name}: <b>{u.value}</b><span className="muted"> · {u.document}</span></div>))}</Sec>
       <Sec title="Used in" n={imp.used_in?.length}>{(imp.used_in ?? []).map((u: any) => (
         <button key={u.part_number} className="kd-row" onClick={() => openPart(u.part_number)}><span className="mono">{u.part_number}</span><span className="muted">× {u.quantity}</span></button>))}</Sec>
       <Sec title="Contains" n={d.impact?.contains?.length}>{(d.impact?.contains ?? []).map((u: any) => (
@@ -336,5 +410,81 @@ function DmDetail({ d, openDm, openPart, openTask }: { d: any; openDm: (s: strin
       <Sec title="Illustrated parts data" n={d.catalogue?.length}>{(d.catalogue ?? []).map((c: any, i: number) => (
         <div key={i} className="small">Fig {c.figure} item {c.item} · <span className="mono">{c.part_number}</span> {c.name} · qty {c.qty_per_next_assy}</div>))}</Sec>
     </>
+  );
+}
+
+const cadStatus = (c: any) => (c.quantity_match === 0 ? "quantity" : c.status === "matched" ? "matched" : c.status === "unmatched" ? "unmatched" : "fuzzy");
+
+/** The part in its 3D model(s), highlighted. */
+function Part3D({ models }: { models: { model_id: number; model: string; nodes: string[] }[] }) {
+  const [i, setI] = useState(0);
+  const m = models[Math.min(i, models.length - 1)];
+  return (
+    <div className="kd-sec"><h5>3D <em>{m.nodes.length}</em></h5>
+      {models.length > 1 && <select value={i} onChange={(e) => setI(+e.target.value)}>{models.map((x, k) => <option key={k} value={k}>{x.model}</option>)}</select>}
+      <Suspense fallback={<div className="mv-msg">Loading 3D viewer…</div>}>
+        <ModelViewer url={`/api/knowledge/models/${m.model_id}/file`} highlight={m.nodes} height={230} />
+      </Suspense>
+      <div className="muted small">{m.model}: {m.nodes.slice(0, 6).join(", ")}{m.nodes.length > 6 ? " …" : ""}</div>
+    </div>
+  );
+}
+
+/** 3D models (GLB) in the library: upload, view coloured by how each item matches the BOM, pick a part. */
+function ModelsSection({ rows, say, reload, openPart, busy }: { rows: any[]; say: (m: string, k?: "ok" | "info" | "err") => void;
+  reload: () => void; openPart: (id: number) => void; busy: boolean }) {
+  const [cur, setCur] = useState<number | null>(null);
+  const [status, setStatus] = useState<Record<string, any> | null>(null);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const model = rows.find((r) => r.id === cur) ?? rows[0];
+  useEffect(() => {
+    setStatus(null); setPicked(null);
+    if (model) api.kModelStatus(model.id).then(setStatus).catch(() => setStatus({}));
+  }, [model?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const upload = async (f: File) => {
+    setUploading(true);
+    try {
+      const r = await api.kAddModel(f);
+      say(`${f.name}: ${r.nodes} item(s), ${r.linked} linked to parts in the library.`, "ok");
+      setCur(r.id); reload();
+    } catch (e) { say(String(e), "err"); } finally { setUploading(false); }
+  };
+  const counts: Record<string, number> = {};
+  Object.values(status ?? {}).forEach((v: any) => { counts[v.status] = (counts[v.status] ?? 0) + 1; });
+  const info = picked && status ? status[picked] : null;
+  return (
+    <div className="kn-models">
+      <div className="kn-models-bar">
+        <label className={`btn${busy || uploading ? " disabled" : ""}`} title="A 3D model as GLB (binary glTF), e.g. converted from STEP">
+          {uploading ? "Reading…" : "Add 3D model (GLB)…"}
+          <input type="file" accept=".glb" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) upload(f); }} /></label>
+        {rows.length > 0 && <select value={model?.id ?? ""} onChange={(e) => setCur(+e.target.value)}>
+          {rows.map((r) => <option key={r.id} value={r.id}>{r.name} · {r.nodes} items{r.reconciliation ? ` · coloured by ${r.reconciliation}` : ""}</option>)}</select>}
+        {model && <button className="ghost" onClick={async () => { if (window.confirm(`Remove the 3D model ${model.name} from the library?`)) {
+          await api.kDeleteModel(model.id); setCur(null); reload(); } }}>Remove</button>}
+      </div>
+      {!model ? <p className="muted">No 3D model yet. Add a GLB here, or import the reconciliation tool's folder (GLB + JSON) with Import engineering data → Folder…; the model's items are then linked to parts and coloured by how they match the BOM.</p> : (
+        <div className="kn-model-grid">
+          <Suspense fallback={<div className="mv-msg">Loading 3D viewer…</div>}>
+            <ModelViewer key={model.id} url={`/api/knowledge/models/${model.id}/file`} status={status ?? {}} picked={picked} onPick={setPicked} height="62vh" />
+          </Suspense>
+          <div className="kn-model-side">
+            <h5>Items</h5>
+            {Object.keys(STATUS_COLOR).filter((k) => counts[k]).map((k) => (
+              <div key={k} className="small"><span className="kn-dot" style={{ background: STATUS_COLOR[k] }} />{STATUS_LABEL[k]} <b>{counts[k]}</b></div>))}
+            <div className="small muted"><span className="kn-dot" style={{ background: "#c9ced6" }} />Not linked {Math.max(0, model.nodes - Object.keys(status ?? {}).length)}</div>
+            <h5>Picked</h5>
+            {!picked ? <p className="muted small">Click a part in the model.</p> : (
+              <div className="small"><div className="mono"><b>{picked}</b></div>
+                {info ? <>{info.part_number && <div>Part <span className="mono">{info.part_number}</span> · {info.name}</div>}
+                  <div className="muted">{STATUS_LABEL[info.status]}</div>
+                  {info.part_id && <button className="link" onClick={() => openPart(info.part_id)}>Open the part</button>}</>
+                  : <div className="muted">Not linked to a part in the library.</div>}
+              </div>)}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

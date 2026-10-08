@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/ipd.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="941" infoCodeVariant="A" itemLocationCode="C"/>
+        <language languageIsoCode="en" countryIsoCode="US"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="10" day="08"/>
+        <dmTitle><techName>Seat recline actuator</techName><infoName>Illustrated parts data</infoName></dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <dataRestrictions>
+        <restrictionInstructions><dataDistribution>Test data for ASTHRA. Product, company and part numbers are fictitious.</dataDistribution></restrictionInstructions>
+        <restrictionInfo><copyright><copyrightPara>ASTHRA Demo Seating Ltd (fictitious)</copyrightPara></copyright></restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></responsiblePartnerCompany>
+      <originator enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></originator>
+      <applic><displayText><simplePara>RA-7100-01 and RA-7100-02</simplePara></displayText></applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="G" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance><unverified/></qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <illustratedPartsCatalog>
+      <figure id="fig-0001"><title>Seat recline actuator</title><graphic infoEntityIdent="ICN-ASTDEMO-A-252171-C-ZZD01-00001-A-001-01"/></figure>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="001" indenture="1" id="csn-01-001">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7100-01"/><partSegment><itemIdentData><descrForPart>Actuator assy, recline</descrForPart></itemIdentData></partSegment><partLocationSegment><notIllustrated/></partLocationSegment><applicabilitySegment><usableOnCodeAssy>A</usableOnCodeAssy></applicabilitySegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="001" itemVariant="A" indenture="1" id="csn-01-001a">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7100-02"/><partSegment><itemIdentData><descrForPart>Actuator assy, recline</descrForPart></itemIdentData></partSegment><partLocationSegment><notIllustrated/></partLocationSegment><applicabilitySegment><usableOnCodeAssy>B</usableOnCodeAssy></applicabilitySegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="010" indenture="2" id="csn-01-010">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7110-1"/><partSegment><itemIdentData><descrForPart>Housing, actuator</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="020" indenture="2" id="csn-01-020">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7120-1"/><partSegment><itemIdentData><descrForPart>Rod, piston</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="030" indenture="2" id="csn-01-030">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7130-1"/><partSegment><itemIdentData><descrForPart>Rod end, threaded</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="040" indenture="2" id="csn-01-040">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="96906" partNumberValue="MS21042L4"/><partSegment><itemIdentData><descrForPart>Nut, self-locking</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="050" indenture="2" id="csn-01-050">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZV02" partNumberValue="RA-7150-1"/><partSegment><itemIdentData><descrForPart>Spring, compression</descrForPart></itemIdentData></partSegment><applicabilitySegment><usableOnCodeAssy>A</usableOnCodeAssy></applicabilitySegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="050" itemVariant="A" indenture="2" id="csn-01-050a">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZV02" partNumberValue="RA-7150-2"/><partSegment><itemIdentData><descrForPart>Spring, compression, high rate</descrForPart></itemIdentData></partSegment><applicabilitySegment><usableOnCodeAssy>B</usableOnCodeAssy></applicabilitySegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="060" indenture="2" id="csn-01-060">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7160-1"/><partSegment><itemIdentData><descrForPart>Lock mechanism assy</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="070" indenture="3" id="csn-01-070">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7170-1"/><partSegment><itemIdentData><descrForPart>Lever, release</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="080" indenture="3" id="csn-01-080">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7180-1"/><partSegment><itemIdentData><descrForPart>Pin, lock</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="090" indenture="2" id="csn-01-090">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>4</quantityPerNextHigherAssy><partRef manufacturerCodeValue="80205" partNumberValue="NAS1352C3-8"/><partSegment><itemIdentData><descrForPart>Screw, cap, socket head</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="100" indenture="2" id="csn-01-100">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>4</quantityPerNextHigherAssy><partRef manufacturerCodeValue="80205" partNumberValue="NAS1149C0363R"/><partSegment><itemIdentData><descrForPart>Washer, flat</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="110" indenture="2" id="csn-01-110">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>2</quantityPerNextHigherAssy><partRef manufacturerCodeValue="81349" partNumberValue="M83248/1-210"/><partSegment><itemIdentData><descrForPart>Packing, preformed</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="120" indenture="2" id="csn-01-120">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZV03" partNumberValue="RA-7190-1"/><partSegment><itemIdentData><descrForPart>Bushing, rod end</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+      <catalogSeqNumber systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" figureNumber="01" item="130" indenture="2" id="csn-01-130">
+        <itemSeqNumber itemSeqNumberValue="00A"><quantityPerNextHigherAssy>1</quantityPerNextHigherAssy><partRef manufacturerCodeValue="ZZD01" partNumberValue="RA-7200-1"/><partSegment><itemIdentData><descrForPart>Placard, identification</descrForPart></itemIdentData></partSegment></itemSeqNumber>
+      </catalogSeqNumber>
+    </illustratedPartsCatalog>
+  </content>
+</dmodule>

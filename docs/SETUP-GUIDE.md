@@ -786,6 +786,17 @@ Available roles are listed at the top of `backend/asthra/render/profiles.py`
 `warning`, `caution`, `note`, `table`, `figure`, `record`, `field`, `meta`, `hidden` …).
 The manifest format itself is described in `docs/03-SCHEMA-ADAPTER-INTERFACE.md`.
 
+**Numbering as the standards print it.** Each profile also carries a `numbering` rule:
+
+| Standard | Numbered elements | Printed as |
+|---|---|---|
+| ATA iSpec 2200 | `task`, `subtask`, `prcitem1`…`prcitem7` | `TASK 25-26-62-040-801-A01` line, then `1.` / `A.` / `(1)` / `(a)` / `1` / `a`, one indent step per level; restarts in each `pgblk` |
+| S1000D | `levelledPara`, `proceduralStep` | `1` / `1.1` / `1.1.1` in one column at the left |
+
+Numbers, task identifiers, revision bars (`revst`…`revend`, S1000D `changeMark="1"`) and the
+IPL parts list columns are computed for display only; the saved file is never changed by them.
+When a step opens with a warning, caution or note, its number moves to its first paragraph.
+
 ### Packaging ASTHRA with SGML support
 
 Put `onsgmls(.exe)`, `osx(.exe)`, their DLLs and OpenSP's `COPYING` file into

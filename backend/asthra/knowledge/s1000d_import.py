@@ -150,7 +150,8 @@ def import_dm(k: KnowledgeStore, root, schema: str = "", file: str = "") -> dict
             k.add("catalogue_item", bei=d["bei"], figure=fig, figure_variant=csn.get("figureNumberVariant", ""),
                   item=item, item_variant=csn.get("itemVariant", ""),
                   indenture=int(csn.get("indenture")) if (csn.get("indenture") or "").isdigit() else None,
-                  part_id=pid, qty_per_next_assy=_text(_find(isn, "quantityPerNextHigherAssy")) or None, source_id=src)
+                  part_id=pid, qty_per_next_assy=_text(_find(isn, "quantityPerNextHigherAssy")) or None,
+                  usable_on_code=_text(_find(isn, "usableOnCodeAssy")) or None, source_id=src)
             counts["catalogue"] += 1
     k.db.commit()
     return {"imported": True, "dmc": dmc, "title": title, **counts}

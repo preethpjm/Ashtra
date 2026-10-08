@@ -32,6 +32,11 @@ class KnowledgeStore:
         self.db = sqlite3.connect(str(path), check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA.read_text(encoding="utf-8"))
+        # columns added after a table first shipped
+        cols = {r[1] for r in self.db.execute("PRAGMA table_info(cad_model)")}
+        if "source_id" not in cols:
+            self.db.execute("ALTER TABLE cad_model ADD COLUMN source_id INTEGER REFERENCES source(id)")
+            self.db.commit()
 
     # ---------------------------------------------------------------- writing
     def source(self, kind: str, document: str, issue: str = "", schema: str = "", note: str = "") -> int:
@@ -157,6 +162,9 @@ class KnowledgeStore:
         for r in self.db.execute("""SELECT DISTINCT s.task_id, s.dm_ref FROM subtask s
                                     WHERE s.dm_ref IS NOT NULL AND s.dm_ref NOT IN (SELECT dmc FROM information_item)"""):
             find("unknown-data-module", r["dm_ref"], f"Task {r['task_id']} refers to {r['dm_ref']}, which is not in the library.")
+        # 4. sources describing the same parts list or structure disagree (ATA IPL, S1000D IPD, S2000M, engineering BOM)
+        from .crosscheck import check
+        out.extend(check(self.db))
         return out
 
     def record_findings(self, findings: list[dict]) -> None:

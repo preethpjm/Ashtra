@@ -1,0 +1,17 @@
+Level,Find No,Part Number,CAGE,Description,Qty,UoM,Effectivity,Parent Part Number,Item Type,Make/Buy,Mass (kg),Material,CAD File
+0,1,RA-7100-01,ZZD01,"Actuator Assy, Recline",1,EA,-01,,Assembly,Make,0.842,,RA-7100-01.step
+0,1A,RA-7100-02,ZZD01,"Actuator Assy, Recline",1,EA,-02,,Assembly,Make,0.851,,RA-7100-02.step
+1,10,RA-7110-1,ZZD01,"Housing, Actuator",1,EA,All,RA-7100-01; RA-7100-02,Part,Make,0.214,AL 7075-T6,RA-7110-1.step
+1,20,RA-7120-1,ZZD01,"Rod, Piston",1,EA,All,RA-7100-01; RA-7100-02,Part,Make,0.168,CRES 17-4PH,RA-7120-1.step
+1,30,RA-7130-1,ZZD01,"Rod End, Threaded",1,EA,All,RA-7100-01; RA-7100-02,Part,Make,0.058,CRES 15-5PH,RA-7130-1.step
+1,40,MS21042L4,96906,"Nut, Self-Locking",1,EA,All,RA-7100-01; RA-7100-02,Standard part,Buy,,,
+1,50,RA-7150-1,ZZV02,"Spring, Compression",1,EA,-01,RA-7100-01,Part,Buy,0.071,MUSIC WIRE ASTM A228,RA-7150-1.step
+1,50A,RA-7150-2,ZZV02,"Spring, Compression, High Rate",1,EA,-02,RA-7100-02,Part,Buy,0.08,MUSIC WIRE ASTM A228,RA-7150-2.step
+1,60,RA-7160-1,ZZD01,Lock Mechanism Assy,1,EA,All,RA-7100-01; RA-7100-02,Assembly,Make,0.122,,RA-7160-1.step
+2,70,RA-7170-1,ZZD01,"Lever, Release",1,EA,All,RA-7160-1,Part,Make,0.031,AL 6061-T6,RA-7170-1.step
+2,80,RA-7180-1,ZZD01,"Pin, Lock",1,EA,All,RA-7160-1,Part,Make,0.012,CRES 17-4PH,RA-7180-1.step
+1,90,NAS1352C3-8,80205,"Screw, Cap, Socket Head",4,EA,All,RA-7100-01; RA-7100-02,Standard part,Buy,,,
+1,100,NAS1149C0363R,80205,"Washer, Flat",4,EA,All,RA-7100-01; RA-7100-02,Standard part,Buy,,,
+1,110,M83248/1-210,81349,"Packing, Preformed",2,EA,All,RA-7100-01; RA-7100-02,Standard part,Buy,,,
+1,120,RA-7190-1,ZZV03,"Bushing, Rod End",1,EA,All,RA-7100-01; RA-7100-02,Part,Buy,0.006,BRONZE C93200,RA-7190-1.step
+1,130,RA-7200-1,ZZD01,"Placard, Identification",1,EA,All,RA-7100-01; RA-7100-02,Part,Make,0.002,POLYCARBONATE,RA-7200-1.step

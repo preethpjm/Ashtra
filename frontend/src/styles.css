@@ -290,8 +290,9 @@ button.fix:hover:not(:disabled) { background: var(--accent-bg); }
 /* procedural steps: 1. 1.1. 1.1.1. */
 .mode-clean [data-role="step-seq"] { counter-reset: step; margin: 1em 0; }
 .mode-clean [data-role="step"] { counter-increment: step; position: relative; padding-left: 3.4em; margin: .15em 0 .35em; }
+.mode-clean [data-role="step"][data-num] { padding-left: 0 !important; }   /* numbered by the standard's scheme instead */
 .mode-clean [data-role="step"] > .x-content { counter-reset: step; }
-.mode-clean [data-role="step"]::before { content: counters(step, ".") "."; position: absolute; left: 0; top: 0; min-width: 3em;
+.mode-clean [data-role="step"]:not([data-num])::before { content: counters(step, ".") "."; position: absolute; left: 0; top: 0; min-width: 3em;
   font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; line-height: 1.55; }
 .mode-clean [data-role="step"] > .x-content > [data-role="title"]:first-child { margin-top: 0; font-size: 15.5px; }
 
@@ -771,3 +772,223 @@ label.fix { cursor: pointer; }
 .bp-foot { display: flex; justify-content: flex-end; border-top: 1px solid var(--rule); padding-top: 10px; }
 .sm-sub { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
 .bp-option .row button { white-space: nowrap; }
+
+/* =====================================================================
+   CALS tables as a grid: merged cells (namest/nameend, spanname, morerows) sit exactly
+   where the table says; columns follow colspec widths but never get narrower than their
+   longest word (words wrap between words or at hyphenation points, never mid-letter)
+   ===================================================================== */
+.mode-clean [data-role="tgroup"] > .x-content { display: grid; width: 100%; border-collapse: separate; table-layout: auto; }
+.mode-clean :is([data-role="thead"], [data-role="tbody"], [data-role="tfoot"], [data-role="row"]) { display: contents; background: none; }
+.mode-clean :is([data-role="thead"], [data-role="tbody"], [data-role="tfoot"], [data-role="row"]) > .x-label { display: none; }
+.mode-clean [data-role="entry"] { display: block; min-width: 0; box-sizing: border-box;
+  overflow-wrap: break-word; word-break: normal; hyphens: auto; -webkit-hyphens: auto; }
+.mode-clean [data-role="entry"][data-head] { background: var(--panel); font-weight: 600; }
+.mode-clean [data-role="entry"][data-valign="middle"] { align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.mode-clean [data-role="entry"][data-valign="bottom"] { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; }
+.mode-clean [data-role="entry"] > .x-content > [data-role="para"] + [data-role="para"] { margin-top: .3em; }
+.sheet .mode-clean [data-role="entry"] { overflow-wrap: break-word; }
+.sheet .mode-clean [data-role="entry"][data-head] { background: #eef0f3; font-size: 11px; letter-spacing: .02em;
+  text-transform: uppercase; line-height: 1.35; border-bottom: .75px solid var(--rule); }
+.sheet .mode-clean [data-role="entry"][data-head="hend"] { border-bottom: 1px solid var(--ink-2); }
+.sheet .mode-clean [data-role="table"] { overflow-x: auto; }
+
+
+/* =====================================================================
+   PUBLICATION NUMBERING, as the standards print it (numbers come from the
+   display profile and are computed from the document; display only).
+   ATA iSpec 2200:  TASK id line, 1. / SUBTASK id line, A. / (1) / (a) / 1 / a,
+                    one indent step per level.
+   S1000D:          1 / 1.1 / 1.1.1 in one column at the left, text aligned after.
+   ===================================================================== */
+.mode-clean { --num-w: 2.6em; --num-g: 4.6em; }
+.mode-clean [data-num] > .x-content { position: relative; }
+.mode-clean [data-num] > .x-content::before {
+  content: attr(data-num); position: absolute; top: 0; white-space: nowrap; font-weight: 600; color: var(--ink);
+  font-variant-numeric: tabular-nums; line-height: 1.55; }
+.mode-clean [data-ns="ata"] > .x-content { padding-left: var(--num-w); }
+.mode-clean [data-ns="ata"] > .x-content::before { left: 0; }
+.mode-clean [data-ns="ata"][data-nd="4"] > .x-content::before, .mode-clean [data-ns="ata"][data-nd="5"] > .x-content::before {
+  text-decoration: underline; text-underline-offset: 2px; }
+.mode-clean [data-ns="decimal"][data-nd="0"] > .x-content { padding-left: var(--num-g); }
+.mode-clean [data-ns="decimal"] > .x-content::before { left: 0; }
+.mode-clean [data-ns="decimal"]:not([data-nd="0"]) > .x-content::before { left: calc(-1 * var(--num-g)); }
+/* a numbered heading: number and title on one line */
+.mode-clean [data-num] > .x-content > [data-role="title"]:first-child {
+  margin-top: 0 !important; text-transform: none !important; letter-spacing: .005em !important; border: 0 !important; padding: 0 !important; }
+.sheet .mode-clean [data-num][data-role="section"] { margin-top: 1.2em; }
+.sheet .mode-clean [data-num][data-role="section"] > .x-content > [data-role="title"]:first-child { font-size: 14.5px; font-weight: 700; margin-bottom: .5em; }
+.sheet .mode-clean [data-ns="ata"][data-nd="0"] > .x-content > [data-role="title"]:first-child { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.sheet .mode-clean [data-ns="ata"][data-nd="0"] > .x-content::before { font-size: 14.5px; font-weight: 700; }
+.sheet .mode-clean [data-ns="decimal"] > .x-content::before { font-weight: 700; }
+.sheet .mode-clean [data-ns="decimal"][data-role="step"] > .x-content > [data-role="title"]:first-child { font-size: 14.5px; font-weight: 700; margin: 0 0 .35em; }
+.mode-clean [data-role="proc-list"] { margin: .3em 0 .5em; }
+.mode-clean [data-role="proc-item"] { margin: 0 0 .45em; }
+.mode-clean :is([data-role="proc-item"], [data-role="step"]) > .x-content > [data-role="para"]:last-child,
+.mode-clean [data-role="wrap"] > .x-content > [data-role="para"]:last-child { margin-bottom: .3em; }
+/* ATA task / subtask identifier above its number */
+.mode-clean .x-node > .x-label[data-ident] { display: block; font-family: var(--pmono, var(--mono)); font-size: 11px; font-weight: 500;
+  color: var(--ink-3); letter-spacing: .02em; margin: 1.1em 0 .15em; line-height: 1.3; }
+.mode-clean .x-label[data-ident] > * { display: none; }
+.mode-clean .x-label[data-ident]::before { content: attr(data-ident); }
+.mode-clean [data-ident] + .x-content > [data-role="title"]:first-child { margin-top: 0; }
+.sheet .mode-clean .x-node[data-ident] { margin-top: 0; }
+/* a title that already says "FIGURE 1 - ..." keeps its own number */
+.sheet .mode-clean [data-selfnum] > .x-content::before { content: none !important; }
+
+/* revision bars (ATA revst/revend, S1000D changeMark): a rule in the left margin, never text */
+.mode-clean [data-role="change-mark"], .mode-clean .x-inline:is([data-name="revst"], [data-name="revend"]) { display: none !important; }
+.mode-clean .x-text[data-chg] { position: relative; }
+.mode-clean .x-text[data-chg]::after { content: ""; position: absolute; top: 1px; bottom: 1px; width: 2.5px; background: var(--ink);
+  left: calc(-12px - var(--chg-off, 0px)); pointer-events: none; }
+.mode-clean [data-chg="a1"] { --chg-off: calc(1 * var(--num-w)); } .mode-clean [data-chg="a2"] { --chg-off: calc(2 * var(--num-w)); }
+.mode-clean [data-chg="a3"] { --chg-off: calc(3 * var(--num-w)); } .mode-clean [data-chg="a4"] { --chg-off: calc(4 * var(--num-w)); }
+.mode-clean [data-chg="a5"] { --chg-off: calc(5 * var(--num-w)); } .mode-clean [data-chg="a6"] { --chg-off: calc(6 * var(--num-w)); }
+.mode-clean [data-chg="a7"] { --chg-off: calc(7 * var(--num-w)); } .mode-clean [data-chg="d1"] { --chg-off: var(--num-g); }
+.sheet .mode-clean :is([data-role="warning"], [data-role="caution"], [data-role="note"]) .x-text[data-chg]::after { margin-left: -17.5px; }
+.mode-clean [data-role="entry"] .x-text[data-chg]::after { left: -6px; margin-left: 0; }
+
+/* warnings and cautions print in capitals (the coloured style stays) */
+.mode-clean :is([data-role="warning"], [data-role="caution"]) > .x-content { text-transform: uppercase; }
+.sheet .mode-clean :is([data-role="warning"], [data-role="caution"]) > .x-content { font-weight: 500; letter-spacing: .01em; }
+.mode-clean :is([data-role="warning"], [data-role="caution"]) .x-mark { text-transform: uppercase; }
+
+/* references read as links; part, tool and material numbers read as codes */
+.sheet .mode-clean :is(.x-inline, .x-mark):is([data-name="internalRef"], [data-name="refint"], [data-name="dmRef"], [data-name="pmRef"],
+  [data-name="refext"], [data-name="grphcref"], [data-name="externalPubRef"], [data-name="xref"], [data-name="hotlink"], [data-name="catalogSeqNumberRef"]) {
+  color: #1a56a8; border-bottom: 1px solid rgba(26,86,168,.35); white-space: normal; text-decoration: none; }
+.sheet .mode-clean :is(.x-inline, .x-mark):is([data-name="partNumber"], [data-name="identNumber"], [data-name="pnr"], [data-name="toolnbr"],
+  [data-name="connbr"], [data-name="ted"], [data-name="con"], [data-name="std"], [data-name="csn"], [data-name="eqdes"], [data-name="rdi"],
+  [data-name="mfr"], [data-name="manufacturerCode"], [data-name="spec"], [data-name="toolRef"], [data-name="supplyRef"], [data-name="spareRef"]) {
+  font-family: var(--pmono); font-size: .92em; background: #f1f3f6; border: 1px solid #e1e5ea; border-radius: 3px; padding: 0 3px;
+  color: #23303e; white-space: normal; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.sheet .mode-clean .x-mark:is([data-name="acronymTerm"], [data-name="acronym"]) { font-variant: normal; }
+.sheet .mode-clean .x-mark[data-name="quantity"], .sheet .mode-clean .x-mark[data-name="quantityValue"] { font-variant-numeric: tabular-nums; }
+.sheet .mode-clean .x-mark:is([data-name="emphasis"], [data-name="emph"]) { font-weight: 700; }
+.sheet .mode-clean .x-mark[data-name="emphasis"][data-emphasistype="em02"] { font-style: italic; font-weight: 400; }
+.sheet .mode-clean .x-mark:is([data-name="sub"], [data-name="subScript"]) { vertical-align: sub; font-size: .8em; }
+.sheet .mode-clean .x-mark:is([data-name="super"], [data-name="superScript"]) { vertical-align: super; font-size: .8em; }
+
+/* =====================================================================
+   ROW LISTS: IPL detailed parts list, vendor list, SB list, temporary
+   revisions — each record one ruled row, column headings once on top.
+   ===================================================================== */
+.mode-clean [data-cols] { display: flex; flex-direction: column; margin: .6em 0 1.2em; }
+.mode-clean [data-cols] > .x-content { display: contents; }
+.mode-clean [data-cols] > .x-label { order: 1; display: grid; grid-template-columns: var(--rl-cols); column-gap: 10px;
+  border-bottom: 1.2px solid var(--ink); border-top: 1.2px solid var(--ink); padding: 5px 0 4px; font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; color: var(--ink); font-family: var(--pfont, var(--font)); }
+.mode-clean [data-cols] > .x-label > :is(.l-raw, .l-human) { display: none; }
+.mode-clean [data-cols] > .x-label > .x-colhead { display: contents; }
+.mode-clean [data-cols] > .x-content > [data-role="data-row"] { order: 2; }
+.mode-clean [data-role="data-row"] { display: grid; grid-template-columns: var(--rl-cols); column-gap: 10px; align-items: start;
+  border-bottom: .75px solid var(--rule-2); padding: 4px 0 3px; margin: 0; font-size: 13px; }
+.mode-clean [data-role="data-row"] > .x-content { display: contents; }
+.mode-clean [data-role="data-row"] > .x-content > .x-node { margin: 0; min-width: 0; }
+.mode-clean [data-role="data-row"] .x-text { margin: 0; }
+.mode-clean [data-name="vendlist"] { --rl-cols: 92px minmax(0, 1fr); }
+.mode-clean [data-name="sblist"] { --rl-cols: 104px 116px minmax(0, 1fr) 96px; }
+.mode-clean [data-name="trlist"] { --rl-cols: 116px minmax(0, 1fr) 116px; }
+.mode-clean [data-name="vendata"] > .x-content > [data-name="mfr"], .mode-clean [data-name="sbdata"] > .x-content > [data-name="sbnbr"],
+.mode-clean [data-name="trdata"] > .x-content > [data-name="trnbr"] { font-family: var(--pmono, var(--mono)); font-size: 12px; }
+
+/* IPL detailed parts list: FIG. ITEM | PART NUMBER | NOMENCLATURE | EFF. CODE | UNITS PER ASSY */
+.mode-clean [data-name="prtlist"] { --rl-cols: 52px 122px minmax(0, 1fr) repeat(5, 15px) 58px; }
+.mode-clean [data-name="prtlist"] > .x-label > .x-colhead > :nth-child(4) { grid-column: 4 / span 5; }
+.mode-clean [data-name="prtlist"] > .x-label > .x-colhead > :nth-child(5) { grid-column: 9; text-align: right; }
+.mode-clean [data-name="itemdata"]::before { content: attr(data-item); grid-column: 1; grid-row: 1; font-variant-numeric: tabular-nums; font-weight: 600; }
+.mode-clean [data-name="itemdata"] > .x-content > [data-name="pnr"] { grid-column: 2; grid-row: 1; font-family: var(--pmono, var(--mono)); font-size: 12px; }
+.mode-clean [data-name="itemdata"] > .x-content > [data-name="iplnom"] { grid-column: 3; grid-row: 1; }
+.mode-clean [data-name="itemdata"] > .x-content > [data-name="upa"] { grid-column: 9; grid-row: 1; text-align: right; }
+/* effectivity codes: five to a row, in document order */
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] { grid-column: 4; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 5; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 6; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 7; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 8; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 4; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 5; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 6; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 7; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 8; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 4; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 5; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 6; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 7; }
+.mode-clean [data-name="iplnom"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] + [data-name="effcode"] { grid-column: 8; }
+.mode-clean [data-name="iplnom"] > .x-content > .x-node { margin: 0; }
+.mode-clean [data-name="iplnom"] > .x-content > [data-name="nom"] { font-weight: 500; }
+.mode-clean [data-name="nom"] [data-name="adt"]::before { content: ", "; }
+.mode-clean [data-name="nom"] > .x-content, .mode-clean [data-name="nom"] > .x-content > .x-node,
+.mode-clean [data-name="nom"] > .x-content > .x-node > .x-content { display: inline; margin: 0; }
+.mode-clean [data-name="iplnom"] > .x-content > :not([data-name="nom"]) { color: var(--ink-2); font-size: 12.5px; }
+.mode-clean [data-name="itemdata"][data-ind="1"] [data-name="nom"]::before { content: "\2022\00a0"; }
+.mode-clean [data-name="itemdata"][data-ind="2"] [data-name="nom"]::before { content: "\2022\00a0\2022\00a0"; }
+.mode-clean [data-name="itemdata"][data-ind="3"] [data-name="nom"]::before { content: "\2022\00a0\2022\00a0\2022\00a0"; }
+.mode-clean [data-name="itemdata"][data-ind="4"] [data-name="nom"]::before { content: "\2022\00a0\2022\00a0\2022\00a0\2022\00a0"; }
+.mode-clean [data-name="itemdata"][data-ind="5"] [data-name="nom"]::before { content: "\2022\00a0\2022\00a0\2022\00a0\2022\00a0\2022\00a0"; }
+.mode-clean [data-name="itemdata"][data-ind="6"] [data-name="nom"]::before,
+.mode-clean [data-name="itemdata"][data-ind="7"] [data-name="nom"]::before { content: "\2022\00a0\2022\00a0\2022\00a0\2022\00a0\2022\00a0\2022\00a0"; }
+.mode-clean [data-name="itemdata"] [data-name="nom"]::before { color: var(--ink-3); letter-spacing: -.05em; }
+@media print { .mode-clean [data-role="data-row"] { break-inside: avoid; } .mode-clean [data-cols] > .x-label { break-after: avoid; } }
+
+/* step number carried by the first paragraph when the step opens with a warning, caution or note */
+.mode-clean [data-nl] > .x-content::before { content: none; }
+.mode-clean .x-text[data-lead] { position: relative; }
+.mode-clean [data-ns="ata"] { --lead-off: var(--num-w); }
+.mode-clean [data-ns="decimal"] { --lead-off: var(--num-g); }
+.sheet .mode-clean [data-ns="decimal"] .x-text[data-lead]::before { font-weight: 700; }
+.mode-clean .x-text[data-lead]::before { content: attr(data-lead); position: absolute; left: calc(-1 * var(--lead-off, var(--num-w))); top: 0;
+  font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+/* inside a row list every child is a cell, including an applicability (effect) column */
+.sheet .mode-clean [data-role="data-row"] > .x-content > [data-role="meta"] { display: block !important; border: 0; padding: 0; margin: 0;
+  font-size: inherit; color: var(--ink-2); }
+/* ATA: a graphic inside a figure is part of that figure (one number, one caption) */
+.sheet .mode-clean [data-role="figure"] [data-role="figure"] { counter-increment: none; margin: .4em 0; }
+.sheet .mode-clean [data-role="figure"] [data-role="figure"] > .x-content > [data-role="title"] > .x-content::before { content: none; }
+.sheet .mode-clean [data-role="figure"] [data-role="figure"] > .x-content > [data-role="title"] { font-weight: 500; color: var(--ink-2); }
+.sheet .mode-clean [data-role="figure"]:has(> .x-content > [data-role="figure"]) > .x-content > [data-role="title"] { order: 0; margin: 0 0 6px; }
+.x-colhead { display: none; }
+/* knowledge library: source badges, engineering import */
+.kn-kind { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .03em; padding: 0 6px; margin-right: 6px;
+  border-radius: 3px; background: var(--accent-bg); color: var(--accent); vertical-align: 1px; }
+label.btn.disabled { opacity: .5; pointer-events: none; }
+/* ---------- 3D model viewer ---------- */
+.mv { position: relative; width: 100%; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: #f3f5f8; }
+.mv-canvas { position: absolute; inset: 0; }
+.mv-canvas canvas { display: block; cursor: grab; }
+.mv-tools { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; }
+.mv-tools button { font-size: 11.5px; padding: 2px 8px; background: rgba(255,255,255,.88); color: #16191d; border: 1px solid #c9ced6; }
+.mv-tools button.on { background: #1d4f7a; color: #fff; border-color: #1d4f7a; }
+.mv-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: #6a737d; padding: 12px; text-align: center; }
+.mv-msg.err { color: var(--err); }
+.p3d { margin-top: 12px; }
+.kn-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.kn-models-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.kn-model-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 14px; align-items: start; }
+.kn-model-side h5 { margin: 4px 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.kn-model-side .small { margin-bottom: 4px; }
+/* S1000D illustrated parts data: one ruled row per catalogue line, like the ATA IPL */
+.mode-clean [data-name="illustratedPartsCatalog"] { --rl-cols: 52px 170px minmax(0, 1fr) 70px 58px; }
+.mode-clean [data-name="illustratedPartsCatalog"] > .x-label > .x-colhead > :nth-child(5) { text-align: right; }
+.mode-clean [data-name="catalogSeqNumber"]::before { content: attr(data-item); grid-column: 1; grid-row: 1; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mode-clean [data-name="catalogSeqNumber"] :is([data-name="itemSeqNumber"], [data-name="partSegment"], [data-name="itemIdentData"],
+  [data-name="partLocationSegment"], [data-name="applicabilitySegment"]),
+.mode-clean [data-name="catalogSeqNumber"] :is([data-name="itemSeqNumber"], [data-name="partSegment"], [data-name="itemIdentData"],
+  [data-name="partLocationSegment"], [data-name="applicabilitySegment"]) > .x-content { display: contents; }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="partRef"] { grid-column: 2; grid-row: 1; display: block; border: 0; padding: 0; margin: 0;
+  font-family: var(--pmono, var(--mono)); font-size: 12px; color: var(--ink); }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="partRef"] > .x-label { display: none; }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="descrForPart"] { grid-column: 3; grid-row: 1; margin: 0; text-transform: uppercase; font-weight: 500; }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="usableOnCodeAssy"] { grid-column: 4; grid-row: 1; margin: 0; }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="quantityPerNextHigherAssy"] { grid-column: 5; grid-row: 1; margin: 0; text-align: right; }
+.mode-clean [data-name="catalogSeqNumber"] :is([data-name="notIllustrated"]) { display: none; }
+.mode-clean [data-name="catalogSeqNumber"][data-ind="1"] [data-name="descrForPart"]::before { content: "\2022\00a0"; color: var(--ink-3); }
+.mode-clean [data-name="catalogSeqNumber"][data-ind="2"] [data-name="descrForPart"]::before { content: "\2022\00a0\2022\00a0"; color: var(--ink-3); }
+.mode-clean [data-name="catalogSeqNumber"][data-ind="3"] [data-name="descrForPart"]::before { content: "\2022\00a0\2022\00a0\2022\00a0"; color: var(--ink-3); }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="descrForPart"] > .x-content { display: inline; }
+.mode-clean [data-name="illustratedPartsCatalog"] { --rl-cols: 52px 200px minmax(0, 1fr) 70px 58px; }
+.mode-clean [data-name="catalogSeqNumber"] [data-name="partRef"] .x-summary { white-space: normal; font-size: 11.5px; }
+.kn-split { display: inline-flex; }
+.kn-split > label.btn:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.kn-split > label.btn + label.btn { border-radius: 0 var(--radius) var(--radius) 0; border-left: 0; }

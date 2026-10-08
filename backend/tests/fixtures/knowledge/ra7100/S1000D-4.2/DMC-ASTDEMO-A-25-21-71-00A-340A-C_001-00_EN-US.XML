@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xsi:noNamespaceSchemaLocation="http://www.s1000d.org/S1000D_4-2/xml_schema_flat/proced.xsd">
+  <identAndStatusSection>
+    <dmAddress>
+      <dmIdent>
+        <dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="340" infoCodeVariant="A" itemLocationCode="C"/>
+        <language languageIsoCode="en" countryIsoCode="US"/>
+        <issueInfo issueNumber="001" inWork="00"/>
+      </dmIdent>
+      <dmAddressItems>
+        <issueDate year="2026" month="10" day="08"/>
+        <dmTitle><techName>Seat recline actuator</techName><infoName>Functional test</infoName></dmTitle>
+      </dmAddressItems>
+    </dmAddress>
+    <dmStatus issueType="new">
+      <security securityClassification="01"/>
+      <dataRestrictions>
+        <restrictionInstructions><dataDistribution>Test data for ASTHRA. Product, company and part numbers are fictitious.</dataDistribution></restrictionInstructions>
+        <restrictionInfo><copyright><copyrightPara>ASTHRA Demo Seating Ltd (fictitious)</copyrightPara></copyright></restrictionInfo>
+      </dataRestrictions>
+      <responsiblePartnerCompany enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></responsiblePartnerCompany>
+      <originator enterpriseCode="ZZD01"><enterpriseName>ASTHRA DEMO SEATING LTD</enterpriseName></originator>
+      <applic><displayText><simplePara>RA-7100-01 and RA-7100-02</simplePara></displayText></applic>
+      <brexDmRef><dmRef><dmRefIdent><dmCode modelIdentCode="S1000D" systemDiffCode="G" systemCode="04" subSystemCode="1" subSubSystemCode="0" assyCode="0301" disassyCode="00" disassyCodeVariant="A" infoCode="022" infoCodeVariant="A" itemLocationCode="D"/></dmRefIdent></dmRef></brexDmRef>
+      <qualityAssurance><unverified/></qualityAssurance>
+    </dmStatus>
+  </identAndStatusSection>
+  <content>
+    <procedure>
+      <commonInfo><title>Job description</title><para>This procedure gives the functional test of the actuator.</para></commonInfo>
+      <preliminaryRqmts><reqCondGroup><noConds/></reqCondGroup><reqPersons><personnel numRequired="1"><personCategory personCategoryCode="Shop technician"/><personSkill skillLevelCode="sk02"/><estimatedTime unitOfMeasure="h">0.5</estimatedTime></personnel></reqPersons><reqSupportEquips><supportEquipDescrGroup><supportEquipDescr id="seq-adt-7100-02"><name>Holding fixture, rod end</name><identNumber><manufacturerCode>ZZD01</manufacturerCode><partAndSerialNumber><partNumber>ADT-7100-02</partNumber></partAndSerialNumber></identNumber><reqQuantity unitOfMeasure="EA">1</reqQuantity></supportEquipDescr><supportEquipDescr id="seq-fg-0500"><name>Force gauge, 0 to 500 N</name><toolRef toolNumber="FG-0500"/><reqQuantity unitOfMeasure="EA">1</reqQuantity></supportEquipDescr></supportEquipDescrGroup></reqSupportEquips><reqSupplies><noSupplies/></reqSupplies><reqSpares><noSpares/></reqSpares><reqSafety><noSafety/></reqSafety></preliminaryRqmts>
+      <mainProcedure><proceduralStep><para>Install the actuator in the holding fixture, <internalRef internalRefId="seq-adt-7100-02" internalRefTargetType="irtt05"/>.</para></proceduralStep><proceduralStep><para>Pull the release lever (70) with the force gauge, <internalRef internalRefId="seq-fg-0500" internalRefTargetType="irtt05"/>. The lock must release at 20 to 30 N (4.5 to 6.7 lbf).</para></proceduralStep><proceduralStep><para>With the lever released, apply a compressive load of 1000 N (225 lbf) to the rod end (30). The piston rod must not move.</para></proceduralStep><proceduralStep><para>Measure the full stroke. It must be 74 to 76 mm (2.91 to 2.99 in).</para><note><notePara>If the actuator does not pass this test, disassemble it (<dmRef><dmRefIdent><dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="530" infoCodeVariant="A" itemLocationCode="C"/></dmRefIdent></dmRef>) and examine the parts against the fits and clearances (<dmRef><dmRefIdent><dmCode modelIdentCode="ASTDEMO" systemDiffCode="A" systemCode="25" subSystemCode="2" subSubSystemCode="1" assyCode="71" disassyCode="00" disassyCodeVariant="A" infoCode="030" infoCodeVariant="A" itemLocationCode="C"/></dmRefIdent></dmRef>).</notePara></note></proceduralStep></mainProcedure>
+      <closeRqmts><reqCondGroup><noConds/></reqCondGroup></closeRqmts>
+    </procedure>
+  </content>
+</dmodule>

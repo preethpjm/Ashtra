@@ -1,0 +1,180 @@
+<!DOCTYPE CMM PUBLIC "-//ATA-TEXT//DTD CMM-VER3-LEVEL2//EN" [
+<!ENTITY ent252171-ipl-01-01.cgm SYSTEM "ent252171-IPL-01-01-00.CGM" NDATA cgm>
+]>
+<cmm spl="ZZD01" oidate="20261008" tsn="0" docnbr="RA-7100 SERIES" lang="en" chapnbr="25" sectnbr="21" subjnbr="71" type="cmm" prelim="0" chg="N" revdate="20261008">
+<title>COMPONENT MAINTENANCE MANUAL WITH ILLUSTRATED PARTS LIST</title>
+<partinfo><cmpnom>SEAT RECLINE ACTUATOR</cmpnom><mfrpnr><pnr>RA-7100-01</pnr><mfr>ZZD01</mfr></mfrpnr><cmpnom>SEAT RECLINE ACTUATOR (POST SB 25-0012)</cmpnom><mfrpnr><pnr>RA-7100-02</pnr><mfr>ZZD01</mfr></mfrpnr></partinfo>
+<legalntc chg="N" revdate="20261008" key="legalntc-1"><cpyrght><year>2026</year><holder>ASTHRA Demo Seating Ltd (fictitious)</holder><geninfo><para>Test data for ASTHRA. The product, the company and its part numbers are fictitious.</para></geninfo></cpyrght></legalntc>
+<mfmatr>
+<trlist chg="N" revdate="20261008" key="trlist-1"><title>RECORD OF TEMPORARY REVISIONS</title><isempty></trlist>
+<sblist chg="N" revdate="20261008" key="sblist-1"><title>SERVICE BULLETIN LIST</title>
+<sbdata><effect>Affects CMM</effect><sbnbr>SB 25-0012</sbnbr><sbtitle>Replace the compression spring with a higher rate spring (RA-7150-1 to RA-7150-2); actuator becomes RA-7100-02</sbtitle><issdate>Sep 15/2026</issdate></sbdata>
+</sblist>
+</mfmatr>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="0" chg="N" revdate="20261008" key="pgblk-252171-0">
+<title>INTRODUCTION</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="99F" seq="801" confltr="A" varnbr="1" pgblknbr="0" chg="N" revdate="20261008" key="task-252171-99f-801-a01">
+<title>General</title>
+<topic><prclist1>
+<prcitem1><prcitem><para>This manual gives the information necessary to do shop maintenance of the seat recline actuator <pnr>RA-7100-01</pnr> and <pnr>RA-7100-02</pnr>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Effectivity codes used in the Illustrated Parts List:</para></prcitem><prclist2>
+<prcitem2><prcitem><para>Code A: RA-7100-01 (PRE SB 25-0012).</para></prcitem></prcitem2>
+<prcitem2><prcitem><para>Code B: RA-7100-02 (POST SB 25-0012).</para></prcitem></prcitem2>
+</prclist2>
+</prcitem1>
+<prcitem1><prcitem><para>Dimensions are in millimetres, with inches in brackets. Torque values are in N.m, with lbf.in in brackets.</para></prcitem></prcitem1>
+</prclist1>
+</topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="1" chg="N" revdate="20261008" key="pgblk-252171-1">
+<title>DESCRIPTION AND OPERATION</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="870" seq="801" confltr="A" varnbr="1" pgblknbr="1" chg="N" revdate="20261008" key="task-252171-870-801-a01">
+<title>Description</title>
+<topic><prclist1>
+<prcitem1><prcitem><para>The seat recline actuator is a mechanical lockable spring strut. It holds the seat back at the selected recline angle and returns it to upright when released.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>The actuator has these main parts:</para></prcitem><prclist2>
+<prcitem2><prcitem><para>A housing (10) which contains a piston rod (20) sealed by two packings (110).</para></prcitem></prcitem2>
+<prcitem2><prcitem><para>A compression spring (50, or 50A after SB 25-0012) which pushes the piston rod to the extended position.</para></prcitem></prcitem2>
+<prcitem2><prcitem><para>A lock mechanism (60) with a release lever (70) and a lock pin (80), attached by four screws (90) and washers (100).</para></prcitem></prcitem2>
+<prcitem2><prcitem><para>A threaded rod end (30) with a bushing (120), held by a self-locking nut (40).</para></prcitem></prcitem2>
+</prclist2>
+</prcitem1>
+<prcitem1><prcitem><para>Operation: when the release lever is pulled, the lock pin disengages and the piston rod can move. Full stroke is 75 mm (2.95 in).</para></prcitem></prcitem1>
+</prclist1>
+</topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="1000" chg="N" revdate="20261008" key="pgblk-252171-1000">
+<title>TESTING AND FAULT ISOLATION</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="700" seq="801" confltr="A" varnbr="1" pgblknbr="1000" chg="N" revdate="20261008" key="task-252171-700-801-a01">
+<title>Functional Test</title>
+<topic>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="700" seq="001" confltr="A" varnbr="1" pgblknbr="1000" chg="N" revdate="20261008" key="subtask-252171-700-001-a01">
+<title>Test the actuator</title>
+<prclist1>
+<prcitem1><prcitem><para>Install the actuator in the holding fixture, <ted><toolnbr>ADT-7100-02</toolnbr><toolname>Holding fixture, rod end</toolname></ted>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Pull the release lever (70) with the force gauge, <ted><toolnbr>FG-0500</toolnbr><toolname>Force gauge, 0 to 500 N</toolname></ted>. The lock must release at 20 to 30 N (4.5 to 6.7 lbf).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>With the lever released, apply a compressive load of 1000 N (225 lbf) to the rod end (30). The piston rod must not move.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Measure the full stroke. It must be 74 to 76 mm (2.91 to 2.99 in).</para><note><para>If the actuator does not pass this test, disassemble it and examine the parts against the fits and clearances.</para></note></prcitem></prcitem1>
+</prclist1>
+</subtask>
+</topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="3000" chg="N" revdate="20261008" key="pgblk-252171-3000">
+<title>DISASSEMBLY</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="000" seq="801" confltr="A" varnbr="1" pgblknbr="3000" chg="N" revdate="20261008" key="task-252171-000-801-a01">
+<title>Disassembly</title>
+<topic>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="040" seq="001" confltr="A" varnbr="1" pgblknbr="3000" chg="N" revdate="20261008" key="subtask-252171-040-001-a01">
+<title>Remove the rod end</title>
+<prclist1>
+<prcitem1><prcitem><para>Install the actuator in the holding fixture, <ted><toolnbr>ADT-7100-02</toolnbr><toolname>Holding fixture, rod end</toolname></ted>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Remove the nut (40) from the piston rod (20).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Remove the rod end (30). Refer to <grphcref refid="graphic-252171-99b-001-a01">IPL Figure 1</grphcref>.</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="040" seq="002" confltr="A" varnbr="1" pgblknbr="3000" chg="N" revdate="20261008" key="subtask-252171-040-002-a01">
+<title>Remove the spring and the lock mechanism</title>
+<warning><para>THE SPRING IS COMPRESSED. USE THE SPRING COMPRESSOR TO RELEASE IT SLOWLY. IF YOU DO NOT, THE PARTS CAN MOVE SUDDENLY AND CAUSE INJURY.</para></warning>
+<prclist1>
+<prcitem1><prcitem><para>Install the spring compressor, <ted><toolnbr>ADT-7100-01</toolnbr><toolname>Spring compressor</toolname></ted>, and compress the spring (50 or 50A).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Remove the four screws (90) and the four washers (100). Remove the lock mechanism (60).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Slowly release the spring compressor. Remove the spring and the piston rod (20) from the housing (10).</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="040" seq="003" confltr="A" varnbr="1" pgblknbr="3000" chg="N" revdate="20261008" key="subtask-252171-040-003-a01">
+<title>Remove the packings</title>
+<caution><para>DO NOT USE A SHARP TOOL TO REMOVE THE PACKINGS. A SCRATCH ON THE PISTON ROD CAN CAUSE A LEAK.</para></caution>
+<prclist1>
+<prcitem1><prcitem><para>Remove the two packings (110) from the piston rod (20). Discard the packings.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Clean all the parts with isopropyl alcohol, <con><connbr>TT-I-735</connbr><conname>Isopropyl alcohol</conname></con>. Let them dry.</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+</topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="7000" chg="N" revdate="20261008" key="pgblk-252171-7000">
+<title>ASSEMBLY</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="400" seq="801" confltr="A" varnbr="1" pgblknbr="7000" chg="N" revdate="20261008" key="task-252171-400-801-a01">
+<title>Assembly</title>
+<topic>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="420" seq="001" confltr="A" varnbr="1" pgblknbr="7000" chg="N" revdate="20261008" key="subtask-252171-420-001-a01">
+<title>Install the packings and the piston rod</title>
+<prclist1>
+<prcitem1><prcitem><para>Lubricate two new packings (110) with grease, <con><connbr>MIL-PRF-23827</connbr><conname>Grease, aircraft and instrument</conname></con>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Install the packings on the piston rod (20).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Install the piston rod in the housing (10).</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="420" seq="002" confltr="A" varnbr="1" pgblknbr="7000" chg="N" revdate="20261008" key="subtask-252171-420-002-a01">
+<title>Install the spring and the lock mechanism</title>
+<warning><para>THE SPRING IS COMPRESSED. USE THE SPRING COMPRESSOR TO RELEASE IT SLOWLY. IF YOU DO NOT, THE PARTS CAN MOVE SUDDENLY AND CAUSE INJURY.</para></warning>
+<prclist1>
+<prcitem1><prcitem><para>Install the spring (50 or 50A) and compress it with the spring compressor, <ted><toolnbr>ADT-7100-01</toolnbr><toolname>Spring compressor</toolname></ted>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Install the lock mechanism (60) with the four washers (100) and the four screws (90). Torque the screws to 2.8 to 3.4 N.m (25 to 30 lbf.in) with the torque wrench, <ted><toolnbr>TW-0110</toolnbr><toolname>Torque wrench, 1 to 10 N.m</toolname></ted>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Slowly release the spring compressor.</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+<subtask chapnbr="25" sectnbr="21" subjnbr="71" func="420" seq="003" confltr="A" varnbr="1" pgblknbr="7000" chg="N" revdate="20261008" key="subtask-252171-420-003-a01">
+<title>Install the rod end</title>
+<prclist1>
+<prcitem1><prcitem><para>Install the actuator in the holding fixture, <ted><toolnbr>ADT-7100-02</toolnbr><toolname>Holding fixture, rod end</toolname></ted>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Apply threadlocker, <con><connbr>LOCTITE 242</connbr><conname>Threadlocker, medium strength</conname></con>, to the threads of the piston rod (20). Install the rod end (30).</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Install the nut (40). Torque the nut to 6.8 to 7.9 N.m (60 to 70 lbf.in). Refer to <refint reftype="table" refid="tab-torque">Table 2</refint>.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>Do the functional test.</para></prcitem></prcitem1>
+</prclist1>
+</subtask>
+</topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="8000" chg="N" revdate="20261008" key="pgblk-252171-8000">
+<title>FITS AND CLEARANCES</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="820" seq="801" confltr="A" varnbr="1" pgblknbr="8000" chg="N" revdate="20261008" key="task-252171-820-801-a01">
+<title>Fits and Clearances</title>
+<topic><prclist1><prcitem1><prcitem><para>The fits and clearances are given in <refint reftype="table" refid="tab-fits">Table 1</refint>. Replace a part that is not in its wear limit.</para></prcitem></prcitem1><prcitem1><prcitem><table chapnbr="25" sectnbr="21" subjnbr="71" func="" seq="001" varnbr="1" id="tab-fits" frame="topbot"><title>Fits and Clearances</title><tgroup cols="6"><colspec colname="c1" colwidth="0.6*"><colspec colname="c2" colwidth="0.7*"><colspec colname="c3" colwidth="2.4*"><colspec colname="c4" colwidth="1.4*"><colspec colname="c5" colwidth="1.4*"><colspec colname="c6" colwidth="1.6*"><thead><row><entry><para>REF</para></entry><entry><para>ITEM</para></entry><entry><para>DIMENSION</para></entry><entry><para>NEW MIN MM (IN)</para></entry><entry><para>NEW MAX MM (IN)</para></entry><entry><para>WEAR LIMIT MM (IN)</para></entry></row></thead><tbody><row><entry><para>A</para></entry><entry><para>20</para></entry><entry><para>Piston rod outside diameter</para></entry><entry><para>9.500 (0.3740)</para></entry><entry><para>9.520 (0.3748)</para></entry><entry><para>9.450 (0.3720) min</para></entry></row><row><entry><para>A</para></entry><entry><para>10</para></entry><entry><para>Housing bore inside diameter</para></entry><entry><para>9.550 (0.3760)</para></entry><entry><para>9.600 (0.3780)</para></entry><entry><para>9.650 (0.3799) max</para></entry></row><row><entry><para>A</para></entry><entry><para>10/20</para></entry><entry><para>Rod-to-bore clearance</para></entry><entry><para>0.030 (0.0012)</para></entry><entry><para>0.100 (0.0039)</para></entry><entry><para>0.200 (0.0079) max</para></entry></row><row><entry><para>B</para></entry><entry><para>120</para></entry><entry><para>Bushing inside diameter</para></entry><entry><para>6.350 (0.2500)</para></entry><entry><para>6.400 (0.2520)</para></entry><entry><para>6.450 (0.2539) max</para></entry></row><row><entry><para>C</para></entry><entry><para>50</para></entry><entry><para>Spring free length (RA-7150-1)</para></entry><entry><para>61.500 (2.4213)</para></entry><entry><para>62.500 (2.4606)</para></entry><entry><para>60.500 (2.3819) min</para></entry></row><row><entry><para>C</para></entry><entry><para>50A</para></entry><entry><para>Spring free length (RA-7150-2)</para></entry><entry><para>61.500 (2.4213)</para></entry><entry><para>62.500 (2.4606)</para></entry><entry><para>60.500 (2.3819) min</para></entry></row></tbody></tgroup></table></prcitem></prcitem1><prcitem1><prcitem><table chapnbr="25" sectnbr="21" subjnbr="71" func="" seq="002" varnbr="1" id="tab-torque" frame="topbot"><title>Torque Values</title><tgroup cols="4"><colspec colname="c1" colwidth="0.6*"><colspec colname="c2" colwidth="3*"><colspec colname="c3" colwidth="1.2*"><colspec colname="c4" colwidth="1.2*"><thead><row><entry><para>ITEM</para></entry><entry><para>FASTENER</para></entry><entry><para>TORQUE N.M</para></entry><entry><para>TORQUE LBF.IN</para></entry></row></thead><tbody><row><entry><para>40</para></entry><entry><para>MS21042L4 nut (rod end)</para></entry><entry><para>6.8 to 7.9</para></entry><entry><para>60 to 70</para></entry></row><row><entry><para>90</para></entry><entry><para>NAS1352C3-8 screws (lock mechanism)</para></entry><entry><para>2.8 to 3.4</para></entry><entry><para>25 to 30</para></entry></row></tbody></tgroup></table></prcitem></prcitem1></prclist1></topic>
+</task>
+</pgblk>
+<pgblk chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="9000" chg="N" revdate="20261008" key="pgblk-252171-9000">
+<title>SPECIAL TOOLS, FIXTURES, EQUIPMENT AND CONSUMABLES</title>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="940" seq="801" confltr="A" varnbr="1" pgblknbr="9000" chg="N" revdate="20261008" key="task-252171-940-801-a01">
+<title>Special Tools and Consumables</title>
+<topic><prclist1><prcitem1><prcitem><table chapnbr="25" sectnbr="21" subjnbr="71" func="" seq="003" varnbr="1" id="tab-tools" frame="topbot"><title>Special Tools, Fixtures and Equipment</title><tgroup cols="4"><colspec colname="c1" colwidth="1.4*"><colspec colname="c2" colwidth="2.4*"><colspec colname="c3" colwidth="1.6*"><colspec colname="c4" colwidth="1.6*"><thead><row><entry><para>NUMBER</para></entry><entry><para>NAME</para></entry><entry><para>SOURCE (CAGE)</para></entry><entry><para>USE</para></entry></row></thead><tbody><row><entry><para>ADT-7100-01</para></entry><entry><para>Spring compressor</para></entry><entry><para>ZZD01</para></entry><entry><para>disassembly, assembly</para></entry></row><row><entry><para>ADT-7100-02</para></entry><entry><para>Holding fixture, rod end</para></entry><entry><para>ZZD01</para></entry><entry><para>disassembly, assembly, test</para></entry></row><row><entry><para>TW-0110</para></entry><entry><para>Torque wrench, 1 to 10 N.m</para></entry><entry><para>Commercially available</para></entry><entry><para>assembly</para></entry></row><row><entry><para>FG-0500</para></entry><entry><para>Force gauge, 0 to 500 N</para></entry><entry><para>Commercially available</para></entry><entry><para>test</para></entry></row></tbody></tgroup></table></prcitem></prcitem1><prcitem1><prcitem><table chapnbr="25" sectnbr="21" subjnbr="71" func="" seq="004" varnbr="1" id="tab-cons" frame="topbot"><title>Consumable Materials</title><tgroup cols="4"><colspec colname="c1" colwidth="1.6*"><colspec colname="c2" colwidth="2.4*"><colspec colname="c3" colwidth="1.2*"><colspec colname="c4" colwidth="1*"><thead><row><entry><para>SPECIFICATION / NUMBER</para></entry><entry><para>NAME</para></entry><entry><para>SOURCE (CAGE)</para></entry><entry><para>QUANTITY</para></entry></row></thead><tbody><row><entry><para>MIL-PRF-23827</para></entry><entry><para>Grease, aircraft and instrument</para></entry><entry><para>81349</para></entry><entry><para>5 g</para></entry></row><row><entry><para>LOCTITE 242</para></entry><entry><para>Threadlocker, medium strength</para></entry><entry><para>05972</para></entry><entry><para>1 ml</para></entry></row><row><entry><para>TT-I-735</para></entry><entry><para>Isopropyl alcohol</para></entry><entry><para>81348</para></entry><entry><para>50 ml</para></entry></row></tbody></tgroup></table></prcitem></prcitem1></prclist1></topic>
+</task>
+</pgblk>
+<ipl chapnbr="25" sectnbr="21" subjnbr="71" pgblknbr="10000" chg="N" revdate="20261008" key="ipl-1">
+<title>ILLUSTRATED PARTS LIST</title>
+<iplintro>
+<task chapnbr="25" sectnbr="21" subjnbr="71" func="99F" seq="805" confltr="A" varnbr="1" pgblknbr="10000" chg="N" revdate="20261008" key="task-252171-99f-805-a01">
+<title>Introduction</title>
+<topic><prclist1>
+<prcitem1><prcitem><para>The Detailed Parts List gives the parts of the actuator in disassembly order. A dash before an item number shows a part that is not illustrated.</para></prcitem></prcitem1>
+<prcitem1><prcitem><para>The effectivity code column shows the actuator configuration that the part applies to. A blank means all configurations.</para></prcitem></prcitem1>
+</prclist1>
+</topic>
+</task>
+<vendlist chg="N" revdate="20261008" key="vendlist-1"><title>LIST OF VENDORS</title><vendata><mfr>VZZD01</mfr><mad>ASTHRA DEMO SEATING LTD, 1 DEMO PARK, BENGALURU, 560001, INDIA</mad></vendata><vendata><mfr>VZZV02</mfr><mad>DEMO SPRINGS CO, 22 COIL ROAD, PUNE, 411001, INDIA</mad></vendata><vendata><mfr>VZZV03</mfr><mad>DEMO BEARINGS LTD, 3 RACE STREET, CHENNAI, 600001, INDIA</mad></vendata></vendlist>
+</iplintro>
+<dplist><title>DETAILED PARTS LIST</title>
+<figure chapnbr="25" sectnbr="21" subjnbr="71" func="950" seq="1" varnbr="1" confltr="A" pgblknbr="10000" fignbr="1" chg="N" revdate="20261008" key="figure-252171-1"><title>FIGURE 1 - SEAT RECLINE ACTUATOR</title>
+<graphic chapnbr="25" sectnbr="21" subjnbr="71" func="99B" seq="1" confltr="A" varnbr="1" pgblknbr="10000" chg="N" revdate="20261008" key="graphic-252171-99b-001-a01"><title>SEAT RECLINE ACTUATOR</title><sheet gnbr="ent252171-ipl-01-01.cgm" sheetnbr="1" chg="N" revdate="20261008" key="sheet-252171-1-1"></sheet></graphic>
+<prtlist chg="N" revdate="20261008" key="prtlist-1">
+<itemdata itemnbr="1" attach="0" illusind="0" indent="0" delitem="0"><pnr>RA-7100-01</pnr><iplnom><nom><kwd>ACTUATOR ASSY</kwd><adt>RECLINE</adt></nom><msc>PRE SB 25-0012</msc></iplnom><effcode>A</effcode><upa>RF</upa></itemdata>
+<itemdata itemnbr="1A" attach="0" illusind="0" indent="0" delitem="0"><pnr>RA-7100-02</pnr><iplnom><nom><kwd>ACTUATOR ASSY</kwd><adt>RECLINE</adt></nom><msc>POST SB 25-0012</msc></iplnom><effcode>B</effcode><upa>RF</upa></itemdata>
+<itemdata itemnbr="10" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7110-1</pnr><iplnom><nom><kwd>HOUSING</kwd><adt>ACTUATOR</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="20" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7120-1</pnr><iplnom><nom><kwd>ROD</kwd><adt>PISTON</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="30" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7130-1</pnr><iplnom><nom><kwd>ROD END</kwd><adt>THREADED</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="40" attach="0" illusind="1" indent="1" delitem="0"><pnr>MS21042L4</pnr><iplnom><nom><kwd>NUT</kwd><adt>SELF-LOCKING</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="50" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7150-1</pnr><iplnom><nom><kwd>SPRING</kwd><adt>COMPRESSION</adt></nom><mfr>VZZV02</mfr><msc>PRE SB 25-0012</msc></iplnom><effcode>A</effcode><upa>1</upa></itemdata>
+<itemdata itemnbr="50A" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7150-2</pnr><iplnom><nom><kwd>SPRING</kwd><adt>COMPRESSION, HIGH RATE</adt></nom><mfr>VZZV02</mfr><msc>POST SB 25-0012</msc></iplnom><effcode>B</effcode><upa>1</upa></itemdata>
+<itemdata itemnbr="60" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7160-1</pnr><iplnom><nom><kwd>LOCK MECHANISM ASSY</kwd></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="70" attach="0" illusind="1" indent="2" delitem="0"><pnr>RA-7170-1</pnr><iplnom><nom><kwd>LEVER</kwd><adt>RELEASE</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="80" attach="0" illusind="1" indent="2" delitem="0"><pnr>RA-7180-1</pnr><iplnom><nom><kwd>PIN</kwd><adt>LOCK</adt></nom></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="90" attach="1" illusind="1" indent="1" delitem="0"><pnr>NAS1352C3-8</pnr><iplnom><nom><kwd>SCREW</kwd><adt>CAP, SOCKET HEAD</adt></nom><msc>ATTACHING PARTS</msc></iplnom><upa>4</upa></itemdata>
+<itemdata itemnbr="100" attach="1" illusind="1" indent="1" delitem="0"><pnr>NAS1149C0363R</pnr><iplnom><nom><kwd>WASHER</kwd><adt>FLAT</adt></nom></iplnom><upa>4</upa></itemdata>
+<itemdata itemnbr="110" attach="0" illusind="1" indent="1" delitem="0"><pnr>M83248/1-210</pnr><iplnom><nom><kwd>PACKING</kwd><adt>PREFORMED</adt></nom></iplnom><upa>2</upa></itemdata>
+<itemdata itemnbr="120" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7190-1</pnr><iplnom><nom><kwd>BUSHING</kwd><adt>ROD END</adt></nom><mfr>VZZV03</mfr></iplnom><upa>1</upa></itemdata>
+<itemdata itemnbr="130" attach="0" illusind="1" indent="1" delitem="0"><pnr>RA-7200-1</pnr><iplnom><nom><kwd>PLACARD</kwd><adt>IDENTIFICATION</adt></nom></iplnom><upa>1</upa></itemdata>
+</prtlist></figure></dplist></ipl>
+</cmm>

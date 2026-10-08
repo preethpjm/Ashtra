@@ -7,7 +7,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS source (           -- where facts came from
   id            INTEGER PRIMARY KEY,
-  kind          TEXT NOT NULL,                -- S1000D-DM | S2000M | S3000L | S4000P | S5000F | S6000T | SX000i | PLM | manual
+  kind          TEXT NOT NULL,                -- S1000D-DM | ATA-CMM | S2000M | S3000L | S4000P | S5000F | S6000T | SX000i | ENG-BOM | manual
   document      TEXT NOT NULL,                -- DMC, file name, dataset id …
   issue         TEXT,                         -- document issue / revision
   schema        TEXT,                         -- e.g. "S3000L 2.0"
@@ -68,6 +68,27 @@ CREATE TABLE IF NOT EXISTS part_list_entry (  -- BOM: parent part contains child
   parent_id INTEGER NOT NULL REFERENCES part(id), child_id INTEGER NOT NULL REFERENCES part(id),
   quantity REAL NOT NULL DEFAULT 1, source_id INTEGER REFERENCES source(id),
   PRIMARY KEY (parent_id, child_id));
+CREATE TABLE IF NOT EXISTS bom_line (         -- engineering BOM line as written (PLM / ERP / CAD export)
+  id INTEGER PRIMARY KEY, source_id INTEGER NOT NULL REFERENCES source(id), line INTEGER,
+  parent_id INTEGER REFERENCES part(id), child_id INTEGER NOT NULL REFERENCES part(id),
+  find_no TEXT, level INTEGER, quantity REAL, unit TEXT, effectivity TEXT, make_buy TEXT);
+CREATE TABLE IF NOT EXISTS part_property (    -- engineering attributes: mass, material, CAD file, CAD node …
+  part_id INTEGER NOT NULL REFERENCES part(id), name TEXT NOT NULL, value TEXT,
+  source_id INTEGER REFERENCES source(id), PRIMARY KEY (part_id, name, source_id));
+CREATE TABLE IF NOT EXISTS cad_link (         -- 3D model item ↔ part, from a STEP/GLB ↔ BOM reconciliation
+  id INTEGER PRIMARY KEY, source_id INTEGER NOT NULL REFERENCES source(id),
+  part_id INTEGER REFERENCES part(id),        -- NULL: an item of the 3D model with no BOM line
+  cad_name TEXT NOT NULL,                     -- the item's part number / name in the 3D model (node name)
+  cad_label TEXT, cad_qty REAL, status TEXT,  -- matched | fuzzy_candidate | unmatched …
+  confidence REAL, quantity_match INTEGER, members TEXT, flags TEXT);
+CREATE TABLE IF NOT EXISTS cad_model (        -- a 3D model (GLB) kept in the data folder
+  id INTEGER PRIMARY KEY, name TEXT NOT NULL, file TEXT NOT NULL, nodes INTEGER, bytes INTEGER, imported_at TEXT NOT NULL,
+  source_id INTEGER REFERENCES source(id));   -- the reconciliation imported with it (its 3D ↔ BOM links colour this model)
+CREATE TABLE IF NOT EXISTS cad_node (
+  model_id INTEGER NOT NULL REFERENCES cad_model(id), idx INTEGER NOT NULL, name TEXT NOT NULL, PRIMARY KEY (model_id, idx));
+CREATE TABLE IF NOT EXISTS engineering_finding ( -- what an engineering tool reported (e.g. STEP ↔ MBOM reconciliation)
+  id INTEGER PRIMARY KEY, source_id INTEGER NOT NULL REFERENCES source(id), rule TEXT NOT NULL, subject TEXT NOT NULL,
+  message TEXT NOT NULL, part_id INTEGER REFERENCES part(id));
 CREATE TABLE IF NOT EXISTS part_supersession ( -- pre-mod part replaced by post-mod part
   old_part_id INTEGER NOT NULL REFERENCES part(id), new_part_id INTEGER NOT NULL REFERENCES part(id),
   change_id TEXT REFERENCES design_change(id), interchangeability TEXT,   -- e.g. one-way / two-way

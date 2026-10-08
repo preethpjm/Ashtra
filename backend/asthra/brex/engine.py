@@ -38,8 +38,57 @@ def _flags(f) -> int:
     return (re.I if "i" in f else 0) | (re.S if "s" in f else 0) | (re.M if "m" in f else 0) | (re.X if "x" in f else 0)
 
 
+def _class_end(p: str, i: int) -> tuple[str, str | None, int]:
+    """p[i] == '['. -> (positive class body, subtracted class or None, index after the closing ']')."""
+    j = i + 1
+    body = ""
+    if j < len(p) and p[j] == "^":
+        body, j = "^", j + 1
+    if j < len(p) and p[j] == "]":                     # a ']' right at the start is literal
+        body, j = body + "\\]", j + 1
+    while j < len(p):
+        c = p[j]
+        if c == "\\" and j + 1 < len(p):
+            body += p[j:j + 2]
+            j += 2
+            continue
+        if c == "-" and j + 1 < len(p) and p[j + 1] == "[":      # XML Schema class subtraction
+            sub, j = _xsd_to_py_class(p, j + 1)
+            if j < len(p) and p[j] == "]":
+                j += 1
+            return body, sub, j
+        if c == "]":
+            return body, None, j + 1
+        body += c
+        j += 1
+    return body, None, j
+
+
+def _xsd_to_py_class(p: str, i: int) -> tuple[str, int]:
+    body, sub, j = _class_end(p, i)
+    cls = f"[{body}]"
+    return (f"(?:(?!{sub}){cls})" if sub else cls), j
+
+
 def _rx(p: str) -> str:
-    return p.replace(r"\i", r"[A-Za-z_:]").replace(r"\c", r"[-\w.:]")      # XML name escapes
+    """An XML Schema / XPath regular expression in Python's syntax: class subtraction
+    ([A-Z-[O]] = A to Z except O) and the XML name escapes \\i and \\c."""
+    p = p.replace(r"\i", r"[A-Za-z_:]").replace(r"\c", r"[-\w.:]")
+    if "-[" not in p:
+        return p
+    out, i = "", 0
+    while i < len(p):
+        c = p[i]
+        if c == "\\" and i + 1 < len(p):
+            out += p[i:i + 2]
+            i += 2
+        elif c == "[":
+            cls, i = _xsd_to_py_class(p, i)
+            out += cls
+        else:
+            out += c
+            i += 1
+    return out
 
 
 XPATH2 = {

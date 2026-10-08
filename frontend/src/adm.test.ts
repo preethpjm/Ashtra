@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { applyTextEdits, headerInfo, refLabel, displayText, editText, setEntityValues, diagRange, inlineLabel, leafDescendants, expandsEntities, renderTarget, setTextContent, parseAdm, readablePath, resolvePath, setAttributeValue, toProseMirror, kindOf, elementAtOffset, lineAt } from "./adm";
+import { ataNumber, applyTextEdits, headerInfo, refLabel, displayText, editText, setEntityValues, diagRange, inlineLabel, leafDescendants, expandsEntities, renderTarget, setTextContent, parseAdm, readablePath, resolvePath, setAttributeValue, toProseMirror, kindOf, elementAtOffset, lineAt } from "./adm";
 
 const fx = (n: string) => readFileSync(`../backend/tests/fixtures/documents/${n}`, "utf-8");
 
@@ -321,5 +321,112 @@ describe("tidy source", () => {
     const out = tidy(parseAdm(src));
     expect(out).toBe(`<doc>\n  <step>\n    <para>Keep  this   text <b>as</b> is</para>\n    <para>Two</para>\n  </step>\n</doc>`);
     expect(tidy(parseAdm(out))).toBe(out);                 // idempotent
+  });
+});
+
+describe("CALS table layout", () => {
+  const tg = (xml: string) => new DOMParser().parseFromString(xml, "application/xml").documentElement;
+  it("places merged and spanned-down cells exactly, numbering thead and tbody on one grid", async () => {
+    const { calsLayout } = await import("./adm");
+    const t = tg(`<tgroup cols="4">
+      <colspec colname="c1" colwidth="1*"/><colspec colname="c2" colwidth="2*"/><colspec colname="c3"/><colspec colname="c4"/>
+      <thead>
+        <row><entry morerows="1">Ref</entry><entry namest="c2" nameend="c3">Limits</entry><entry morerows="1">Wear</entry></row>
+        <row><entry>Min</entry><entry>Max</entry></row>
+      </thead>
+      <tbody><row><entry>A</entry><entry>1</entry><entry>2</entry><entry>3</entry></row></tbody></tgroup>`);
+    const l = calsLayout(t);
+    const at = (txt: string) => { for (const [e, p] of l.cells) if (e.textContent === txt) return p; throw new Error(txt); };
+    expect(l.cols).toBe(4);
+    expect(at("Ref")).toMatchObject({ row: 1, col: 1, rowSpan: 2, colSpan: 1, head: true });
+    expect(at("Limits")).toMatchObject({ row: 1, col: 2, colSpan: 2 });
+    expect(at("Wear")).toMatchObject({ col: 4, rowSpan: 2 });
+    expect(at("Min")).toMatchObject({ row: 2, col: 2, headEnd: true });     // pushed past the cell spanning down
+    expect(at("Max")).toMatchObject({ row: 2, col: 3 });
+    expect(at("A")).toMatchObject({ row: 3, col: 1, head: false });
+    expect(l.template).toBe("minmax(min-content, 1fr) minmax(min-content, 2fr) minmax(min-content, 1fr) minmax(min-content, 1fr)");
+  });
+  it("uses absolute colwidths as proportions and spanspec spans", async () => {
+    const { calsLayout } = await import("./adm");
+    const l = calsLayout(tg(`<tgroup cols="2"><colspec colname="a" colwidth="20mm"/><colspec colname="b" colwidth="60mm"/>
+      <spanspec spanname="all" namest="a" nameend="b"/><tbody><row><entry spanname="all">x</entry></row></tbody></tgroup>`));
+    expect([...l.cells.values()][0]).toMatchObject({ col: 1, colSpan: 2 });
+    expect(l.template).toBe("minmax(min-content, 20fr) minmax(min-content, 60fr)");
+  });
+});
+
+describe("publication numbering and display data", () => {
+  const ATA = { numbering: { scheme: "ata" as const, elements: ["task", "subtask", "prcitem1", "prcitem2", "prcitem3"], resets: ["pgblk"],
+    ident: { task: "TASK", subtask: "SUBTASK" } } };
+  const nodes = (pm: any, name: string): any[] => {
+    const out: any[] = [];
+    const walk = (n: any) => { if (n.attrs?.name === name) out.push(n); (n.content ?? []).forEach(walk); };
+    walk(pm);
+    return out;
+  };
+  const cmm = `<cmm><pgblk><title>DISASSEMBLY</title>
+    <task chapnbr="25" sectnbr="26" subjnbr="62" func="040" seq="1" confltr="a" varnbr="1"><title>General</title><topic>
+      <subtask chapnbr="25" sectnbr="26" subjnbr="62" func="040" seq="2" confltr="A" varnbr="1"><title>Remove</title><prclist1>
+        <prcitem1><prcitem><para>First</para></prcitem><prclist2><prcitem2><prcitem><para>Sub</para></prcitem></prcitem2></prclist2></prcitem1>
+        <prcitem1><prcitem><caution><para>be careful</para></caution><para>Second <revst/>changed<revend/></para></prcitem></prcitem1>
+      </prclist1></subtask></topic></task>
+    <task chapnbr="25" sectnbr="26" subjnbr="62" seq="3" varnbr="1"><title>Next</title><topic><prclist1><prcitem1><prcitem><para>Only</para></prcitem></prcitem1></prclist1></topic></task>
+  </pgblk><pgblk><title>REPAIR</title><task chapnbr="25" sectnbr="26" subjnbr="62" seq="9" varnbr="1"><title>Again</title><topic><prclist1>
+    <prcitem1><prcitem><para>x</para></prcitem></prcitem1></prclist1></topic></task></pgblk></cmm>`;
+
+  it("numbers ATA tasks, subtasks and procedure items by level (1. A. (1) (a)) and restarts per page block", () => {
+    const pm = toProseMirror(parseAdm(cmm), ATA);
+    expect(nodes(pm, "task").map((n) => n.attrs.x.num)).toEqual(["1.", "2.", "1."]);
+    expect(nodes(pm, "subtask")[0].attrs.x.num).toBe("A.");
+    expect(nodes(pm, "prcitem1").map((n) => n.attrs.x.num)).toEqual(["(1)", "(2)", "A.", "A."]);
+    expect(nodes(pm, "prcitem2")[0].attrs.x.num).toBe("(a)");
+  });
+
+  it("gives ATA task and subtask identifier lines", () => {
+    const pm = toProseMirror(parseAdm(cmm), ATA);
+    expect(nodes(pm, "task")[0].attrs.x.ident).toBe("TASK 25-26-62-040-001-A01");
+    expect(nodes(pm, "subtask")[0].attrs.x.ident).toBe("SUBTASK 25-26-62-040-002-A01");
+  });
+
+  it("puts the number of a step that opens with a caution on its first paragraph", () => {
+    const pm = toProseMirror(parseAdm(cmm), ATA);
+    const second = nodes(pm, "prcitem1")[1];
+    expect(second.attrs.x.nl).toBe("1");
+    expect(nodes(second, "para").find((p: any) => p.attrs.x.lead)?.attrs.x.lead).toBe("(2)");
+  });
+
+  it("marks text between revst and revend for a revision bar and never shows the marks as text", () => {
+    const pm = toProseMirror(parseAdm(cmm), ATA);
+    const changed = nodes(pm, "para").filter((p) => p.attrs.x.chg);
+    expect(changed).toHaveLength(1);
+    expect(changed[0].attrs.x.chg).toBe("a3");
+    expect(JSON.stringify(changed[0].content)).not.toContain('"text":"revst');
+  });
+
+  it("numbers S1000D levelled paragraphs and steps decimally", () => {
+    const s = `<dmodule><content><description><levelledPara><title>A</title><levelledPara><title>B</title></levelledPara>
+      <levelledPara><title>C</title></levelledPara></levelledPara><levelledPara><title>D</title></levelledPara></description></content></dmodule>`;
+    const pm = toProseMirror(parseAdm(s), { numbering: { scheme: "decimal", elements: ["levelledPara", "proceduralStep"] } });
+    expect(nodes(pm, "levelledPara").map((n) => n.attrs.x.num)).toEqual(["1", "1.1", "1.2", "2"]);
+  });
+
+  it("shows source line breaks and indentation as single spaces", () => {
+    const pm = toProseMirror(parseAdm(`<doc><para>
+        one
+           two <b>three</b>  four
+      </para></doc>`));
+    const t = nodes(pm, "para")[0].content.map((c: any) => c.text).join("");
+    expect(t).toBe("one two three four");
+  });
+
+  it("does not repeat the word before a reference (Table <refint/> reads Table 9)", () => {
+    const pm = toProseMirror(parseAdm(`<doc><table id="t9"><title>Fits</title></table><para>Refer to Table <refint refid="t9"/>.</para></doc>`));
+    const ref = nodes(pm, "refint")[0];
+    expect(ref.attrs.summary.toLowerCase().startsWith("table")).toBe(false);
+  });
+
+  it("ATA numbering labels", () => {
+    expect([0, 1, 2, 3, 4, 5, 6].map((d) => ataNumber(d, 3))).toEqual(["3.", "C.", "(3)", "(c)", "3", "c", "(iii)"]);
+    expect(ataNumber(1, 27)).toBe("AA.");
   });
 });

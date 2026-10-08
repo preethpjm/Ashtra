@@ -22,10 +22,10 @@ def test_import_project_into_the_library(loaded, project):
     for name in ("s1000d_proced_valid.xml", "s1000d_proced_invalid.xml", "ata_cmm_valid.xml"):
         loaded.documents.import_bytes(project["id"], name, (DOCS / name).read_bytes())
     rep = loaded.knowledge.import_project(project["id"])
-    assert [r["file"] for r in rep["imported"]] == ["s1000d_proced_valid.xml"]
+    assert [r["file"] for r in rep["imported"]] == ["s1000d_proced_valid.xml", "ata_cmm_valid.xml"]
+    assert rep["imported"][1]["kind"] == "ATA iSpec 2200"                     # ATA manuals are read too
     reasons = {r["file"]: r["reason"] for r in rep["skipped"]}
     assert "structure failed" in reasons["s1000d_proced_invalid.xml"]
-    assert "not an identified S1000D" in reasons["ata_cmm_valid.xml"]
     dm = rep["imported"][0]
     assert dm["resources"] >= 2 and dm["safety"] >= 1
     detail = loaded.knowledge.data_module_detail(dm["dmc"])
@@ -35,7 +35,7 @@ def test_import_project_into_the_library(loaded, project):
     assert detail["item"]["bei"] and detail["item"]["bei"] in dm["dmc"]
     again = loaded.knowledge.import_project(project["id"])                    # re-import replaces, never duplicates
     assert len(loaded.knowledge.data_module_detail(dm["dmc"])["resources"]) == len(detail["resources"])
-    assert len(again["imported"]) == 1
+    assert len(again["imported"]) == 2
 
 
 def test_knowledge_api_with_the_bike_example(tmp_path):

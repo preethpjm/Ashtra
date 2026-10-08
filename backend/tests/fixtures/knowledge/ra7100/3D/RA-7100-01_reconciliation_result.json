@@ -1,0 +1,417 @@
+{
+  "success": true,
+  "summary": {
+    "matched": 13,
+    "exact_matches": 13,
+    "supersession_matches": 0,
+    "fuzzy_matches": 0,
+    "quantity_mismatches": 0,
+    "unmatched_or_ambiguous_step": 0,
+    "unmatched_mbom_lines": 3
+  },
+  "matched": [
+    {
+      "step_part_number": "RA-7110-1",
+      "step_name": "HOUSING, ACTUATOR",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7110-1",
+      "mbom_description": "HOUSING, ACTUATOR",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7110-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7120-1",
+      "step_name": "ROD, PISTON",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7120-1",
+      "mbom_description": "ROD, PISTON",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7120-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7130-1",
+      "step_name": "ROD END, THREADED",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7130-1",
+      "mbom_description": "ROD END, THREADED",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7130-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7190-1",
+      "step_name": "BUSHING, ROD END",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7190-1",
+      "mbom_description": "BUSHING, ROD END",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7190-1"
+      ]
+    },
+    {
+      "step_part_number": "MS21042L4",
+      "step_name": "NUT, SELF-LOCKING",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "MS21042L4",
+      "mbom_description": "NUT, SELF-LOCKING",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "MS21042L4"
+      ]
+    },
+    {
+      "step_part_number": "RA-7150-1",
+      "step_name": "SPRING, COMPRESSION",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7150-1",
+      "mbom_description": "SPRING, COMPRESSION",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7150-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7160-1",
+      "step_name": "LOCK MECHANISM ASSY",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7160-1",
+      "mbom_description": "LOCK MECHANISM ASSY",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7160-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7170-1",
+      "step_name": "LEVER, RELEASE",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7170-1",
+      "mbom_description": "LEVER, RELEASE",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 2,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7170-1"
+      ]
+    },
+    {
+      "step_part_number": "RA-7180-1",
+      "step_name": "PIN, LOCK",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7180-1",
+      "mbom_description": "PIN, LOCK",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 2,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7180-1"
+      ]
+    },
+    {
+      "step_part_number": "NAS1352C3-8",
+      "step_name": "SCREW, CAP, SOCKET HEAD",
+      "step_qty": 4,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "NAS1352C3-8",
+      "mbom_description": "SCREW, CAP, SOCKET HEAD",
+      "mbom_qty": 4,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "NAS1352C3-8_1",
+        "NAS1352C3-8_2",
+        "NAS1352C3-8_3",
+        "NAS1352C3-8_4"
+      ]
+    },
+    {
+      "step_part_number": "NAS1149C0363R",
+      "step_name": "WASHER, FLAT",
+      "step_qty": 4,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "NAS1149C0363R",
+      "mbom_description": "WASHER, FLAT",
+      "mbom_qty": 4,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "NAS1149C0363R_1",
+        "NAS1149C0363R_2",
+        "NAS1149C0363R_3",
+        "NAS1149C0363R_4"
+      ]
+    },
+    {
+      "step_part_number": "M83248/1-210",
+      "step_name": "PACKING, PREFORMED",
+      "step_qty": 2,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "M83248/1-210",
+      "mbom_description": "PACKING, PREFORMED",
+      "mbom_qty": 2,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "M83248/1-210_1",
+        "M83248/1-210_2"
+      ]
+    },
+    {
+      "step_part_number": "RA-7200-1",
+      "step_name": "PLACARD, IDENTIFICATION",
+      "step_qty": 1,
+      "status": "matched",
+      "confidence": 1,
+      "mbom_part_number": "RA-7200-1",
+      "mbom_description": "PLACARD, IDENTIFICATION",
+      "mbom_qty": 1,
+      "mbom_manuf_code": null,
+      "mbom_level": 1,
+      "quantity_match": true,
+      "flags": [],
+      "candidates": [],
+      "signals": {
+        "structural": 1,
+        "semantic": 1,
+        "component_type": 1,
+        "qty": 1,
+        "spec": 0,
+        "part_number_sim": 1
+      },
+      "variant_siblings": [],
+      "effectivity_code": null,
+      "member_part_numbers": [
+        "RA-7200-1"
+      ]
+    }
+  ],
+  "unmatched_step": [],
+  "unmatched_mbom": [
+    {
+      "level": "0",
+      "find_number": "1",
+      "part_number": "RA-7100-01",
+      "description": "ACTUATOR ASSY, RECLINE",
+      "qty": "1",
+      "unit_measure": "ea",
+      "level_depth": 0
+    },
+    {
+      "level": "0",
+      "find_number": "1A",
+      "part_number": "RA-7100-02",
+      "description": "ACTUATOR ASSY, RECLINE",
+      "qty": "1",
+      "unit_measure": "ea",
+      "level_depth": 0
+    },
+    {
+      "level": "1",
+      "find_number": "50A",
+      "part_number": ".RA-7150-2",
+      "description": "SPRING, COMPRESSION, HIGH RATE",
+      "qty": "1",
+      "unit_measure": "ea",
+      "level_depth": 1
+    }
+  ],
+  "manualQtyOverrides": {},
+  "manualMatches": 0
+}
