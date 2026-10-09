@@ -68,11 +68,26 @@ class KnowledgeService:
             local = etree.QName(root).localname
             kind = ("s1000d" if local == "dmodule" else "ata" if local.lower() in ATA_ROOTS
                     else "s2000m" if local == "provisioningExchange" or (d.get("package_id") or "").startswith("s2000m") else "")
-            if not kind:
-                report["skipped"].append({"file": name, "reason": f"<{local}> is not a document ASTHRA reads facts from yet"})
-                continue
             if status == "failed" and not include_invalid:
                 report["skipped"].append({"file": name, "reason": "structure failed: fix it first"})
+                continue
+            if not kind:
+                res = None
+                tr = getattr(self, "translate", None)
+                if tr is not None:
+                    with self.lock:
+                        res = tr.read_document(d, root)
+                xr = getattr(self, "crossref", None)
+                if res is None and xr is not None:          # an S-Series document whose data model is loaded
+                    with self.lock:
+                        res = xr.read_document(d, root, d.get("standard") or "")
+                if res is None:
+                    hint = xr.doc_hint(d) if xr is not None else None
+                    report["skipped"].append({"file": name, "reason": hint["message"] if hint else
+                                              f"<{local}> is not a document ASTHRA reads facts from yet "
+                                              "(load its data model under Knowledge → Cross-reference, or save a parts-list binding under Translate)"})
+                else:
+                    (report["imported"] if res.get("imported") else report["skipped"]).append({"file": name, **res})
                 continue
             with self.lock:
                 if kind == "s1000d":
@@ -155,7 +170,7 @@ class KnowledgeService:
             tables = [r[0] for r in self.store.db.execute("SELECT name FROM sqlite_master WHERE type='table'")]
             self.store.db.execute("PRAGMA foreign_keys = OFF")
             for t in tables:
-                if t != "layer":
+                if t not in ("layer", "binding", "translate_setting", "xr_name"):     # schema bindings are settings, not facts
                     self.store.db.execute(f"DELETE FROM {t}")
             self.store.db.execute("PRAGMA foreign_keys = ON")
             self.store.db.commit()

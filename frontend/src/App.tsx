@@ -35,6 +35,11 @@ export function App() {
   const [pkgs, setPkgs] = useState<Pkg[]>([]);
   const [docId, setDocId] = useState<string | null>(null);
   const [meta, setMeta] = useState<Doc | null>(null);
+  const [docHint, setDocHint] = useState<{ message?: string; choose?: SchemaOption & { text: string } } | null>(null);
+  useEffect(() => {
+    setDocHint(null);
+    if (meta && !meta.package_id) api.xrDocHint(meta.id).then(setDocHint).catch(() => setDocHint(null));
+  }, [meta?.id, meta?.package_id]); // eslint-disable-line react-hooks/exhaustive-deps
   const [text, setText] = useState("");
   const textRef = useRef("");
   const [savedText, setSavedText] = useState("");
@@ -804,6 +809,18 @@ export function App() {
   });
 
   // ---- actions: projects, import, schemas ----------------------------------------------
+  const removeDoc = async (d: Doc) => {
+    const edits = d.has_working_copy ? " Its unsaved working copy" : " Its";
+    if (!window.confirm(`Remove ${d.original_name} from this project?\n\n${edits.trim()} revisions and validation history go too. ` +
+      "The file on your computer is not touched, and what the knowledge library already learned from it stays.")) return;
+    try {
+      await api.deleteDocument(d.id);
+      if (d.id === docId) { setDocId(null); setMeta(null); }
+      await refreshDocs(); refreshProjects();
+      say(`Removed ${d.original_name}.`, "ok");
+    } catch (e) { fail(e); }
+  };
+
   const importFiles = async (files: FileList | null) => {
     if (!files || !pid) return;
     let last: Doc | null = null;
@@ -838,6 +855,9 @@ export function App() {
         : report?.render_note ?? "SGML document, shown through OpenSP's conversion. Editing needs its schema model; edit the SGML in Source meanwhile."}</div>}
       {!isSgml && !adm.ok && <div className="banner warn">The source has XML errors, so the visual view is paused at the last valid version. Fix the source to continue.</div>}
       {adm.ok && adm.visualBlocked && <div className="banner info">{adm.visualBlocked}</div>}
+      {meta && !meta.package_id && docHint?.message && <div className="banner info">{docHint.message}
+        {" "}{docHint.choose && <button className="link" onClick={() => chooseSchema(docHint.choose!)}>Use {docHint.choose.text}</button>}
+        {docHint.choose && " · "}<button className="link" onClick={() => setManagerOpen(true)}>Install schemas…</button></div>}
       {meta && ["needs-choice", "ambiguous"].includes(meta.identification.status) && !meta.package_id &&
         <div className="banner info">{meta.identification.notes[0]} Pick one in the panel on the right.</div>}
       <div className="desk"><Sheet info={header} standardLine={meta?.standard ? `${meta.standard} ${meta.issue ?? ""} · ${meta.doc_type ?? ""}` : undefined}>
@@ -890,6 +910,8 @@ export function App() {
                 <span className={`dot st-${d.last_validation?.structural_status ?? "none"}`} />
                 <span className="doc-name">{d.original_name}</span>
                 <span className="doc-meta">{d.standard ?? (d.syntax === "sgml" ? "SGML" : "unidentified")}{d.doc_type ? ` · ${d.doc_type}` : ""}{d.has_working_copy ? " · edited" : ""}</span>
+                <button className="doc-del" title={`Remove ${d.original_name} from this project`} aria-label={`Remove ${d.original_name}`}
+                  onClick={(e) => { e.stopPropagation(); removeDoc(d); }}>×</button>
               </li>
             ))}
           </ul>
@@ -1166,7 +1188,9 @@ export function App() {
         onCancel={() => { setTableAsk(null); backToTyping(); }}
         onOk={(spec) => { const t = tableAsk; setTableAsk(null); t.commit(spec); }} />}
       {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
-      {view === "knowledge" && <KnowledgeView projects={projects} pid={pid} say={say} />}
+      {view === "knowledge" && <KnowledgeView projects={projects} pid={pid} say={say}
+        openDocument={(id) => { refreshDocs().catch(() => {}); setView("documents"); openDoc(id); }} openSchemas={() => setManagerOpen(true)}
+        docsChanged={() => { refreshDocs().catch(() => {}); refreshProjects().catch(() => {}); if (docId) api.state(docId).catch(() => { setDocId(null); setMeta(null); }); }} />}
       {brexAsk && <BrexPrompt named={brexAsk} say={say} onDone={brexRecheck}
         onClose={() => { brexDismissed.current.add(brexAsk); setBrexAsk(null); }} />}
       {managerOpen && <SchemaManager onClose={() => setManagerOpen(false)} say={say}

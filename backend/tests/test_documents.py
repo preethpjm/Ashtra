@@ -98,3 +98,26 @@ def test_windows_line_endings(loaded, project):
     loaded.documents.save_working(d["id"], text)
     data, _ = loaded.documents.current_bytes(d["id"])
     assert b"\r\n" in data and data.count(b"\r\n") == src.count(b"\r\n")
+
+
+def test_delete_removes_document_history_and_unshared_original(loaded, project):
+    from asthra.documents.service import DocumentError
+    src = DOCS / "s1000d_proced_valid.xml"
+    a = loaded.documents.import_path(project["id"], src)
+    b = loaded.documents.import_path(project["id"], src)              # same file twice: one stored original
+    root = Path(project["root_path"])
+    blob = root / a["blob_path"]
+    loaded.documents.save_working(a["id"], loaded.documents.source_text(a["id"]))
+    rev = loaded.documents.commit_revision(a["id"], "first")
+    loaded.documents.validate(a["id"])
+    out = loaded.documents.delete(a["id"])
+    assert out["name"] == src.name and blob.exists()                  # still used by the second copy
+    assert not (root / rev["rel_path"]).exists() and not (root / "working" / f"{a['id']}.xml").exists()
+    assert [d["id"] for d in loaded.documents.list(project["id"])] == [b["id"]]
+    with pytest.raises(DocumentError):
+        loaded.documents.get(a["id"])
+    res = loaded.documents.delete_many([b["id"], "nope"])
+    assert [d["id"] for d in res["deleted"]] == [b["id"]] and res["failed"][0]["id"] == "nope"
+    assert not blob.exists() and loaded.documents.list(project["id"]) == []
+    again = loaded.documents.import_path(project["id"], src)          # can be imported again afterwards
+    assert loaded.documents.original_bytes(again["id"]) == src.read_bytes()

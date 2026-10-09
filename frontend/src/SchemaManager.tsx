@@ -73,8 +73,10 @@ export function SchemaManager({ onClose, onChanged, say }: Props) {
     try {
       const r = await api.buildSchemas(staging, choice, replace);
       const added = (r as any).brex_added as BrexEntry[] | undefined;
+      const hints = await api.xrHints(r.standard).catch(() => [] as string[]);
       say(`${r.action === "replaced" ? "Updated" : "Installed"} ${r.standard} ${r.issue}: ${r.doc_types.map((d) => d.id).join(", ")}.`
-        + (added?.length ? ` Default BREX added: ${added.map((b) => `DMC-${b.dmc} issue ${b.issue}`).join(", ")}.` : ""), "ok");
+        + (added?.length ? ` Default BREX added: ${added.map((b) => `DMC-${b.dmc} issue ${b.issue}`).join(", ")}.` : "")
+        + (hints.length ? " Still to do: " + hints.join(" ") : ""), hints.length ? "info" : "ok");
       setProp(null); setStaging(null); setConflict(null);
       await refresh(); onChanged();
     } catch (e) {

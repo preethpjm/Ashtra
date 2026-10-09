@@ -215,6 +215,105 @@ Filling works in two ways:
 Every generated element keeps a link to the facts it came from (an ASTHRA sidecar record, not
 markup inside the standard's XML), so a later re-import can show what changed.
 
+### 6.1 Built (m5.0): the schema-driven translator (`asthra/translate/`)
+
+Nothing about a standard is hard-coded in the translator. For a **concept** (today: a parts list —
+figure, item, variant, indenture, part number, name, CAGE, quantity, unit, effectivity, not
+illustrated, attaching) it reads the installed schema's model (XSD, XML DTD or SGML DTD, the same
+model the editor uses) and **proposes a binding**:
+
+| Step | How |
+|---|---|
+| Which element is one line | every repeating element is scored by how many concept fields its attributes and descendants name (synonym lists in `concepts.py`); `catalogSeqNumber`, `itemdata`, … win |
+| Where the lines live | cheapest path from the root (optional and later choice branches cost more): `dmodule/content/illustratedPartsCatalog`, `cmm/ipl/dplist/figure/prtlist` |
+| Where each field goes | best-named slot within 4 levels: `itemSeqNumber/partRef/@partNumberValue`, `iplnom/mfr`, `@itemnbr` … with a confidence |
+| How it is written | a **format** chosen from the slot: `join_variant` (50A), `pad3_join` (050A), `zero_based` indent, `rf_top` (RF), `vendor_v` (VZZV02), `invert01` (illusind), `split_kwd_adt` |
+| A field on a parent | e.g. ATA `figure/@fignbr` above the lines: lines are grouped per figure |
+
+The binding is shown in **Knowledge → Translate**, where every place is editable (with the schema's
+allowed places offered) and checked against the schema; once saved it is used for writing and for
+reading. Saved bindings are settings: they survive "Empty library".
+
+**Sources of lines** (`records.py`): an engineering assembly from the BOM — several tops (pre/post SB)
+become items 1, 1A with effectivity A, B; detail parts used in only some tops carry their codes;
+items follow the find numbers (or 10, 20 …) — or a parts list already in the library (ATA → S1000D,
+S1000D → ATA …). **Rules** (saved): exclusions by pattern or property, quantity-0 alternates, own CAGEs
+not written as vendor codes (unless the schema requires a CAGE), units not written, names in capitals.
+
+**Writing** (`generate.py`, `markup.py`): the document's existing lines are replaced (per figure); every
+other byte is kept — DOCTYPE, entities, comments, SGML minimisation. Children are put in schema order,
+required attributes and elements are filled from the schema (fixed/default values, generated IDs, or the
+value every existing line uses, e.g. `itemSeqNumberValue="00A"`), and what cannot be filled is listed.
+SGML omitted end tags are understood through the content model. The result is imported as
+`<name>-generated.<ext>` next to the original and validated; a missing figure or container is reported,
+never invented.
+
+**Reading** (`extract.py`): "Import from project" uses a saved binding for documents that have no
+dedicated importer, so a new standard's parts lists reach the library (and its cross-checks) without code.
+
+Not yet: records referenced by ID (S2000M `ipdItem` → `part` by IDREF) — the proposal says so; concepts
+beyond parts lists (task resources, S3000L support equipment) use the same machinery and are next.
+
+### 6.2 Built (m5.2): cross-reference — one generic name, every standard's tag (`asthra/crossref/`)
+
+Every value ASTHRA knows is kept under a **generic name** taken from the S-Series common data model (SX002D)
+wherever it defines the data — `PartAsDesigned.partIdentifier`, `….identifierSetBy` (the CAGE),
+`BreakdownElement.breakdownElementIdentifier`, `Task.taskIdentifier` … — and shown under the tag of whichever
+standard you choose ("Show as"). The module has no ASTHRA screen code in it and can be reused elsewhere.
+
+| Piece | What it does |
+|---|---|
+| `xmi.py` | Reads an S-Series UML data model exported as XMI (Enterprise Architect): classes, attributes, keys, inheritance, documentation and the **XML name** of each class and attribute (`HardwarePartAsDesigned` → `hwPart`, `partIdentifier` → `partId`, `IdentifierType` → `id` + `setBy`). Packages named "CDM …" are the common data model. |
+| `vocab.py` | The generic names: all terms of the loaded models (SX000i 3.0 carries the SX002D classes), ASTHRA terms for data the S-Series model does not define (IPD figure / item / indenture, unit of issue, NSN), and ASTHRA's **crosswalk** for standards without a UML model (S1000D, ATA iSpec 2200, engineering BOM). |
+| `names.py` | What an *installed schema* calls each term, resolved against the schema's own declarations: a confirmed path, else the data model of the same specification, else the crosswalk, else a name the term has elsewhere that the schema uses. |
+| `facts.py` | Facts per item (Part, BreakdownElement, Task, TaskRequirement, Organization, Document, Product): the knowledge library through an adapter (no copy), and any S-Series document read generically through its data model into `xr_fact`. |
+| `service.py` | Models (upload / remove), views, terms, items "shown as", confirmations (`xr_name`, kept on "Empty library"). |
+
+Knowledge → **Cross-reference**: load data models (XMI); *Items* — search a part, BEI, task or DM and see all
+its values from all sources under the chosen standard's tags, with the tag each value was read from and
+disagreements highlighted; values the chosen standard has no place for are listed apart. *Generic names* — the
+matrix of terms × standards; a term's detail shows its path in every installed schema, settable by hand.
+
+"Import from project" reads documents of any specification whose data model is loaded (matched by the schema's
+standard or by its tag names). The S-Series XML schemas are generated from these models, so their tags match the
+model's XML names; wrapper elements are tolerated.
+
+**Coverage, prompts and review (m5.3, `coverage.py`).** Knowledge → Cross-reference → *Coverage* lists every
+standard ASTHRA has met (installed schemas, data models, library sources, project documents — recognised by root
+element, namespace, schema location, DOCTYPE or, for S-Series XML, by the model's tag names) with its schema,
+data model, how many library names each installed schema places (confirmed / to review) and what to do:
+*Install schema…* (also when a document's issue is not installed), *Add data model (XMI)…* (S-Series only — S1000D
+and ATA publish none) and *Review N placements*, with the download page. The same advice appears as a banner on an
+unrecognised document, as the skip reason of "Import from project", and in the message after a schema or data
+model is installed. *Review* lists placements found only by name or in several places, plus likely places for
+names not found, each confirmable, changeable (from the schema's own places) or markable "not in this schema";
+confirmations are kept per schema (`xr_name`) and survive "Empty library".
+
+m5.4: a document whose schema is installed but was not matched automatically (no public identifier, or an issue
+not installed) gets *Use <schema> for N document(s)* — the declared schema, or the closest installed issue — in
+one click from Coverage or from the document's banner; the same file in several projects is listed once; and a
+review confirmation applies to every issue and document type of the same standard where the same place exists
+(not where that term is already certain or decided).
+
+m5.5: the model carrying the common data model (SX000i, else the largest loaded) is the **reference (hub)**: its
+definitions win, and Coverage shows it as the generic layer (its XSD optional). A specification model that only
+*references* a common class (S2000M 7.0 lists `HardwarePartAsDesigned` with no attributes) gets that class's
+attributes — inherited ones included — under its own class name (`hwPart/partId/id`); attribute types defined in
+another model are taken from the EA extension. S2000M's IPD classes are joined to ASTHRA's IPD terms (Figure →
+figure number, FigureItem → item number and indenture, `qna`, `uoc`, `unitIssue`), and documents are read through
+the vocabulary, so a figure item's values reach the part it lists.
+
+m5.6: a name borrowed from another standard, or a suggested place, must sit inside its term's class (a part's name
+under a part element, an organization's identifier under `org`): leaves like `name`, `unit`, `id` or `time` alone are
+not enough, and signatures, message headers, security marking, project attributes and `…Ref` references are never
+offered. Coverage separates documents with **no schema chosen yet** (one installed fits) from those **no installed
+schema fits**, and says when a document does not name its schema at all (no public identifier or schema location).
+Documents can be removed from a project (sidebar ×, or Remove in Coverage's waiting list): working copy, revisions,
+validation history and the stored original (unless another copy uses it) go; library facts already learned stay.
+
+Limits: S1000D / ATA names are ASTHRA's crosswalk (marked as such); code lists (units, information codes) are not
+translated yet; S2000M, S5000F, S6000T need their XMI loaded to be exact.
+
 ## 7. Conflicts, versions, applicability
 
 - **Authority rules** per attribute, configurable per project, e.g. "part identification:

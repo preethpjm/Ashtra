@@ -208,3 +208,11 @@ CREATE TABLE IF NOT EXISTS service_bulletin (
 CREATE TABLE IF NOT EXISTS finding (
   id INTEGER PRIMARY KEY, rule TEXT NOT NULL, subject TEXT NOT NULL, message TEXT NOT NULL,
   values_json TEXT, found_at TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'open');
+
+-- ------------------------------------------------------------------ translator (schema bindings)
+CREATE TABLE IF NOT EXISTS binding (          -- where a concept's fields live in one installed schema
+  package_id TEXT NOT NULL, doc_type TEXT NOT NULL, concept TEXT NOT NULL,
+  json TEXT NOT NULL, saved_at TEXT NOT NULL,
+  PRIMARY KEY (package_id, doc_type, concept));
+CREATE TABLE IF NOT EXISTS translate_setting (   -- the project rules last used (exclusions, numbering …)
+  key TEXT PRIMARY KEY, json TEXT NOT NULL);

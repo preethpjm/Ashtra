@@ -30,7 +30,19 @@ class AppContext:
         documents = DocumentService(db, projects, registry, settings.max_import_bytes)
         from .knowledge.service import KnowledgeService
         knowledge = KnowledgeService(settings, documents, projects)
+        from .translate.service import TranslateService
+        knowledge.translate = TranslateService(registry, documents, projects, knowledge)
+        from .crossref.service import CrossrefService
+        knowledge.crossref = CrossrefService(knowledge, registry)
         return cls(settings, db, registry, projects, documents, knowledge)
+
+    @property
+    def translate(self):
+        return self.knowledge.translate
+
+    @property
+    def crossref(self):
+        return self.knowledge.crossref
 
     def close(self) -> None:
         self.db.close()

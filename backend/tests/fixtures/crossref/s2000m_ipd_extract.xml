@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC test extract shaped like S2000M 7.0 IPD data, written with the XML names of the S2000M 7.0 and
+     common data models (fig, figItem, figReaContxt, hwPart, partId …). Data: the RA-7100 test product.
+     Not a valid instance of the official S2000M schema (wrapper elements simplified). -->
+<mmDataset>
+  <fig>
+    <figId><id>01</id></figId>
+    <figItem>
+      <figItemId><id>050A</id></figItemId>
+      <indentLevel>2</indentLevel>
+      <fRealization>
+        <isn>00A</isn>
+        <figReaContxt><qna>1</qna><uoc><code>B</code></uoc></figReaContxt>
+        <hwPart>
+          <partId><id>RA-7150-2</id><setBy>ZZV02</setBy></partId>
+          <partName><name>SPRING, COMPRESSION, HIGH RATE</name></partName>
+          <hwPartSupport><unitIssue><code>EA</code></unitIssue></hwPartSupport>
+        </hwPart>
+      </fRealization>
+    </figItem>
+    <figItem>
+      <figItemId><id>060</id></figItemId>
+      <indentLevel>2</indentLevel>
+      <fRealization>
+        <figReaContxt><qna>4</qna></figReaContxt>
+        <hwPart><partId><id>NAS1352C3-8</id><setBy>80205</setBy></partId></hwPart>
+      </fRealization>
+    </figItem>
+  </fig>
+</mmDataset>

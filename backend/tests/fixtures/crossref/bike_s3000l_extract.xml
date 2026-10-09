@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC test extract shaped like an S3000L 2.0 data exchange, written with the XML names of the
+     S3000L 2.0 UML data model (be, beId, hwPart, partId, task, taskRev …). Data: the S-Series UF2024 Bike example.
+     It is NOT a valid instance of the official S3000L schema (wrapper elements are simplified). -->
+<lsaDataSet>
+  <breakdownElements>
+    <be>
+      <beId><id>B5-A-A7-31-02-00A</id></beId>
+      <beName><name>SB5 Front Brake Pads</name></beName>
+      <beRev><revId><id>1.0</id></revId></beRev>
+    </be>
+    <be>
+      <beId><id>B5-A-A7-31-00-00A</id></beId>
+      <beName><name>SB5 Front Brake System</name></beName>
+    </be>
+  </breakdownElements>
+  <parts>
+    <hwPart>
+      <partId><id>BP-0001</id><setBy>D2635</setBy></partId>
+      <partName><name>Brake Pad Set</name></partName>
+    </hwPart>
+    <hwPart>
+      <partId><id>PC-1000</id></partId>
+      <partName><name>Paper cloth</name></partName>
+    </hwPart>
+  </parts>
+  <taskRequirements>
+    <taskReq>
+      <trId><id>TR-00009</id></trId>
+      <trRev><revId><id>1.0</id></revId><trDescr><descr>Replace worn front brake pads</descr></trDescr></trRev>
+    </taskReq>
+  </taskRequirements>
+  <tasks>
+    <task>
+      <taskId><id>T00002</id></taskId>
+      <taskRev>
+        <revId><id>1.0</id></revId>
+        <taskName><name>Replace Front Brake Pads</name></taskName>
+        <wcn><wcnId><id>W1</id></wcnId><wcnDescr><descr>Do not actuate the brake when the wheel is removed.</descr></wcnDescr></wcn>
+      </taskRev>
+    </task>
+  </tasks>
+</lsaDataSet>

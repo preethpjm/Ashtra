@@ -1,15 +1,17 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { api, KFinding, KImport, KPart, KSummary, Project } from "./api";
 import { STATUS_COLOR, STATUS_LABEL } from "./modelColors";
+import { TranslateView } from "./TranslateView";
+import { CrossrefView } from "./CrossrefView";
 
 const ModelViewer = lazy(() => import("./ModelViewer"));
 
-type Section = "overview" | "breakdown" | "parts" | "tasks" | "dms" | "models" | "findings" | "sources";
+type Section = "overview" | "breakdown" | "parts" | "tasks" | "dms" | "models" | "crossref" | "translate" | "findings" | "sources";
 type Sel = { kind: "part"; id: number } | { kind: "task"; id: string; rev: string } | { kind: "dm"; dmc: string } | null;
 
 const SECTIONS: [Section, string][] = [
   ["overview", "Overview"], ["breakdown", "Breakdown"], ["parts", "Parts"], ["tasks", "Tasks"],
-  ["dms", "Data modules"], ["models", "3D models"], ["findings", "Findings"], ["sources", "Sources"],
+  ["dms", "Data modules"], ["models", "3D models"], ["crossref", "Cross-reference"], ["translate", "Translate"], ["findings", "Findings"], ["sources", "Sources"],
 ];
 const RULES: Record<string, string> = {
   "maintenance-level": "Maintenance level differs", "task-duration": "Task time differs",
@@ -39,8 +41,8 @@ const KIND_LABEL: Record<string, string> = { "support-equipment": "Support equip
   component: "Component" };
 
 /** The knowledge library: one store of product facts that S1000D, S2000M and S3000L share. */
-export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid: string | null;
-  say: (m: string, kind?: "ok" | "info" | "err") => void }) {
+export function KnowledgeView({ projects, pid, say, openDocument, openSchemas, docsChanged }: { projects: Project[]; pid: string | null;
+  say: (m: string, kind?: "ok" | "info" | "err") => void; openDocument: (id: string) => void; openSchemas: () => void; docsChanged?: () => void }) {
   const [section, setSection] = useState<Section>("overview");
   const [summary, setSummary] = useState<KSummary | null>(null);
   const [listed, setListed] = useState<{ key: string; rows: any[] }>({ key: "", rows: [] });
@@ -272,6 +274,8 @@ export function KnowledgeView({ projects, pid, say }: { projects: Project[]; pid
           </div>
         )}
 
+        {section === "crossref" && <CrossrefView say={say} openSchemas={openSchemas} openDocument={openDocument} docsChanged={docsChanged} />}
+        {section === "translate" && <TranslateView pid={pid} say={say} openDocument={openDocument} />}
         {section === "models" && <ModelsSection rows={rows} say={say} reload={refreshSummary} openPart={openPart} busy={!!busy} />}
         {section === "sources" && (
           <table className="kn-table"><thead><tr><th>Kind</th><th>Document</th><th>Issue</th><th>Schema</th><th>Imported</th><th>Note</th></tr></thead>

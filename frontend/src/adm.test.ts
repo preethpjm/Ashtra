@@ -43,6 +43,19 @@ describe("ADM", () => {
     expect(b.elements[resolvePath(b, "/provisioningExchange/ipdRecords/ipdItem[2]/quantityPerAssembly")!].textContent).toBe("4");
   });
 
+  it("never shows table layout attributes as content (SGML parsers add morerows/rotate defaults)", () => {
+    const a = parseAdm(`<doc><table><tgroup cols="2"><colspec colname="c1" colwidth="1*"/><tbody><row>` +
+      `<entry morerows="0" rotate="0" valign="bottom"/><entry morerows="0" rotate="0" valign="middle"><para>BY</para></entry>` +
+      `</row></tbody></tgroup></table><graphic boardno="ICN-1" rotate="0"/></doc>`);
+    const els = (n: string) => a.elements.filter((e) => e.localName === n);
+    expect(kindOf(els("entry")[0])).toBe("text");             // an empty cell: an empty, editable cell
+    expect(kindOf(els("colspec")[0])).toBe("atom");           // column definitions stay out of the content
+    expect(kindOf(els("graphic")[0])).toBe("atom");
+    const pm = JSON.stringify(toProseMirror(a));
+    expect(pm).not.toMatch(/morerows=|rotate=|valign=/);
+    expect(pm).toContain('"valign":"bottom"');                 // still used for alignment
+  });
+
   it("classifies text, container and atom elements", () => {
     const a = parseAdm(fx("s1000d_descript_valid.xml"));
     const by = (n: string) => a.elements.find((e) => e.localName === n)!;

@@ -141,3 +141,13 @@ def test_schema_chooser_over_http(client):
     assert any(d["rule_id"] == "ASTHRA-SCHEMA-CHOSEN" for d in v["diagnostics"])
     s1 = client.get(f"/api/documents/{docs['s1000d_proced_valid.xml']['id']}/state").json()
     assert s1["render"]["roles"]["proceduralStep"] == "step"
+
+
+def test_delete_documents_over_http(client):
+    pid = client.post("/api/projects", json={"name": "Del"}).json()["id"]
+    src = (DOCS / "s1000d_proced_valid.xml").read_bytes()
+    ids = [client.post(f"/api/projects/{pid}/documents", files={"file": (f"p{i}.xml", src)}).json()["id"] for i in range(3)]
+    assert client.delete(f"/api/documents/{ids[0]}").json()["id"] == ids[0]
+    assert client.delete(f"/api/documents/{ids[0]}").status_code == 400
+    r = client.post("/api/documents/delete", json={"ids": ids[1:]}).json()
+    assert len(r["deleted"]) == 2 and client.get(f"/api/projects/{pid}/documents").json() == []

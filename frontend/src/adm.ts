@@ -265,13 +265,30 @@ function hasRealText(el: Element): boolean {
 
 /** How an element is shown in the visual editor. Without the M3 schema model this
  *  is a structural heuristic; it never changes what is saved. */
+/** Attributes that only say how something is laid out (CALS / OASIS exchange tables, which S1000D and ATA both
+ *  use, plus common print hints). They style the rendering; they are never shown as content. SGML parsers also
+ *  write their declared defaults (morerows="0", rotate="0") into every element, so they cannot be told apart
+ *  from authored values by presence alone. */
+export const LAYOUT_ATTRS = new Set([
+  "align", "valign", "char", "charoff", "colname", "namest", "nameend", "spanname", "morerows", "rotate",
+  "rowsep", "colsep", "colnum", "colwidth", "cols", "frame", "pgwide", "orient", "tabstyle", "tgroupstyle",
+  "shortentry", "tocentry", "rowheight", "outputclass", "role", "xml:space", "space", "shownow",
+]);
+const REF_ATTR = /^(ref|refid|idref|xrefid|internalrefid|target)$/i;
+const meaningfulAttrs = (el: Element) => Array.from(el.attributes).filter((a) =>
+  !LAYOUT_ATTRS.has(a.name.toLowerCase()) && !LAYOUT_ATTRS.has(a.localName.toLowerCase())
+  && !a.name.startsWith("xmlns") && !a.name.startsWith("xsi:"));
+
 export function kindOf(el: Element): Kind {
   if (hasRealText(el)) return "text";
   const elKids = el.children.length;
   const other = Array.from(el.childNodes).some((c) => c.nodeType === Node.CDATA_SECTION_NODE);
   if (other) return "text";
   if (elKids > 0) return "block";
-  return el.attributes.length === 0 ? "text" : "atom";   // <para/> is editable; <graphic .../> is an atom
+  // <para/> and an empty table cell (<entry valign="bottom"/>) are editable text; <graphic .../> is an atom
+  if (el.attributes.length === 0) return "text";
+  if (/^(colspec|spanspec)$/i.test(localName(el))) return "atom";            // column definitions: never content
+  return meaningfulAttrs(el).length === 0 ? "text" : "atom";
 }
 
 export function isMarkable(el: Element): boolean {
@@ -317,7 +334,10 @@ export function knownSummary(el: Element): string | null {
 export function attrSummary(el: Element, max = 4): string {
   const known = knownSummary(el);
   if (known) return known;
-  return Array.from(el.attributes).filter((a) => !a.name.startsWith("xmlns") && !a.name.startsWith("xsi:"))
+  // a reference (ATA <grphcref refid>, <refint>): what it points at, not its attributes
+  const ref = Array.from(el.attributes).find((a) => REF_ATTR.test(a.localName));
+  if (ref) return `→ ${refLabel(el.ownerDocument, ref.value) ?? ref.value}`;
+  return meaningfulAttrs(el)
     .slice(0, max).map((a) => `${a.localName}=${displayText(a.value, el.ownerDocument)}`).join("  ");
 }
 
@@ -335,7 +355,7 @@ export function refLabel(doc: Document | null | undefined, id: string | null | u
       const n = localName(el);
       const isFig = n === "figure" || (n === "graphic" && localName(el.parentElement ?? el) !== "figure" && el.parentElement?.localName !== "sheet");
       let label: string | null = null;
-      if (isFig && n === "figure") label = `Figure ${++fig}`;
+      if (isFig) label = `Figure ${++fig}`;            // S1000D <figure>; ATA <graphic> (sheets inside it)
       else if (n === "table") label = `Table ${++tab}`;
       const idv = ID_ATTRS.map((a) => el.getAttribute(a)).find(Boolean);
       if (!idv) continue;
@@ -345,10 +365,11 @@ export function refLabel(doc: Document | null | undefined, id: string | null | u
         label = txt ? (txt.length > 60 ? txt.slice(0, 59) + "…" : txt) : idv;
       }
       map.set(idv, label);
+      if (!map.has(idv.toLowerCase())) map.set(idv.toLowerCase(), label);   // SGML IDs are case-insensitive
     }
     (doc as any).__asthraRefs = map;
   }
-  return map.get(id) ?? null;
+  return map.get(id) ?? map.get(id.toLowerCase()) ?? null;
 }
 
 export interface HeaderInfo {
@@ -441,7 +462,7 @@ export function inlineLabel(el: Element): string {
         const v = unit ? `${t} ${unit}` : t;
         return v.length > 60 ? v.slice(0, 59) + "…" : v;
       }
-      const ref = Array.from(el.attributes).find((a) => /^(ref|refid|idref|xrefid|internalrefid|target)$/i.test(a.localName));
+      const ref = Array.from(el.attributes).find((a) => REF_ATTR.test(a.localName));
       return ref ? (refLabel(el.ownerDocument, ref.value) ?? ref.value) : localName(el);
     }
   }

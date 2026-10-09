@@ -1,0 +1,33 @@
+<!-- SYNTHETIC ASTHRA TEST DTD, SGML syntax, using ATA iSpec 2200-style element names for an illustrated
+     parts list. It is NOT an ATA DTD and must not be used to validate real publications.
+     Public identifier: "-//ASTHRA//DTD Synthetic ATA-style IPL SGML//EN"                                -->
+
+<!ELEMENT cmm      - -  (title, ipl)                                          >
+<!ATTLIST cmm      chapnbr  CDATA #REQUIRED  sectnbr CDATA #REQUIRED
+                   subjnbr  CDATA #REQUIRED  key     ID    #IMPLIED           >
+<!ELEMENT title    - O  (#PCDATA)                                             >
+<!ELEMENT ipl      - -  (title, vendlist?, dplist)                            >
+<!ELEMENT vendlist - -  (vendata+)                                            >
+<!ELEMENT vendata  - O  (mfr, mad)                                            >
+<!ELEMENT dplist   - -  (figure+)                                             >
+<!ELEMENT figure   - -  (title, sheet+, prtlist)                              >
+<!ATTLIST figure   fignbr   CDATA #REQUIRED  key ID #IMPLIED                  >
+<!ELEMENT sheet    - O  EMPTY                                                 >
+<!ATTLIST sheet    gnbr     CDATA #REQUIRED                                   >
+<!ELEMENT prtlist  - -  (itemdata+)                                           >
+<!ELEMENT itemdata - O  (pnr, iplnom, effcode*, upa)                          >
+<!ATTLIST itemdata itemnbr  CDATA  #REQUIRED
+                   indent   NUMBER "1"
+                   illusind NUMBER "1"
+                   attach   NUMBER "0"
+                   delitem  NUMBER "0"                                        >
+<!ELEMENT pnr      - O  (#PCDATA)                                             >
+<!ELEMENT iplnom   - O  (nom, mfr?, msc?)                                     >
+<!ELEMENT nom      - O  (kwd, adt?)                                           >
+<!ELEMENT kwd      - O  (#PCDATA)                                             >
+<!ELEMENT adt      - O  (#PCDATA)                                             >
+<!ELEMENT mfr      - O  (#PCDATA)                                             >
+<!ELEMENT mad      - O  (#PCDATA)                                             >
+<!ELEMENT msc      - O  (#PCDATA)                                             >
+<!ELEMENT effcode  - O  (#PCDATA)                                             >
+<!ELEMENT upa      - O  (#PCDATA)                                             >

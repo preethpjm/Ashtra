@@ -419,6 +419,55 @@ class DocumentService:
         _, data = self.revision_bytes(doc_id, rev_id)
         return self.save_working(doc_id, self.decode(data))
 
+    # ------------------------------------------------------------------ remove
+    def delete(self, doc_id: str) -> dict:
+        """Remove a document from its project: its working copy, revisions and validation history, and the
+        stored original unless another document of the project uses the same file. What the knowledge
+        library already learned from it stays (reset the library to forget it)."""
+        d, root = self._root(doc_id)
+        files = [r["rel_path"] for r in self.db.query("SELECT rel_path FROM revision WHERE document_id=?", (doc_id,))]
+        wc = self.db.one("SELECT rel_path FROM working_copy WHERE document_id=?", (doc_id,))
+        if wc:
+            files.append(wc["rel_path"])
+        others = self.db.one("SELECT COUNT(*) n FROM document WHERE source_file_id=? AND id<>?",
+                             (d["source_file_id"], doc_id))["n"]
+        with self.db.tx() as c:
+            c.execute("DELETE FROM working_copy WHERE document_id=?", (doc_id,))
+            c.execute("DELETE FROM revision WHERE document_id=?", (doc_id,))
+            c.execute("DELETE FROM diagnostic WHERE run_id IN (SELECT id FROM validation_run WHERE document_id=?)", (doc_id,))
+            c.execute("DELETE FROM validation_run WHERE document_id=?", (doc_id,))
+            c.execute("DELETE FROM document WHERE id=?", (doc_id,))
+            if not others:
+                c.execute("DELETE FROM source_file WHERE id=?", (d["source_file_id"],))
+                files.append(d["blob_path"])
+            c.execute("INSERT INTO audit_event(at,actor,action,subject,detail_json) VALUES (?,?,?,?,?)",
+                      (now(), "local", "document.delete", doc_id,
+                       json.dumps({"sha256": d["sha256"], "name": d["original_name"], "project": d["project_id"]})))
+        for rel in files:                                   # stored read-only: make writable, then remove
+            p = root / rel
+            try:
+                p.chmod(0o644)
+                p.unlink()
+            except FileNotFoundError:
+                pass
+            except OSError:                                 # noqa: PERF203 - leave the file, the record is gone
+                pass
+        rev_dir = root / "revisions" / doc_id
+        try:
+            rev_dir.rmdir()
+        except OSError:
+            pass
+        return {"id": doc_id, "name": d["original_name"], "project_id": d["project_id"]}
+
+    def delete_many(self, ids: list[str]) -> dict:
+        done, failed = [], []
+        for i in ids:
+            try:
+                done.append(self.delete(i))
+            except DocumentError as e:
+                failed.append({"id": i, "error": str(e)})
+        return {"deleted": done, "failed": failed}
+
 
 def _report_json(rep: ValidationReport) -> dict:
     return {"statuses": rep.statuses(), "counts": rep.counts(), **rep.model_dump(mode="json")}

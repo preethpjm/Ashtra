@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC test model shaped like an Enterprise Architect XMI 2.1 export of an S-Series data model.
+     A handful of classes with the same names and XML names as the S-Series model; not the official model. -->
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
+         xmlns:thecustomprofile="http://www.sparxsystems.com/profiles/thecustomprofile/1.0">
+  <uml:Model xmi:type="uml:Model" name="EA_Model">
+    <packagedElement xmi:type="uml:Package" xmi:id="P0" name="S-Series_S3000L_Data_model">
+      <packagedElement xmi:type="uml:Package" xmi:id="P1" name="S3000L_2-0_Data_model_002-00">
+        <packagedElement xmi:type="uml:Package" xmi:id="P2" name="CDM UoF Part Definition">
+          <packagedElement xmi:type="uml:Class" xmi:id="C_PART" name="PartAsDesigned" isAbstract="true">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_PID" name="partIdentifier"><type xmi:idref="T_ID"/>
+              <lowerValue xmi:type="uml:LiteralInteger" value="1"/><upperValue xmi:type="uml:LiteralUnlimitedNatural" value="-1"/></ownedAttribute>
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_PNAME" name="partName"><type xmi:idref="T_NAME"/></ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="C_HW" name="HardwarePartAsDesigned">
+            <generalization xmi:type="uml:Generalization" xmi:id="G1" general="C_PART"/>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="P3" name="CDM UoF Breakdown Structure">
+          <packagedElement xmi:type="uml:Class" xmi:id="C_BE" name="BreakdownElement" isAbstract="true">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_BEID" name="breakdownElementIdentifier"><type xmi:idref="T_ID"/></ownedAttribute>
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_BENAME" name="breakdownElementName"><type xmi:idref="T_NAME"/></ownedAttribute>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="P4" name="CDM UoF Task">
+          <packagedElement xmi:type="uml:Class" xmi:id="C_TASK" name="Task" isAbstract="true">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_TID" name="taskIdentifier"><type xmi:idref="T_ID"/></ownedAttribute>
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_REV" name="has" association="AS1"><type xmi:idref="C_TREV"/></ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="C_TREV" name="TaskRevision">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_TNAME" name="taskName"><type xmi:idref="T_NAME"/></ownedAttribute>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="P9" name="S_Series_Primitives">
+          <packagedElement xmi:type="uml:PrimitiveType" xmi:id="T_ID" name="IdentifierType">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_ID_ID" name="identifier"><lowerValue xmi:type="uml:LiteralInteger" value="1"/></ownedAttribute>
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_ID_SB" name="identifierSetBy"><lowerValue xmi:type="uml:LiteralInteger" value="0"/></ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:PrimitiveType" xmi:id="T_NAME" name="NameType">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_NM" name="nameText"><lowerValue xmi:type="uml:LiteralInteger" value="1"/></ownedAttribute>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+  </uml:Model>
+  <thecustomprofile:xmlName base_Class="C_PART" xmlName="part"/>
+  <thecustomprofile:xmlName base_Class="C_HW" xmlName="hwPart"/>
+  <thecustomprofile:xmlName base_Class="C_BE" xmlName="be"/>
+  <thecustomprofile:xmlName base_Class="C_TASK" xmlName="task"/>
+  <thecustomprofile:xmlName base_Class="C_TREV" xmlName="taskRev"/>
+  <thecustomprofile:xmlName base_Property="A_PID" xmlName="partId"/>
+  <thecustomprofile:xmlName base_Property="A_PNAME" xmlName="partName"/>
+  <thecustomprofile:xmlName base_Property="A_BEID" xmlName="beId"/>
+  <thecustomprofile:xmlName base_Property="A_BENAME" xmlName="beName"/>
+  <thecustomprofile:xmlName base_Property="A_TID" xmlName="taskId"/>
+  <thecustomprofile:xmlName base_Property="A_TNAME" xmlName="taskName"/>
+  <thecustomprofile:xmlName base_Property="A_ID_ID" xmlName="id"/>
+  <thecustomprofile:xmlName base_Property="A_ID_SB" xmlName="setBy"/>
+  <thecustomprofile:xmlName base_Property="A_NM" xmlName="name"/>
+  <thecustomprofile:key base_Property="A_PID"/>
+  <thecustomprofile:key base_Property="A_BEID"/>
+  <thecustomprofile:key base_Property="A_TID"/>
+  <xmi:Extension extender="Enterprise Architect">
+    <elements>
+      <element xmi:idref="C_PART" xmi:type="uml:Class" name="PartAsDesigned">
+        <properties documentation="PartAsDesigned is a &amp;lt;&amp;lt;class&amp;gt;&amp;gt; that represents the definitional information for an artifact."/>
+        <attributes>
+          <attribute xmi:idref="A_PID" name="partIdentifier"><documentation value="partIdentifier is an identifier that establishes a unique designator for a PartAsDesigned."/></attribute>
+        </attributes>
+      </element>
+    </elements>
+  </xmi:Extension>
+</xmi:XMI>

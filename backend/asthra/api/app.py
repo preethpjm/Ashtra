@@ -40,6 +40,10 @@ class TextIn(BaseModel):
     text: str
 
 
+class IdsIn(BaseModel):
+    ids: list[str]
+
+
 class CommitIn(BaseModel):
     message: str = ""
 
@@ -359,6 +363,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def save_working(did: str, body: TextIn):
         return guarded(docs.save_working, did, body.text)
 
+    @app.delete("/api/documents/{did}")
+    def delete_document(did: str):
+        return guarded(docs.delete, did)
+
+    @app.post("/api/documents/delete")
+    def delete_documents(body: IdsIn):
+        return docs.delete_many(body.ids)
+
     @app.delete("/api/documents/{did}/working")
     def discard_working(did: str):
         guarded(docs.discard_working, did)
@@ -450,6 +462,136 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/knowledge/locate")
     def knowledge_locate(pn: str):
         return ctx.knowledge.locate(pn)
+
+    # ---------------------------------------------------------------- translator (schema-driven parts lists)
+    from ..translate.service import TranslateError
+
+    def tr(fn, *a, **kw):
+        try:
+            return fn(*a, **kw)
+        except (TranslateError, DocumentError, RegistryError) as e:
+            raise HTTPException(400, str(e))
+
+    @app.get("/api/translate/concepts")
+    def translate_concepts():
+        return ctx.translate.concepts()
+
+    @app.get("/api/translate/schemas")
+    def translate_schemas():
+        return ctx.translate.schemas()
+
+    @app.get("/api/translate/binding")
+    def translate_binding(package_id: str, doc_type: str, concept: str = "parts_list", record: str | None = None):
+        return tr(ctx.translate.binding, package_id, doc_type, concept, record)
+
+    @app.put("/api/translate/binding")
+    def translate_save_binding(body: dict):
+        return tr(ctx.translate.save_binding, body.get("package_id", ""), body.get("doc_type", ""), body.get("binding") or {})
+
+    @app.delete("/api/translate/binding")
+    def translate_forget_binding(package_id: str, doc_type: str, concept: str = "parts_list"):
+        ctx.translate.forget_binding(package_id, doc_type, concept)
+        return {"ok": True}
+
+    @app.get("/api/translate/rules")
+    def translate_rules():
+        return ctx.translate.rules()
+
+    @app.put("/api/translate/rules")
+    def translate_save_rules(body: dict):
+        return ctx.translate.save_rules(body)
+
+    @app.get("/api/translate/sources")
+    def translate_sources():
+        return ctx.translate.sources()
+
+    @app.get("/api/translate/targets/{pid}")
+    def translate_targets(pid: str):
+        return tr(ctx.translate.targets, pid)
+
+    @app.post("/api/translate/preview")
+    def translate_preview(body: dict):
+        return tr(ctx.translate.records, body.get("source") or {}, body.get("rules"))
+
+    @app.post("/api/translate/generate")
+    def translate_generate(body: dict):
+        return tr(ctx.translate.generate, body.get("doc_id", ""), body.get("source") or {}, body.get("rules"), body.get("binding"))
+
+    # ---------------------------------------------------------------- cross-reference (generic names for all standards)
+    from ..crossref.service import CrossrefError
+
+    def xr(fn, *a, **kw):
+        try:
+            return fn(*a, **kw)
+        except (CrossrefError, RegistryError) as e:
+            raise HTTPException(400, str(e))
+
+    @app.get("/api/crossref/overview")
+    def crossref_overview():
+        return ctx.crossref.overview()
+
+    @app.post("/api/crossref/models")
+    async def crossref_add_model(file: UploadFile = File(...)):
+        data = await file.read()
+        return xr(ctx.crossref.add_model, file.filename or "model.xmi", data)
+
+    @app.delete("/api/crossref/models")
+    def crossref_delete_model(label: str):
+        ctx.crossref.delete_model(label)
+        return {"ok": True}
+
+    @app.get("/api/crossref/terms")
+    def crossref_terms(q: str = "", core: bool = False, common: bool = False, limit: int = 300):
+        return ctx.crossref.terms(q, core, common, min(limit, 2000))
+
+    @app.get("/api/crossref/term")
+    def crossref_term(id: str):
+        return xr(ctx.crossref.term, id)
+
+    @app.put("/api/crossref/name")
+    def crossref_confirm_name(body: dict):
+        return xr(ctx.crossref.confirm_name, body.get("package_id", ""), body.get("doc_type", ""), body.get("term", ""), body.get("path", ""))
+
+    @app.get("/api/crossref/subjects")
+    def crossref_subjects(q: str = ""):
+        return ctx.crossref.subjects(q)
+
+    @app.get("/api/crossref/item")
+    def crossref_item(subject: str, key: str, view: str = ""):
+        return xr(ctx.crossref.item, subject, key, view)
+
+    @app.get("/api/crossref/coverage")
+    def crossref_coverage():
+        return ctx.crossref.coverage()
+
+    @app.get("/api/crossref/hints")
+    def crossref_hints(standard: str = ""):
+        return ctx.crossref.hints(standard)
+
+    @app.get("/api/crossref/doc-hint/{did}")
+    def crossref_doc_hint(did: str):
+        try:
+            return ctx.crossref.doc_hint(ctx.documents.get(did)) or {}
+        except DocumentError as e:
+            raise HTTPException(404, str(e))
+
+    @app.get("/api/crossref/review")
+    def crossref_review(view: str):
+        return xr(ctx.crossref.review, view)
+
+    @app.put("/api/crossref/review")
+    def crossref_confirm_many(body: dict):
+        return xr(ctx.crossref.confirm_many, body.get("package_id", ""), body.get("doc_type", ""), body.get("items") or [],
+                  bool(body.get("whole_standard", True)))
+
+    @app.post("/api/crossref/assign-schemas")
+    def crossref_assign_schemas(body: dict):
+        return ctx.crossref.assign_schemas(body.get("items") or [])
+
+    @app.get("/api/crossref/names")
+    def crossref_names(view: str, core: bool = True):
+        terms = [t for t, x in ctx.crossref.vocab.terms.items() if x.get("core")] if core else None
+        return xr(ctx.crossref.names_for, view, terms)
 
     @app.post("/api/knowledge/examples/bike")
     def knowledge_bike():

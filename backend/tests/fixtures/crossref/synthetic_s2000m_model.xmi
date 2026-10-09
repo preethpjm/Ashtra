@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC test model shaped like the S2000M 7.0 XMI: its own figure-item classes, and HardwarePartAsDesigned
+     only referenced (no attributes): the common data model defines it. Not the official model. -->
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
+         xmlns:thecustomprofile="http://www.sparxsystems.com/profiles/thecustomprofile/1.0">
+  <uml:Model xmi:type="uml:Model" name="EA_Model">
+    <packagedElement xmi:type="uml:Package" xmi:id="P0" name="S-Series_S2000M_Data_model">
+      <packagedElement xmi:type="uml:Package" xmi:id="P1" name="S2000M_7-0_Data_model_001-00">
+        <packagedElement xmi:type="uml:Package" xmi:id="P2" name="S2000M Figure And Figure Item Data">
+          <packagedElement xmi:type="uml:Class" xmi:id="C_FIG" name="Figure">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_FIGID" name="figureIdentifier"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="C_FI" name="FigureItem" isAbstract="true">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_FIID" name="figureItemIdentifier"/>
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_IND" name="figureItemIndentureLevel"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="C_CTX" name="FigureItemRealizationContextData">
+            <ownedAttribute xmi:type="uml:Property" xmi:id="A_QNA" name="quantityInNextHigherAssembly"/>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="P3" name="S2000M Part Definition Data">
+          <packagedElement xmi:type="uml:Class" xmi:id="C_HW" name="HardwarePartAsDesigned"/>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+  </uml:Model>
+  <thecustomprofile:xmlName base_Class="C_FIG" xmlName="fig"/>
+  <thecustomprofile:xmlName base_Class="C_FI" xmlName="figItem"/>
+  <thecustomprofile:xmlName base_Class="C_CTX" xmlName="figReaContxt"/>
+  <thecustomprofile:xmlName base_Class="C_HW" xmlName="hwPart"/>
+  <thecustomprofile:xmlName base_Property="A_FIGID" xmlName="figId"/>
+  <thecustomprofile:xmlName base_Property="A_FIID" xmlName="figItemId"/>
+  <thecustomprofile:xmlName base_Property="A_IND" xmlName="indentLevel"/>
+  <thecustomprofile:xmlName base_Property="A_QNA" xmlName="qna"/>
+  <xmi:Extension extender="Enterprise Architect">
+    <elements>
+      <element xmi:idref="C_FIG" xmi:type="uml:Class" name="Figure"><attributes>
+        <attribute xmi:idref="A_FIGID" name="figureIdentifier"><properties type="IdentifierType"/></attribute></attributes></element>
+      <element xmi:idref="C_FI" xmi:type="uml:Class" name="FigureItem"><attributes>
+        <attribute xmi:idref="A_FIID" name="figureItemIdentifier"><properties type="IdentifierType"/></attribute>
+        <attribute xmi:idref="A_IND" name="figureItemIndentureLevel"><properties type="umlInteger"/></attribute></attributes></element>
+    </elements>
+  </xmi:Extension>
+</xmi:XMI>
